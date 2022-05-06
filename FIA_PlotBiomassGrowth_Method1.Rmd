@@ -1,0 +1,519 @@
+---
+title: "FIA_PLOT BIOMASS GROWTH_METHOD 1"
+author: "JAH"
+date: "3/17/2022"
+output: 
+  html_document:
+    toc: true
+    toc_float: true
+    toc_collapsed: true
+    toc_depth: 3
+    number_sections: true
+    theme: lumen
+---
+
+```{r, include=FALSE, echo = FALSE}
+knitr::opts_chunk$set(tidy.opts=list(width.cutoff=60),tidy=TRUE, echo = FALSE, message = TRUE, warning = TRUE)
+```
+
+Steps:
+
+Data conversion
+1.  In the TREE TABLE, convert $ABG_i$ for tree $i$ to Mg 
+2.  Convert $TPA_i$ for that tree to $TPHA_i$  trees per acres to trees per hectare
+
+use this formula to calculate plot $B_t$, the biomass of living trees in a plot at time t
+$B_t = \sum_{i=1}^{n} ABG_{i,t} \times TPHA_i$  units are Mg/ha
+
+we can calculate the the change in plot biomass $\Delta B$ as the difference between measurements
+$\Delta B = B_{t + \Delta t} - B_t$
+
+Plot-level "growth" or AGB gross productivity $G_t$ is then:
+$G_t = (\Delta B + M_t + C_t ) / REMPER$, where $REMPER$ is the FIA re-measurement period or $\Delta t$
+
+so we need to also calculate the sum of AGB for trees that died ($M_t$) or were removed ($C_t$) between two plot measurements and add that back to the $\Delta B$.   Dead and removed trees are denoted in the TREE table STATUSCD column.  
+
+# Coded example of what was done
+
+```{r, echo = T, cache = T}
+library(rFIA); library(dplyr)
+
+############################# STEP 1 - data ###
+###############################################
+
+## was done separately for each state - here I show the example for Alabama (al)
+
+## read in the data
+state <-  readFIA('C:/Users/hogie/Dropbox (Personal)/FIA_R/data/al')
+
+## convert units -- lbs dry biomass to Mg (metric tons)
+state$TREE$DRYBIO_AG_Mg <- state$TREE$DRYBIO_AG * 0.00045359237
+## convert units - conversion of per acre to per hectare
+state$TREE$TPHa_UNADJ <-  state$TREE$TPA_UNADJ*2.4710538147   ##TPA base level TPA
+
+##  create pltID
+state$TREE$pltID <-  stringr::str_c(state$TREE$UNITCD, state$TREE$STATECD, state$TREE$COUNTYCD, state$TREE$PLOT, sep = '_')
+state$PLOT$pltID <-  stringr::str_c(state$PLOT$UNITCD, state$PLOT$STATECD, state$PLOT$COUNTYCD, state$PLOT$PLOT, sep = '_')
+
+## data frames
+tree_df <- state$TREE
+plot_df <- state$PLOT
+
+###############################################
+##################### STEP 2- BIOMASS #########
+
+### use dplyr to calculate plot level biomass  AG_Mg (aboveground biomass in Mg) X TPHa (trees per hectare) - gives numbers in Mg/Ha  - filter statuscode = 1 selects only live trees
+## if TPAGROW is NA then use TPA 
+plotBio <- tree_df %>% group_by(pltID, PLT_CN, INVYR) %>% filter(STATUSCD == 1) %>%
+                       summarize(B_plt_MgHa = sum((DRYBIO_AG_Mg * TPHa_UNADJ), na.rm =T))
+
+### ORDER DATA FRAME BY pltID then INVYR
+plotBio <- plotBio[with(plotBio, order(pltID, INVYR)),]
+
+#### NEED TO CALCULATE DIFFERENCE BETWEEN RECORDS
+########## https://stackoverflow.com/questions/21667262/how-to-find-difference-between-values-in-two-rows-in-an-r-dataframe-using-dplyr
+diffBio <- plotBio %>% group_by(pltID) %>%  mutate(deltaB_MgHa = B_plt_MgHa - lag(B_plt_MgHa, default = NA), deltaT = INVYR - lag(INVYR, default = NA))
+
+### subset out NAs.  This elimates all first records (where no diff can be calculated )
+diffBio <- diffBio[!is.na(diffBio$deltaB_MgHa),]
+
+###############################################
+##################### STEP 3- MORTALITY #######
+
+### use dplyr to calculate plot level dead and removed  aboveground biomass in Mg * TPHaMORT (for STATUSCD = 2) & TPHaREMV (for STATUSCD = 3) - gives numbers in Mg/Ha  
+### I use PREV_TRE_CN to match the dead or cut tree record to the previous measurement of tree biomass
+
+### get PREV_TRE_CNs for Dead Tree - creates a list of PREV_TRE_CNs
+DeadBio <- tree_df %>% filter(STATUSCD == 2) %>% group_by(pltID, PLT_CN, INVYR) %>%         
+           summarize(PREV_TRE_CN_VEC = list(unique(PREV_TRE_CN))) 
+
+## for loop to calculate dead tree biomass matching by PLT_CN
+DeadBio$B_M_MgHa <- 0
+for(i in 1:length(DeadBio$pltID)) {
+  df <- tree_df[tree_df$CN %in% unlist(DeadBio$PREV_TRE_CN_VEC[i]),]
+  DeadBio$B_M_MgHa[i] <- sum(df$DRYBIO_AG_Mg * df$TPHa_UNADJ, na.rm = T)
+}
+
+### use sapply to match PREV_TRE_CN to CN calculate the biomass of dead trees
+#DeadBio$B_M_MgHa <- sapply(DeadBio$PREV_TRE_CN_VEC, function(x) sum(tree_df[tree_df$CN %in% unlist(x),]$DRYBIO_AG_Mg * tree_df[tree_df$CN %in% unlist(x),]$TPHa_UNADJ))
+
+## reorder by  pltID then INVYR
+DeadBio <- DeadBio[with(DeadBio, order(pltID, INVYR)),]
+
+### get PREV_TRE_CNs for Cut Trees
+CutBio <- tree_df %>% filter(STATUSCD == 3) %>% group_by(pltID, PLT_CN, INVYR) %>%
+          summarize(PREV_TRE_CN_VEC = list(unique(PREV_TRE_CN))) 
+
+## for loop to calculate dead tree biomass matching by PLT_CN
+CutBio$B_C_MgHa <- 0
+for(i in 1:length(CutBio$pltID)) {
+  df <- tree_df[tree_df$CN %in% unlist(CutBio$PREV_TRE_CN_VEC[i]),]
+  CutBio$B_C_MgHa[i] <- sum(df$DRYBIO_AG_Mg * df$TPHa_UNADJ, na.rm = T)
+} 
+
+### use sapply to match PREV_TRE_CN to CN calculate the biomass of dead trees
+# CutBio$B_C_MgHa <- sapply(CutBio$PREV_TRE_CN_VEC, function(x) sum(tree_df[tree_df$CN %in% unlist(x),]$DRYBIO_AG_Mg * tree_df[tree_df$CN %in% unlist(x),]$TPHa_UNADJ))
+
+## make NAs zeroes
+CutBio[is.na(CutBio$B_C_MgHa),]$B_C_MgHa  <- 0 
+## reorder by  pltID then INVYR
+CutBio <- CutBio[with(CutBio, order(pltID, INVYR)),]
+
+## merge
+Mort <- full_join(DeadBio, CutBio, by = c("pltID", "PLT_CN", "INVYR"))
+
+###############################################
+########### STEP 4 - save calculation #########
+
+#### jf - create jeremy frames
+jf <- left_join(diffBio, Mort, by = c("pltID", "PLT_CN", "INVYR"))
+
+### make NAs zeroes
+jf[is.na(jf$B_M_MgHa),]$B_M_MgHa <- 0
+jf[is.na(jf$B_C_MgHa),]$B_C_MgHa <- 0
+
+### MERGE IN REMPER VALUES FROM PLOT TABLE & CALCULATE M = MORTALITY/REMPER
+jf <-  left_join(jf, plot_df[,c("pltID", "INVYR", "REMPER")], by = c("pltID", "INVYR"))
+
+### Calcualte G
+jf$G_MgHa <- (jf$deltaB_MgHa + jf$B_M_MgHa + jf$B_C_MgHa)/ jf$REMPER                              
+
+###############################################
+###############################################
+## add state column
+jf$STATE <- "AL"
+
+## add STARTYR
+jf$STARTYR <- jf$INVYR-jf$deltaT
+
+### re-arrange dataframes
+jf <- jf[c("STATE", "pltID", "PLT_CN", "STARTYR", "INVYR", "deltaT", "REMPER", "B_plt_MgHa", "deltaB_MgHa", "B_M_MgHa", "B_C_MgHa", "G_MgHa")]
+
+# ### CREATE T_chk
+# ### subset the data to datapoints that are +- 3 yrs difference between delta T and REMPER
+# jf$T_chk <- jf$REMPER - jf$deltaT
+# jf <- jf[jf$T_chk > -3 & jf$T_chk <3,]
+
+### add state prefix to jf
+al_jf <- jf
+#rm(jf)
+
+#save(wy_jf, file = "al_jf.Rdata")
+
+#### and remove others
+rm(CutBio, DeadBio, diffBio, Mort, plotBio, state, df)
+
+### print df head
+knitr::kable(head(al_jf, 20))
+```
+
+```{r}
+# FIA_jf <- rbind(al_jf, az_jf, ar_jf, ca_jf, co_jf, ct_jf, de_jf, fl_jf, ga_jf, id_jf, il_jf, ind_jf, ia_jf, ks_jf, ky_jf, la_jf, me_jf, md_jf, ma_jf, mi_jf, mn_jf, ms_jf, mo_jf, mt_jf, ne_jf, nv_jf, nh_jf, nj_jf, nm_jf, ny_jf, nc_jf, nd_jf, oh_jf, ok_jf, or_jf, pa_jf, ri_jf, sc_jf, sd_jf, tn_jf, tx_jf, ut_jf, vt_jf, va_jf, wa_jf, wv_jf, wi_jf, wy_jf)
+# # # 
+# save(FIA_jf, file= "FIA_jf.Rdata")
+```
+
+```{r}
+# ### LOAD JF FRAMES -- method 1 biomass calculation
+# 
+# load("C:/Users/hogie/Dropbox (Personal)/FIA_R/Biomass_Growth_calculations_Method1_jf/FIA_jf.Rdata")
+# 
+# # for FIA plot conditions
+# load("C:/Users/hogie/Dropbox (Personal)/FIA_R/Plot Conditions_rFIA/FIA_conditions_allPlots.Rdata")
+# FIA_conditions$STATE <- as.factor(FIA_conditions$STATE)
+# FIA_conditions$PROP_BASIS <- as.factor(FIA_conditions$PROP_BASIS)
+# FIA_conditions$MIXEDCONFCD <- as.factor(FIA_conditions$MIXEDCONFCD)
+# FIA_conditions$DWM_FUELBED_TYPCD  <-  as.factor(FIA_conditions$DWM_FUELBED_TYPCD)
+# 
+# # for FIA plots (plot table)
+# load("C:/Users/hogie/Dropbox (Personal)/FIA_R/Plot Conditions_rFIA/FIA_plots_allPlots.Rdata")
+# FIA_plots$STATE <- as.factor(FIA_plots$STATE)
+# FIA_plots$ECOSUBCD <- as.factor(FIA_plots$ECOSUBCD)
+# 
+# ##### COMBINE PLOT and CODITION TABLES
+# P_cond <- dplyr::left_join(FIA_conditions, FIA_plots, by = c("STATE", "PLOT", "INVYR", "PLT_CN" = "CN"))  #PLT_CN = CN  merges condition table to the plot table using PLT_CN (see FIA data user guide 8.0)
+# 
+# ###### COMBINE BIOMASS, CONDITION AND PLOT TABLES
+# ## merge by CN
+# G_m1 <-  dplyr::inner_join(FIA_jf, P_cond[,c("STATE", "CN", "PLT_CN", "INVYR", "STDAGE", "STDORGCD", "CONDPROP_UNADJ", "SITECLCD", "STDSZCD")], by = c("STATE", "PLT_CN", "INVYR")) %>% distinct()
+# 
+# rm(P_cond, FIA_jf, FIA_conditions, FIA_plots)  #removes other data frames
+# 
+# #####################
+# #### APPLYING FILTERS
+# 
+# ## remove cases of NA's from BIO_ACRE and STDAGE columns
+# G_m1 <- G_m1[!is.na(G_m1$STDAGE) & !G_m1$STDAGE == 9999,]
+# ## Filter out plantations
+# G_m1 <- G_m1[G_m1$STDORGCD == 0, ]
+# ## Filter plots with a single condition using a 95% threshold for CONDPROP_UNADJ
+# G_m1 <- G_m1[G_m1$CONDPROP_UNADJ >= 0.95, ]
+# ### Filter out SITECLCD 7 (non productive stands - those with less than 20 ft3/ac/yr)
+# G_m1 <- G_m1[!G_m1$SITECLCD == 7,]
+# ### Filter out non-stocked plots (with STDSZCD == 5)
+# G_m1 <- G_m1[!G_m1$STDSZCD == 5,]
+# 
+# #### APPLYING_m1 FILTERS
+# #####################
+# 
+# ## STATE, pltID, and YEAR as factors
+# G_m1$STATE <- as.factor(G_m1$STATE)
+# G_m1$pltID <- as.factor(G_m1$pltID)
+# 
+# 
+# save(G_m1, file = "G_m1_dataset_04.20.2022.Rdata")
+###############################################################
+# ####################### END PROCESSING CODE #################
+###############################################################
+
+### LOAD OLD VERSION OF G_m1
+xxx <-  load("C:/Users/hogie/Dropbox (Personal)/FIA_R/G_m1_dataset_03.29.2022.Rdata")
+G_m1_3.29 <-  get(xxx)
+rm(xxx)
+
+###  LOAD G_m1
+load("C:/Users/hogie/Dropbox (Personal)/FIA_R/G_m1_dataset_04.20.2022.Rdata")
+
+### load G
+load("C:/Users/hogie/Dropbox (Personal)/FIA_R/G_dataset_03.15.2022.Rdata")
+
+### alternative to G: 
+### LOAD G_positive
+#load("C:/Users/hogie/Dropbox (Personal)/FIA_R/G_dataset_03.15.2022.Rdata")
+```
+
+```{r}
+### COMBINE G and G_m1 dataframes
+G_combinedMethods <- dplyr::full_join(G_m1, G, by = c("STATE", "pltID", "CN", "PLT_CN", "INVYR", "STDAGE", "STDORGCD", "CONDPROP_UNADJ", "SITECLCD", "STDSZCD"))
+
+### combine
+G_combinedMethods_old <- dplyr::full_join(G_m1_3.29, G, by = c("STATE", "pltID", "CN", "PLT_CN", "INVYR", "STDAGE", "STDORGCD", "CONDPROP_UNADJ", "SITECLCD", "STDSZCD"))
+```
+
+```{r}
+### add in code for ECOPROVINCES 
+
+##### RE_FACTOR ECOLOGICAL SUBCD to ECOSYSTEM PROVINCES
+G_combinedMethods$ECOPROVCD <-  NA
+
+G_combinedMethods$ECOPROVCD[G_combinedMethods$ECOSUBCD %in% unique(G_combinedMethods$ECOSUBCD)[order(unique(G_combinedMethods$ECOSUBCD))][1:27]] <- "211"
+G_combinedMethods$ECOPROVCD[G_combinedMethods$ECOSUBCD %in% unique(G_combinedMethods$ECOSUBCD)[order(unique(G_combinedMethods$ECOSUBCD))][28:85]] <- "212"
+G_combinedMethods$ECOPROVCD[G_combinedMethods$ECOSUBCD %in% unique(G_combinedMethods$ECOSUBCD)[order(unique(G_combinedMethods$ECOSUBCD))][86:127]] <- "221"
+G_combinedMethods$ECOPROVCD[G_combinedMethods$ECOSUBCD %in% unique(G_combinedMethods$ECOSUBCD)[order(unique(G_combinedMethods$ECOSUBCD))][128:173]] <- "222"
+G_combinedMethods$ECOPROVCD[G_combinedMethods$ECOSUBCD %in% unique(G_combinedMethods$ECOSUBCD)[order(unique(G_combinedMethods$ECOSUBCD))][174:223]] <- "223"
+G_combinedMethods$ECOPROVCD[G_combinedMethods$ECOSUBCD %in% unique(G_combinedMethods$ECOSUBCD)[order(unique(G_combinedMethods$ECOSUBCD))][224:282]] <- "231"
+G_combinedMethods$ECOPROVCD[G_combinedMethods$ECOSUBCD %in% unique(G_combinedMethods$ECOSUBCD)[order(unique(G_combinedMethods$ECOSUBCD))][283:337]] <- "232"
+G_combinedMethods$ECOPROVCD[G_combinedMethods$ECOSUBCD %in% unique(G_combinedMethods$ECOSUBCD)[order(unique(G_combinedMethods$ECOSUBCD))][338:351]] <- "234"
+G_combinedMethods$ECOPROVCD[G_combinedMethods$ECOSUBCD %in% unique(G_combinedMethods$ECOSUBCD)[order(unique(G_combinedMethods$ECOSUBCD))][352:363]] <- "242"
+G_combinedMethods$ECOPROVCD[G_combinedMethods$ECOSUBCD %in% unique(G_combinedMethods$ECOSUBCD)[order(unique(G_combinedMethods$ECOSUBCD))][364:401]] <- "251"
+G_combinedMethods$ECOPROVCD[G_combinedMethods$ECOSUBCD %in% unique(G_combinedMethods$ECOSUBCD)[order(unique(G_combinedMethods$ECOSUBCD))][402:425]] <- "255"
+G_combinedMethods$ECOPROVCD[G_combinedMethods$ECOSUBCD %in% unique(G_combinedMethods$ECOSUBCD)[order(unique(G_combinedMethods$ECOSUBCD))][426:435]] <- "261"
+G_combinedMethods$ECOPROVCD[G_combinedMethods$ECOSUBCD %in% unique(G_combinedMethods$ECOSUBCD)[order(unique(G_combinedMethods$ECOSUBCD))][436:437]] <- "262"
+G_combinedMethods$ECOPROVCD[G_combinedMethods$ECOSUBCD %in% unique(G_combinedMethods$ECOSUBCD)[order(unique(G_combinedMethods$ECOSUBCD))][438:443]] <- "263"
+G_combinedMethods$ECOPROVCD[G_combinedMethods$ECOSUBCD %in% unique(G_combinedMethods$ECOSUBCD)[order(unique(G_combinedMethods$ECOSUBCD))][444:477]] <- "313"
+G_combinedMethods$ECOPROVCD[G_combinedMethods$ECOSUBCD %in% unique(G_combinedMethods$ECOSUBCD)[order(unique(G_combinedMethods$ECOSUBCD))][478:503]] <- "315"
+G_combinedMethods$ECOPROVCD[G_combinedMethods$ECOSUBCD %in% unique(G_combinedMethods$ECOSUBCD)[order(unique(G_combinedMethods$ECOSUBCD))][504:517]] <- "321"
+G_combinedMethods$ECOPROVCD[G_combinedMethods$ECOSUBCD %in% unique(G_combinedMethods$ECOSUBCD)[order(unique(G_combinedMethods$ECOSUBCD))][518:538]] <- "322"
+G_combinedMethods$ECOPROVCD[G_combinedMethods$ECOSUBCD %in% unique(G_combinedMethods$ECOSUBCD)[order(unique(G_combinedMethods$ECOSUBCD))][539:596]] <- "331"
+G_combinedMethods$ECOPROVCD[G_combinedMethods$ECOSUBCD %in% unique(G_combinedMethods$ECOSUBCD)[order(unique(G_combinedMethods$ECOSUBCD))][597:618]] <- "332"
+G_combinedMethods$ECOPROVCD[G_combinedMethods$ECOSUBCD %in% unique(G_combinedMethods$ECOSUBCD)[order(unique(G_combinedMethods$ECOSUBCD))][619:674]] <- "341"
+G_combinedMethods$ECOPROVCD[G_combinedMethods$ECOSUBCD %in% unique(G_combinedMethods$ECOSUBCD)[order(unique(G_combinedMethods$ECOSUBCD))][675:724]] <- "342"
+G_combinedMethods$ECOPROVCD[G_combinedMethods$ECOSUBCD %in% unique(G_combinedMethods$ECOSUBCD)[order(unique(G_combinedMethods$ECOSUBCD))][725:729]] <- "411"
+G_combinedMethods$ECOPROVCD[G_combinedMethods$ECOSUBCD %in% unique(G_combinedMethods$ECOSUBCD)[order(unique(G_combinedMethods$ECOSUBCD))][730:750]] <- "M211"
+G_combinedMethods$ECOPROVCD[G_combinedMethods$ECOSUBCD %in% unique(G_combinedMethods$ECOSUBCD)[order(unique(G_combinedMethods$ECOSUBCD))][751:769]] <- "M221"
+G_combinedMethods$ECOPROVCD[G_combinedMethods$ECOSUBCD %in% unique(G_combinedMethods$ECOSUBCD)[order(unique(G_combinedMethods$ECOSUBCD))][770:771]] <- "M223"
+G_combinedMethods$ECOPROVCD[G_combinedMethods$ECOSUBCD %in% unique(G_combinedMethods$ECOSUBCD)[order(unique(G_combinedMethods$ECOSUBCD))][772:775]] <- "M231"
+G_combinedMethods$ECOPROVCD[G_combinedMethods$ECOSUBCD %in% unique(G_combinedMethods$ECOSUBCD)[order(unique(G_combinedMethods$ECOSUBCD))][776:801]] <- "M242"
+G_combinedMethods$ECOPROVCD[G_combinedMethods$ECOSUBCD %in% unique(G_combinedMethods$ECOSUBCD)[order(unique(G_combinedMethods$ECOSUBCD))][802:870]] <- "M261"
+G_combinedMethods$ECOPROVCD[G_combinedMethods$ECOSUBCD %in% unique(G_combinedMethods$ECOSUBCD)[order(unique(G_combinedMethods$ECOSUBCD))][871:889]] <- "M262"
+G_combinedMethods$ECOPROVCD[G_combinedMethods$ECOSUBCD %in% unique(G_combinedMethods$ECOSUBCD)[order(unique(G_combinedMethods$ECOSUBCD))][890:904]] <- "M313"
+G_combinedMethods$ECOPROVCD[G_combinedMethods$ECOSUBCD %in% unique(G_combinedMethods$ECOSUBCD)[order(unique(G_combinedMethods$ECOSUBCD))][905:998]] <- "M331"
+G_combinedMethods$ECOPROVCD[G_combinedMethods$ECOSUBCD %in% unique(G_combinedMethods$ECOSUBCD)[order(unique(G_combinedMethods$ECOSUBCD))][999:1079]] <- "M332"
+G_combinedMethods$ECOPROVCD[G_combinedMethods$ECOSUBCD %in% unique(G_combinedMethods$ECOSUBCD)[order(unique(G_combinedMethods$ECOSUBCD))][1080:1102]] <- "M333"
+G_combinedMethods$ECOPROVCD[G_combinedMethods$ECOSUBCD %in% unique(G_combinedMethods$ECOSUBCD)[order(unique(G_combinedMethods$ECOSUBCD))][1103:1104]] <- "M334"
+G_combinedMethods$ECOPROVCD[G_combinedMethods$ECOSUBCD %in% unique(G_combinedMethods$ECOSUBCD)[order(unique(G_combinedMethods$ECOSUBCD))][1105:1138]] <- "M341"
+G_combinedMethods$ECOPROVCD[G_combinedMethods$ECOSUBCD %in% unique(G_combinedMethods$ECOSUBCD)[order(unique(G_combinedMethods$ECOSUBCD))][1139:1233]] <- "NA"
+
+G_combinedMethods$ECOPROVCD <- as.factor(G_combinedMethods$ECOPROVCD)
+
+#####################################################################################################
+# 2222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222222 #
+#####################################################################################################
+##### RE_FACTOR ECOLOGICAL SUBCD to ECOSYSTEM PROVINCES
+G_combinedMethods_old$ECOPROVCD <-  NA
+
+G_combinedMethods_old$ECOPROVCD[G_combinedMethods_old$ECOSUBCD %in% unique(G_combinedMethods_old$ECOSUBCD)[order(unique(G_combinedMethods_old$ECOSUBCD))][1:27]] <- "211"
+G_combinedMethods_old$ECOPROVCD[G_combinedMethods_old$ECOSUBCD %in% unique(G_combinedMethods_old$ECOSUBCD)[order(unique(G_combinedMethods_old$ECOSUBCD))][28:85]] <- "212"
+G_combinedMethods_old$ECOPROVCD[G_combinedMethods_old$ECOSUBCD %in% unique(G_combinedMethods_old$ECOSUBCD)[order(unique(G_combinedMethods_old$ECOSUBCD))][86:127]] <- "221"
+G_combinedMethods_old$ECOPROVCD[G_combinedMethods_old$ECOSUBCD %in% unique(G_combinedMethods_old$ECOSUBCD)[order(unique(G_combinedMethods_old$ECOSUBCD))][128:173]] <- "222"
+G_combinedMethods_old$ECOPROVCD[G_combinedMethods_old$ECOSUBCD %in% unique(G_combinedMethods_old$ECOSUBCD)[order(unique(G_combinedMethods_old$ECOSUBCD))][174:223]] <- "223"
+G_combinedMethods_old$ECOPROVCD[G_combinedMethods_old$ECOSUBCD %in% unique(G_combinedMethods_old$ECOSUBCD)[order(unique(G_combinedMethods_old$ECOSUBCD))][224:282]] <- "231"
+G_combinedMethods_old$ECOPROVCD[G_combinedMethods_old$ECOSUBCD %in% unique(G_combinedMethods_old$ECOSUBCD)[order(unique(G_combinedMethods_old$ECOSUBCD))][283:337]] <- "232"
+G_combinedMethods_old$ECOPROVCD[G_combinedMethods_old$ECOSUBCD %in% unique(G_combinedMethods_old$ECOSUBCD)[order(unique(G_combinedMethods_old$ECOSUBCD))][338:351]] <- "234"
+G_combinedMethods_old$ECOPROVCD[G_combinedMethods_old$ECOSUBCD %in% unique(G_combinedMethods_old$ECOSUBCD)[order(unique(G_combinedMethods_old$ECOSUBCD))][352:363]] <- "242"
+G_combinedMethods_old$ECOPROVCD[G_combinedMethods_old$ECOSUBCD %in% unique(G_combinedMethods_old$ECOSUBCD)[order(unique(G_combinedMethods_old$ECOSUBCD))][364:401]] <- "251"
+G_combinedMethods_old$ECOPROVCD[G_combinedMethods_old$ECOSUBCD %in% unique(G_combinedMethods_old$ECOSUBCD)[order(unique(G_combinedMethods_old$ECOSUBCD))][402:425]] <- "255"
+G_combinedMethods_old$ECOPROVCD[G_combinedMethods_old$ECOSUBCD %in% unique(G_combinedMethods_old$ECOSUBCD)[order(unique(G_combinedMethods_old$ECOSUBCD))][426:435]] <- "261"
+G_combinedMethods_old$ECOPROVCD[G_combinedMethods_old$ECOSUBCD %in% unique(G_combinedMethods_old$ECOSUBCD)[order(unique(G_combinedMethods_old$ECOSUBCD))][436:437]] <- "262"
+G_combinedMethods_old$ECOPROVCD[G_combinedMethods_old$ECOSUBCD %in% unique(G_combinedMethods_old$ECOSUBCD)[order(unique(G_combinedMethods_old$ECOSUBCD))][438:443]] <- "263"
+G_combinedMethods_old$ECOPROVCD[G_combinedMethods_old$ECOSUBCD %in% unique(G_combinedMethods_old$ECOSUBCD)[order(unique(G_combinedMethods_old$ECOSUBCD))][444:477]] <- "313"
+G_combinedMethods_old$ECOPROVCD[G_combinedMethods_old$ECOSUBCD %in% unique(G_combinedMethods_old$ECOSUBCD)[order(unique(G_combinedMethods_old$ECOSUBCD))][478:503]] <- "315"
+G_combinedMethods_old$ECOPROVCD[G_combinedMethods_old$ECOSUBCD %in% unique(G_combinedMethods_old$ECOSUBCD)[order(unique(G_combinedMethods_old$ECOSUBCD))][504:517]] <- "321"
+G_combinedMethods_old$ECOPROVCD[G_combinedMethods_old$ECOSUBCD %in% unique(G_combinedMethods_old$ECOSUBCD)[order(unique(G_combinedMethods_old$ECOSUBCD))][518:538]] <- "322"
+G_combinedMethods_old$ECOPROVCD[G_combinedMethods_old$ECOSUBCD %in% unique(G_combinedMethods_old$ECOSUBCD)[order(unique(G_combinedMethods_old$ECOSUBCD))][539:596]] <- "331"
+G_combinedMethods_old$ECOPROVCD[G_combinedMethods_old$ECOSUBCD %in% unique(G_combinedMethods_old$ECOSUBCD)[order(unique(G_combinedMethods_old$ECOSUBCD))][597:618]] <- "332"
+G_combinedMethods_old$ECOPROVCD[G_combinedMethods_old$ECOSUBCD %in% unique(G_combinedMethods_old$ECOSUBCD)[order(unique(G_combinedMethods_old$ECOSUBCD))][619:674]] <- "341"
+G_combinedMethods_old$ECOPROVCD[G_combinedMethods_old$ECOSUBCD %in% unique(G_combinedMethods_old$ECOSUBCD)[order(unique(G_combinedMethods_old$ECOSUBCD))][675:724]] <- "342"
+G_combinedMethods_old$ECOPROVCD[G_combinedMethods_old$ECOSUBCD %in% unique(G_combinedMethods_old$ECOSUBCD)[order(unique(G_combinedMethods_old$ECOSUBCD))][725:729]] <- "411"
+G_combinedMethods_old$ECOPROVCD[G_combinedMethods_old$ECOSUBCD %in% unique(G_combinedMethods_old$ECOSUBCD)[order(unique(G_combinedMethods_old$ECOSUBCD))][730:750]] <- "M211"
+G_combinedMethods_old$ECOPROVCD[G_combinedMethods_old$ECOSUBCD %in% unique(G_combinedMethods_old$ECOSUBCD)[order(unique(G_combinedMethods_old$ECOSUBCD))][751:769]] <- "M221"
+G_combinedMethods_old$ECOPROVCD[G_combinedMethods_old$ECOSUBCD %in% unique(G_combinedMethods_old$ECOSUBCD)[order(unique(G_combinedMethods_old$ECOSUBCD))][770:771]] <- "M223"
+G_combinedMethods_old$ECOPROVCD[G_combinedMethods_old$ECOSUBCD %in% unique(G_combinedMethods_old$ECOSUBCD)[order(unique(G_combinedMethods_old$ECOSUBCD))][772:775]] <- "M231"
+G_combinedMethods_old$ECOPROVCD[G_combinedMethods_old$ECOSUBCD %in% unique(G_combinedMethods_old$ECOSUBCD)[order(unique(G_combinedMethods_old$ECOSUBCD))][776:801]] <- "M242"
+G_combinedMethods_old$ECOPROVCD[G_combinedMethods_old$ECOSUBCD %in% unique(G_combinedMethods_old$ECOSUBCD)[order(unique(G_combinedMethods_old$ECOSUBCD))][802:870]] <- "M261"
+G_combinedMethods_old$ECOPROVCD[G_combinedMethods_old$ECOSUBCD %in% unique(G_combinedMethods_old$ECOSUBCD)[order(unique(G_combinedMethods_old$ECOSUBCD))][871:889]] <- "M262"
+G_combinedMethods_old$ECOPROVCD[G_combinedMethods_old$ECOSUBCD %in% unique(G_combinedMethods_old$ECOSUBCD)[order(unique(G_combinedMethods_old$ECOSUBCD))][890:904]] <- "M313"
+G_combinedMethods_old$ECOPROVCD[G_combinedMethods_old$ECOSUBCD %in% unique(G_combinedMethods_old$ECOSUBCD)[order(unique(G_combinedMethods_old$ECOSUBCD))][905:998]] <- "M331"
+G_combinedMethods_old$ECOPROVCD[G_combinedMethods_old$ECOSUBCD %in% unique(G_combinedMethods_old$ECOSUBCD)[order(unique(G_combinedMethods_old$ECOSUBCD))][999:1079]] <- "M332"
+G_combinedMethods_old$ECOPROVCD[G_combinedMethods_old$ECOSUBCD %in% unique(G_combinedMethods_old$ECOSUBCD)[order(unique(G_combinedMethods_old$ECOSUBCD))][1080:1102]] <- "M333"
+G_combinedMethods_old$ECOPROVCD[G_combinedMethods_old$ECOSUBCD %in% unique(G_combinedMethods_old$ECOSUBCD)[order(unique(G_combinedMethods_old$ECOSUBCD))][1103:1104]] <- "M334"
+G_combinedMethods_old$ECOPROVCD[G_combinedMethods_old$ECOSUBCD %in% unique(G_combinedMethods_old$ECOSUBCD)[order(unique(G_combinedMethods_old$ECOSUBCD))][1105:1138]] <- "M341"
+G_combinedMethods_old$ECOPROVCD[G_combinedMethods_old$ECOSUBCD %in% unique(G_combinedMethods_old$ECOSUBCD)[order(unique(G_combinedMethods_old$ECOSUBCD))][1139:1233]] <- "NA"
+
+G_combinedMethods_old$ECOPROVCD <- as.factor(G_combinedMethods_old$ECOPROVCD)
+```
+
+# lets look at some of the data
+
+```{r}
+par(mfrow = c(1,2))
+## hist(G_combinedMethods$G_MgHa, breaks = 500, main = "Method 1 OLD - stock change calculation ", xlim = c(-10, 30), las =1, xlab = "plot G (Mg/Ha)")
+hist(G_combinedMethods$G_MgHa, breaks = 500, main = "Method 1- stock change calculation ", xlim = c(-10, 30), las =1, xlab = "plot G (Mg/Ha)")
+hist(G_combinedMethods$BIO_GROW_MgHa, breaks = 250, main = "Method 2- rFIA::vitalRates", xlim = c(-5, 20), las =1, xlab = "plot BIO_GROW (Mg/Ha)")
+```
+
+```{r}
+# par(mfrow = c(1,2))
+# 
+# hist(G_combinedMethods$BIO_GROW_MgHa, breaks = 250, main = "Method 2- rFIA::vitalRates", xlim = c(-5, 20), las =1, xlab = "plot BIO_GROW (Mg/Ha)")
+```
+
+# let's look at the method 1 data:
+
+## Plot biomass change 
+
+```{r}
+hist(G_m1$deltaB_MgHa, breaks =500, xlab = "Delta Biomass (Mg/Ha)", xlim = c(-120,120), las =1, main = expression("Method 1 - "*Delta*"Biomass (Mg/Ha)"))
+```
+
+## Biomass of Tree Mortality
+
+```{r}
+hist(G_m1$B_M_MgHa, breaks =4500, xlab = "Dead Tree Biomass (Mg/Ha)", main = "Method 1 - M (Mg/Ha)", xlim = c(0,5), las = 1)
+```
+
+## Biomass of Removed Trees
+
+```{r}
+hist(G_m1$B_C_MgHa, breaks =4500, xlab = "Removed/Cut Tree Biomass (Mg/Ha)", main = "Method 1 - C (Mg/Ha)", xlim = c(0,10), las = 1)
+```
+
+## Plot biomass change 
+
+```{r}
+hist(G_m1$G_MgHa,  breaks = 500, main = "Method 1- G", xlim = c(-30, 30), las =1, xlab = "plot G (Mg/Ha)")
+```
+
+# how are the data disributed
+## Method 1 
+
+* mean, standard error & range
+
+```{r, cache =T}
+## mean and se
+mean(G_combinedMethods$G_MgHa, na.rm = T); plotrix::std.error(G_combinedMethods$G_MgHa, na.rm = T)
+## range
+range(G_combinedMethods$G_MgHa, na.rm = T)
+
+## describe distribution of the data
+fitdistrplus::descdist(G_combinedMethods[!is.na(G_combinedMethods$G_MgHa),]$G_MgHa, boot = 999)
+```
+
+
+## Method 2
+
+* mean, standard error & range
+
+```{r, cache =T}
+## mean and se
+mean(G_combinedMethods$BIO_GROW_MgHa , na.rm = T); plotrix::std.error(G_combinedMethods$BIO_GROW_MgHa, na.rm = T)
+## range
+range(G_combinedMethods$BIO_GROW_MgHa, na.rm = T)
+
+## describe distribution of the data
+fitdistrplus::descdist(G_combinedMethods[!is.na(G_combinedMethods$BIO_GROW_MgHa),]$BIO_GROW_MgHa, boot = 999)
+```
+
+# calculate the difference between method 1 and method 2
+```{r, cache = T}
+### make combined data set C
+G_combinedMethods_CC <- G_combinedMethods[!is.na(G_combinedMethods$BIO_GROW_MgHa) & !is.na(G_combinedMethods$G_MgHa),]
+
+## same for old dataset
+G_combinedMethods_old_CC <- G_combinedMethods_old[!is.na(G_combinedMethods_old$BIO_GROW_MgHa) & !is.na(G_combinedMethods_old$G_MgHa),]
+
+### make new column for the difference  -  
+G_combinedMethods_CC$Bio_diff_methods <- G_combinedMethods_CC$G_MgHa - G_combinedMethods_CC$BIO_GROW_MgHa
+
+G_combinedMethods_old_CC$Bio_diff_methods <- G_combinedMethods_old_CC$G_MgHa - G_combinedMethods_old_CC$BIO_GROW_MgHa
+```
+
+## first  try - range and avg difference (MgHa) [Method 1 - Method 2]
+```{r}
+range(G_combinedMethods_old_CC$Bio_diff_methods)
+mean(G_combinedMethods_old_CC$Bio_diff_methods)
+```
+
+## second pass - range and avg difference (MgHa) [Method 1 - Method 2]
+```{r}
+range(G_combinedMethods_CC$Bio_diff_methods)
+mean(G_combinedMethods_CC$Bio_diff_methods)
+```
+
+## plotting
+```{r, plot_multi_histograms function}
+library(ggplot2)
+plot_multi_histogram <- function(df, feature, label_column) {
+    plt <- ggplot(df, aes(x=eval(parse(text=feature)), fill=eval(parse(text=label_column)))) +
+    geom_histogram(alpha=0.75, position="identity", aes(y = ..density..), color="black") +
+    geom_density(alpha=0.15) +
+    geom_vline(aes(xintercept=mean(eval(parse(text=feature)))), color="black", linetype="dashed", size=1) +
+    labs(x="Biomass Growth difference (Mg/ha)", y = "Density")
+    plt + guides(fill=guide_legend(title=label_column)) + theme_classic()
+}
+```
+
+```{r, cache = T}
+both_methods_CC <-  data.frame(diff = c(G_combinedMethods_CC$Bio_diff_methods, G_combinedMethods_old_CC$Bio_diff_methods), diff_method =c(rep("new approach - for loop", 102273), rep("first approach", 102273)))
+
+plot_multi_histogram(both_methods_CC, "diff", "diff_method") + xlim(c(-20,20))
+```
+
+# compare values along 1:1 line
+
+* 102273 observations that match between both datasets
+
+## all data
+
+```{r, cache = T}
+
+# plot(G_combinedMethods_CC$G_MgHa, G_combinedMethods_CC$BIO_GROW_MgHa, xlab = "Method 1 plot G (Mg/ha)", ylab = "Method 2 BIO_GROW (Mg/Ha)", pch = 4, col = "#000000F7" )
+
+gg_1.1 <-  ggplot(aes(x = BIO_GROW_MgHa, y= G_MgHa), data = G_combinedMethods_CC) +
+           geom_abline(slope = 1, intercept =0, linetype = 2, col = "red") +
+           geom_point(shape = 4, alpha = 0.33) + theme_classic() + 
+           xlab("Plot BIO_GROW - Method 2 rFIA (Mg/Ha) ") + 
+           ylab("Plot G - Method 1 (Mg/Ha)") 
+      
+#tiff(filename = "FIA_Plot_Biomass_Growth_Method1v2_ALL2_axesSwitched.tiff", width = 12.5, height = 9, units ="cm", compression = "lzw", res= 300)
+
+gg_1.1
+
+#dev.off()
+```
+
+## by ecoprovince
+
+```{r, cache = T}
+gg_1.1_ECOPROV <-  ggplot(aes(x = BIO_GROW_MgHa, y= G_MgHa), data = G_combinedMethods_CC[!G_combinedMethods_CC$BIO_GROW_MgHa == 0,]) +
+                   geom_abline(slope = 1, intercept =0, linetype = 2, col = "red") +
+                   geom_point(shape = 4, alpha = 0.33) + theme_classic() + 
+                   xlab("Plot BIO GROW - Method 2 rFIA (Mg/Ha)") + 
+                   ylab("Plot G - Method 1 (Mg/Ha)") + 
+                   facet_wrap(vars(ECOPROVCD))
+
+#tiff(filename = "FIA_Plot_Biomass_Growth_Method 1 vs. Method 2_03.22.22_By.tiff", width =50, height = 36, units ="cm", compression = "lzw", res= 600)
+
+gg_1.1_ECOPROV
+
+#dev.off()
+```
+
+# Cases where no trees died or were cut
+
+* n = 8227 of 102273 (8%)
+
+## avg & range of  difference between methods
+```{r}
+mean(G_combinedMethods_CC[G_combinedMethods_CC$B_M_MgHa == 0 & G_combinedMethods_CC$B_C_MgHa == 0,]$Bio_diff_methods)
+
+range(G_combinedMethods_CC[G_combinedMethods_CC$B_M_MgHa == 0 & G_combinedMethods_CC$B_C_MgHa == 0,]$Bio_diff_methods)
+```
+
+## histogram
+```{r}
+hist(G_combinedMethods_CC[G_combinedMethods_CC$B_M_MgHa == 0 & G_combinedMethods_CC$B_C_MgHa == 0,]$Bio_diff_methods, breaks = 100, xlab = "Biomass Difference Method 1 to Method 2 (Mg/ha)", main = "plots with no dead or cut trees (n = 8227)", xlim = c(-10,10))
+```
+
+
+
