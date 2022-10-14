@@ -16,13 +16,15 @@ library(rFIA); library(dplyr)
 ##################################################################################################
 
 ## file name housekeeping
-data_path <- 'C:/Users/hogan.jaaron/Dropbox/FIA_R/data/'
+data_path <- 'C:/Users/hogan.jaaron/Dropbox/FIA_R/data_FIA/'
 
 save_object_path <- 'C:/Users/hogan.jaaron/Dropbox/FIA_R/BiomassGrowth/Biomass_Growth_calculations_june2022/'
 
 ## state_vec: vector of state abbreviations to loop over
-state_vec <- c("al", "az", "ar", "ca", "co", "ct", "de", "fl","ga", "id", "il", "in", "ia", "ks", "ky", "la", "me", "md", "ma", "mi", "mn", "ms", "mo", "mt",
-               "ne", "nv", "nh", "nj", "nm", "ny", "nc", "nd", "oh", "ok", "or", "pa", "ri", "sc", "sd", "tn", "tx", "ut", "vt", "va", "wa", "wv", "wi")  ## exclude WY - Wyoming:  code does not work for wyo (for some reason)
+state_vec <- c("al", "az", "ar", "ca", "co", "ct", "de", "fl","ga", "id", "il", "in", 
+               "ia", "ks", "ky", "la", "me", "md", "ma", "mi", "mn", "ms", "mo", "mt",
+               "ne", "nv", "nh", "nj", "nm", "ny", "nc", "nd", "oh", "ok", "or", "pa", 
+               "ri", "sc", "sd", "tn", "tx", "ut", "vt", "va", "wa", "wv", "wi")  ## exclude WY - Wyoming:  code does not work for wyo (for some reason)
 
 ## looping over the 48 continental US states
 for (j in 1:length(state_vec)) {
@@ -43,8 +45,7 @@ for (j in 1:length(state_vec)) {
   tree_df <- state$TREE
   plot_df <- state$PLOT
   
-  #############################################################################################################
-  ############################################################################# STEP 2 - TREE BIOMASS G  ######
+## STEP 2 - TREE BIOMASS G  ######
   
   ## make placeholder datafame - each row with a unique record for each plot - t1 to t2
   ## filters out plots with before 1995(implementation of FIA 2.0), year = 9999 (non-inventories), and plots missing REMPER (i.e., no tree records for t1)
@@ -89,17 +90,22 @@ for (j in 1:length(state_vec)) {
   calc_df$MEASTIME_REMPER <-      -9999
   calc_df$diff_T <-               -9999
   
+  ### FOR LOOP on calc_df
   
-  ####################-------------------------------------------------------------------------------------------
-  #################### FOR LOOP on calc_df
-  
-  ##### start for loop, which loops over each pltID in the placholder calc_df - dataframe of plot censuses
+  ### start for loop, which loops over each pltID in the placeholder calc_df - dataframe of plot censuses
   for(i in 1:nrow(calc_df)) {   
     
-    #############################################################################################################
-    #### GET THE DATA
-    ## create t2 data frame - contains all live (STATUSCD==1) tree records from the second census
+    ### GET THE DATA
+    ## create t2 data frame - contains all tree records from the second census
     t2_df <- tree_df[tree_df$STATUSCD %in% c(1) & tree_df$PLT_CN %in% calc_df$CN[i], c("CN", "DIA", "PREVDIA", "TPHa_UNADJ", "PREV_TRE_CN","DRYBIO_AG_Mg", "RECONCILECD")]
+    
+    ## t2_df_b  - the mutates t2_df - rewriting data where the logical statements are fulfilled: i.e., for ingrowth trees
+    t2_df_b <- t2_df %>% mutate(PREVDIA = ifelse((DIA<5 & is.na(t2_df$PREVDIA)) | (t2_df$DIA>=5 & is.na(t2_df$PREVDIA) & t2_df$RECONCILECD==2), 
+                                                 0, PREVDIA),
+                                PREV_TRE_CN = ifelse((DIA<5 & is.na(t2_df$PREVDIA)) | (t2_df$DIA>=5 & is.na(t2_df$PREVDIA) & t2_df$RECONCILECD==2), 
+                                                     7777777, PREV_TRE_CN), 
+                                RECONCILECD = ifelse((DIA<5 & is.na(t2_df$PREVDIA)) | (t2_df$DIA>=5 & is.na(t2_df$PREVDIA) & t2_df$RECONCILECD==2), 
+                                                     99, RECONCILECD))
     
     ## create t2_dead and t2_cut data frames - contains all tree records recorded dead or cut from the second census
     t2_dead_df <- tree_df[tree_df$STATUSCD %in% c(2) & tree_df$PLT_CN %in% calc_df$CN[i], c("CN", "DIA", "PREVDIA", "TPHa_UNADJ", "PREV_TRE_CN","DRYBIO_AG_Mg")]
@@ -137,7 +143,6 @@ for (j in 1:length(state_vec)) {
                                                    7777777, PREV_TRE_CN))
         ## this dplyr code takes all trees that meet case 1 and 2, and gives them diameter of 0 and TPHa_t1 the sapling TPHa.  They are labelled RECONCILECD = 99, PREV_TRE_CN = 7777, for subsetting complete cases later on
     
-    #############################################################################################################
     #### ADDITIONAL CALCULATIONS
     
     ## do the math for plot biomass at T1
@@ -174,7 +179,7 @@ for (j in 1:length(state_vec)) {
     ## This assumes the mid-month measuring date of the month, year combination at FIA census time
     calc_df$MEASTIME_t2[i] <- calc_df$MEASYEAR[i] + ((calc_df$MEASMON[i] - 0.5) / 12)
     
-    calc_df$MEASTIME_t1[i] <- ifelse(nrow(plot_df[plot_df$CN == calc_df$PREV_PLT_CN[20],])>0, 
+    calc_df$MEASTIME_t1[i] <- ifelse(nrow(plot_df[plot_df$CN == calc_df$PREV_PLT_CN[i],])>0, 
                                      plot_df[plot_df$CN == calc_df$PREV_PLT_CN[i],]$MEASYEAR+((plot_df[plot_df$CN==calc_df$PREV_PLT_CN[i],]$MEASMON-0.5)/12), 
                                      NA)
     
@@ -182,10 +187,9 @@ for (j in 1:length(state_vec)) {
                                          (calc_df$MEASTIME_t2[i] - calc_df$MEASTIME_t1[i]), 
                                          NA)
     
-    ## compare difference in MEASTIME and REMPER[i]
+    ## compare difference in MEASTIME_REMPER and REMPER
     calc_df$diff_T <- calc_df$MEASTIME_REMPER[i] - calc_df$REMPER[i]
     
-    #############################################################################################################
     #### FOR PLOT SCENARIOS   
     
     calc_df$nTree_Rec[i] <- length(tb_df$CN)
@@ -219,7 +223,7 @@ for (j in 1:length(state_vec)) {
 
   
   ## some cleaning up 
-  calc_df <- calc_df[complete.cases(calc_df),]
+  #calc_df <- calc_df[complete.cases(calc_df),]
   
   calc_df$Ingrowth <- as.logical(calc_df$Ingrowth)
   calc_df$Harvest <- as.logical(calc_df$Harvest)
@@ -241,85 +245,86 @@ for (j in 1:length(state_vec)) {
 ## combine results into one big dataframe
 FIA_G_calc <- rbind(al_calc, az_calc, ar_calc, ca_calc, co_calc, ct_calc, de_calc, fl_calc, ga_calc, id_calc, il_calc, in_calc, ia_calc, ks_calc, ky_calc, la_calc, me_calc, md_calc, ma_calc, mi_calc, mn_calc, ms_calc, mo_calc, mt_calc, ne_calc, nv_calc, nh_calc, nj_calc, nm_calc, ny_calc, nc_calc, nd_calc, oh_calc, ok_calc, or_calc, pa_calc, ri_calc, sc_calc, sd_calc, tn_calc, tx_calc, ut_calc, vt_calc, va_calc, wa_calc, wv_calc, wi_calc) 
 
-
-# ### read in the G_calc dataset (See create_Gobs_m2_dataset.R)
-# load("C:/Users/hogan.jaaron/Dropbox/FIA_R/BiomassGrowth/Biomass_Growth_calculations_june2022/FIA_G_calc.Rdata")
-# 
-# ## small change to the dataset -- rename column 2 (was "CN") to "PLT_CN" -
+## small change to the dataset -- rename column 2 (was "CN") to "PLT_CN" -
 colnames(FIA_G_calc)[2] <- "PLT_CN"
-
-## save result
-save(FIA_G_calc, file = "FIA_G_calc.Rdata")
+ 
+# ## save result
+# #save(FIA_G_calc, file = "FIA_G_calc.Rdata")
 
 
 #############################################################################################################
 ## FILTER THE DATASTET -- Plot Selection Criteria
 #############################################################################################################
 
-# ################################################################################## apply filters to the FIA_G_calc data frame
+# #############################################################################################################
+# ## FILTER THE DATASTET -- Plot Selection Criteria
+# #############################################################################################################
 # 
-# ### create p_Cond_surv --- the combined  plot condition and survey table dataframe for subsetting
+# # ################################################################################## apply filters to the FIA_G_calc data frame
+# # 
+# # ### create p_Cond_surv --- the combined  plot condition and survey table dataframe for subsetting
+# # 
+# # for FIA plot conditions
+# load("C:/Users/hogan.jaaron/Dropbox/FIA_R/Plot_Conditions_rFIA/FIA_conditions_allPlots.Rdata")
+# FIA_conditions$STATE <- as.factor(FIA_conditions$STATE)
+# FIA_conditions$PROP_BASIS <- as.factor(FIA_conditions$PROP_BASIS)
+# FIA_conditions$MIXEDCONFCD <- as.factor(FIA_conditions$MIXEDCONFCD)
+# FIA_conditions$DWM_FUELBED_TYPCD  <-  as.factor(FIA_conditions$DWM_FUELBED_TYPCD)
 # 
-# for FIA plot conditions
-load("C:/Users/hogan.jaaron/Dropbox/FIA_R/Plot Conditions_rFIA/FIA_conditions_allPlots.Rdata")
-FIA_conditions$STATE <- as.factor(FIA_conditions$STATE)
-FIA_conditions$PROP_BASIS <- as.factor(FIA_conditions$PROP_BASIS)
-FIA_conditions$MIXEDCONFCD <- as.factor(FIA_conditions$MIXEDCONFCD)
-FIA_conditions$DWM_FUELBED_TYPCD  <-  as.factor(FIA_conditions$DWM_FUELBED_TYPCD)
+# # for FIA plots (plot table)
+# load("C:/Users/hogan.jaaron/Dropbox/FIA_R/Plot_Conditions_rFIA/FIA_plots_allPlots.Rdata")
+# FIA_plots$STATE <- as.factor(FIA_plots$STATE)
+# FIA_plots$ECOSUBCD <- as.factor(FIA_plots$ECOSUBCD)
+# 
+# ##### COMBINE PLOT and CODITION TABLES
+# P_cond <- dplyr::left_join(FIA_conditions, FIA_plots, by = c("STATE", "PLOT", "INVYR", "PLT_CN" = "CN"))  #PLT_CN = CN  merges condition table to the plot table using PLT_CN (see FIA data user guide 8.0)
+# 
+# #### load survey tables
+# load("C:/Users/hogan.jaaron/Dropbox/FIA_R/Plot_Conditions_rFIA/FIA_survey.Rdata")
+# ##### COMBINE P_cond and survey tables
+# P_cond_surv <- dplyr::left_join(P_cond, FIA_survey[,c("CN", "P3_OZONE_IND", "ANN_INVENTORY")], by = c("SRV_CN" = "CN"))
+# 
+# ###### COMBINE G_calc
+# G <- dplyr::left_join(FIA_G_calc, P_cond_surv[,c("STATE", "CN", "PLT_CN", "INVYR", "STDAGE", "STDORGCD", "CONDPROP_UNADJ", "SITECLCD", "STDSZCD", "COND_STATUS_CD", "P3_OZONE_IND", "ANN_INVENTORY")], by = c("STATE", "PLT_CN", "INVYR")) %>% distinct()  # 370598 observations
+# 
+# rm(P_cond, FIA_G_calc, FIA_conditions, FIA_plots, FIA_survey, P_cond_surv)  #removes other data frames
+# 
+# #### vvvvvvvvvvvvvvvv ####----------------------------------------------------------------------------------------------------------
+# #### APPLYING FILTERS ####
+# 
+# ## remove cases of NA's STDAGE columns
+# G <- G[!is.na(G$STDAGE) & !G$STDAGE == 9999,]
+# ## Filter out plantations
+# G <- G[G$STDORGCD == 0, ]
+# ## Filter plots with a single condition using a 95% threshold for CONDPROP_UNADJ
+# G <- G[G$CONDPROP_UNADJ >= 0.95, ]
+# ### Filter out SITECLCD 7 (non productive stands - those with less than 20 ft3/ac/yr)
+# G <- G[!G$SITECLCD == 7,]
+# ### Filter out non-stocked plots (with STDSZCD == 5)
+# G <- G[!G$STDSZCD == 5,]
+# 
+# ### new filters - MAY 2022
+# ### Filter out the the non-accessible plots -- COND_STATUS_CD == 1 is accessible
+# G <- G[G$COND_STATUS_CD == 1,]
+# ### Filter by survey table --- annual inventories YES
+# G <- G[G$ANN_INVENTORY == "Y",]
+# ### Filter by survey table --- B3_OZONE NO
+# G <- G[G$P3_OZONE_IND == "N",]
+# 
+# ### NOTE: 111752 after filtering
+# 
+# #### APPLYING FILTERS ####
+# #### ^^^^^^^^^^^^^^^^ ####----------------------------------------------------------------------------------------------------------
+# 
+# ## dealing with ECOPROVINCES:
+# G$ECOPROVCD <- stringr::str_replace_all(gsub('.{2}$', '', G$ECOSUBCD), stringr::fixed(" "), "")
+# 
+# G[G$ECOPROVCD == "M322A"]$ECOPROVCD
+# 
+# G$ECOPROVCD <-  as.factor(G$ECOPROVCD)
+# 
+# ### save the output -- the clean subsetted dataset
+# setwd("C:/Users/hogan.jaaron/Dropbox/FIA_R/BiomassGrowth/Biomass_Growth_calculations_june2022")
+# save(G, file = "G_clean&subsetted.Rdata")
 
-# for FIA plots (plot table)
-load("C:/Users/hogan.jaaron/Dropbox/FIA_R/Plot Conditions_rFIA/FIA_plots_allPlots.Rdata")
-FIA_plots$STATE <- as.factor(FIA_plots$STATE)
-FIA_plots$ECOSUBCD <- as.factor(FIA_plots$ECOSUBCD)
-
-##### COMBINE PLOT and CODITION TABLES
-P_cond <- dplyr::left_join(FIA_conditions, FIA_plots, by = c("STATE", "PLOT", "INVYR", "PLT_CN" = "CN"))  #PLT_CN = CN  merges condition table to the plot table using PLT_CN (see FIA data user guide 8.0)
-
-#### load survey tables
-load("C:/Users/hogan.jaaron/Dropbox/FIA_R/Plot Conditions_rFIA/FIA_survey.Rdata")
-##### COMBINE P_cond and survey tables
-P_cond_surv <- dplyr::left_join(P_cond, FIA_survey[,c("CN", "P3_OZONE_IND", "ANN_INVENTORY")], by = c("SRV_CN" = "CN"))
-
-###### COMBINE G_calc
-G <- dplyr::left_join(FIA_G_calc, P_cond_surv[,c("STATE", "CN", "PLT_CN", "INVYR", "STDAGE", "STDORGCD", "CONDPROP_UNADJ", "SITECLCD", "STDSZCD", "COND_STATUS_CD", "P3_OZONE_IND", "ANN_INVENTORY")], by = c("STATE", "PLT_CN", "INVYR")) %>% distinct()  # 370598 observations
-
-rm(P_cond, FIA_G_calc, FIA_conditions, FIA_plots, FIA_survey, P_cond_surv)  #removes other data frames
-
-#### vvvvvvvvvvvvvvvv ####----------------------------------------------------------------------------------------------------------
-#### APPLYING FILTERS ####
-
-## remove cases of NA's STDAGE columns
-G <- G[!is.na(G$STDAGE) & !G$STDAGE == 9999,]
-## Filter out plantations
-G <- G[G$STDORGCD == 0, ]
-## Filter plots with a single condition using a 95% threshold for CONDPROP_UNADJ
-G <- G[G$CONDPROP_UNADJ >= 0.95, ]
-### Filter out SITECLCD 7 (non productive stands - those with less than 20 ft3/ac/yr)
-G <- G[!G$SITECLCD == 7,]
-### Filter out non-stocked plots (with STDSZCD == 5)
-G <- G[!G$STDSZCD == 5,]
-
-### new filters - MAY 2022
-### Filter out the the non-accessible plots -- COND_STATUS_CD == 1 is accessible
-G <- G[G$COND_STATUS_CD == 1,]
-### Filter by survey table --- annual inventories YES
-G <- G[G$ANN_INVENTORY == "Y",]
-### Filter by survey table --- B3_OZONE NO
-G <- G[G$P3_OZONE_IND == "N",]
-
-### NOTE: 111752 after filtering
-
-#### APPLYING FILTERS ####
-#### ^^^^^^^^^^^^^^^^ ####----------------------------------------------------------------------------------------------------------
-
-## dealing with ECOPROVINCES:
-G$ECOPROVCD <- stringr::str_replace_all(gsub('.{2}$', '', G$ECOSUBCD), stringr::fixed(" "), "")
-
-G[G$ECOPROVCD == "M322A"]$ECOPROVCD
-
-G$ECOPROVCD <-  as.factor(G$ECOPROVCD)
-
-### save the output -- the clean subsetted dataset
-setwd("C:/Users/hogan.jaaron/Dropbox/FIA_R/BiomassGrowth/Biomass_Growth_calculations_june2022")
-save(G, file = "G_clean&subsetted_7.9.2022.Rdata")
 
