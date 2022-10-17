@@ -13,10 +13,10 @@ In this repository we include:
 * code for fitting non-linear weighted least-squares regresions to a) biomass-stand age relationships, b) growth-biomass relationships, and c) growth-stand age relationships.
 
 * code for deriving processed FIA datasets from FIA datatables
-    1.  Our FIA plot biomass dataset (P)
+    1.  our FIA plot biomass dataset (P)
         - codefile: create_P.R
         - dataset: FIA_P_dataset.Rdata
     
-    2. Our FIA plot biomass growth dataset (G)
+    2. our FIA plot biomass growth dataset (G)
         - codefile: create_G.R
         - dataset: FIA_G_dataset.Rdata
