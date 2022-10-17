@@ -1,15 +1,22 @@
 # FIA-forest-dynamics
-Quantifying changes in the dynamics of U.S. forests using national forest inventory data and novel modeling approaches
 
-In this repository we include processed FIA datasets (including metadata) and code for fitting models. 
+Quantifying changes in the dynamics of U.S. forests using national forest inventory data
 
-Here is a table of contents:
+Objective:  To estimate biomass stock and biomass growth enhancement effects usingn non-linear modeling techniques. 
 
-Processed FIA dataset
-1. FIA_P_dataset.Rdata
-2. FIA_G_dataset.Rdata
+Data:  Data from the United States Forest Service's Forest Inventory and Analysis program were used. https://www.fia.fs.usda.gov/
+We recommend the rFIA package for downloading FIA data tables (see rfia::getFIA).  https://rfia.netlify.app/ 
 
-Code for fitting models
-1. Part 1: Models for AGB - stand age
-2. Part 2: Models for biomass growth - AGB 
+In this repository we include: 
+* code used to derive processed FIA datasets, from the FIA data tables.  We include those processed data products including metadata.
+* code used to processed Palmer Drought Severity Index (PDSI) data to include in our models.
+* code for fitting non-linear weighted least-squares regresions to a) biomass-stand age relationships, b) growth-biomass relationships, and c) growth-stand age relationships.
 
+* code for deriving processed FIA datasets from FIA datatables
+    1.  Our FIA plot biomass dataset (P)
+        - codefile: create_P.R
+        - dataset: FIA_P_dataset.Rdata
+    
+    2. Our FIA plot biomass growth dataset (G)
+        - codefile: create_G.R
+        - dataset: FIA_G_dataset.Rdata
