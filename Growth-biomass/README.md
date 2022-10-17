@@ -1,6 +1,6 @@
 This folder contains analyses of plot biomass growth - plot biomass relationships.
 
-Three analyses were done.  All us the same analytical approach (i.e., code) applied to different versions of the dataset.
+Three analyses were done.  All use the same analytical approach (i.e., code) applied to different versions of the dataset.
 
 1. The entire plot biomass growth vs. plot biomass dataset
     - FIA_nls3_BiomassG_plotB.Rmd/html
