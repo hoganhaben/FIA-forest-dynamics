@@ -9,8 +9,8 @@ See the files (.html and .Rmd files) for each analysis.
 2. The same plot records included in the plot biomass growth vs. plot biomass analyses
     -  FIA_nls3_plotB_StdAge_ReconciledG.Rmd/html
 
-3. The same plot records included in the plot biomass growth vs. plot biomass analyses, but "temporally-balanced" to include only one plot measurment per decade (in cases where plots had more than 2 records, we used the first and last measurements).
+3. The same plot records included in the plot biomass growth vs. plot biomass analyses, but "temporally-balanced" to include only one plot measurement per decade (in cases where plots had more than 2 records, we used the first and last measurements).
     -  FIA_nls3_plotB_StdAge_TemporallyBalanced.Rmd/html
 
-3.  The same plot records included in the plot biomass growth vs. plot biomass analyses, but "temporally-balanced" to include only one plot measurment per decade, and excluding any plots which experienced timber harvest. 
+3.  The same plot records included in the plot biomass growth vs. plot biomass analyses, but "temporally-balanced" to include only one plot measurement per decade, and excluding any plots which experienced timber harvest. 
     -  FIA_nls3_plotB_StdAge_TemporallyBalanced_NoHarvest.Rmd/html
