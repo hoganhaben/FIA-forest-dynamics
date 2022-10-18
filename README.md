@@ -8,14 +8,18 @@ Quantifying changes in the dynamics of U.S. forests using national forest invent
 We recommend the rFIA package for downloading FIA data tables (see `rfia::getFIA`).  https://rfia.netlify.app/ 
 
 In this repository we include: 
-* code used to derive processed FIA datasets, from the FIA data tables.  We include those processed data products including metadata.
-* code used to processed Palmer Drought Severity Index (PDSI) data to include in our models.
-* code for fitting non-linear weighted least-squares regressions to: 
+
+* analyses which fit non-linear weighted least-squares regressions to: 
     - biomass-stand age relationships, 
     - growth-biomass relationships, and 
     - growth-stand age relationships.
+Each analysis is included in a separate sub-folder
 
-* code for deriving processed FIA datasets from FIA datatables
+
+* code used to process Palmer Drought Severity Index (PDSI) data which is included in our non-linear models.
+ 
+ 
+* code used to derive processed FIA datasets, from the FIA datatables.  We include those processed data products including metadata in this main directory:
     1.  our FIA plot biomass dataset (P)
         - codefile: create_P.R
         - dataset: FIA_P_dataset.Rdata
