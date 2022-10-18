@@ -1,6 +1,6 @@
 # FIA-forest-dynamics
 
-Quantifying changes in the dynamics of U.S. forests using national forest inventory data
+*Quantifying changes in the dynamics of U.S. forests using national forest inventory data*
 
 *Objective*:  To estimate biomass stock and biomass growth enhancement effects using non-linear modeling techniques. 
 
