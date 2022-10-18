@@ -4,8 +4,8 @@
 
 *Objective*:  To estimate biomass stock and biomass growth enhancement effects using non-linear modeling techniques. 
 
-*Data*:  Data from the United States Forest Service's Forest Inventory and Analysis program from 2000-2022 were used. https://www.fia.fs.usda.gov/
-We recommend the rFIA package for downloading FIA data tables (see `rfia::getFIA`).  https://rfia.netlify.app/ 
+*Data*:  Data from the United States Forest Service's Forest Inventory and Analysis program from 2000-2022 were used (see https://www.fia.fs.usda.gov/).
+We recommend the rFIA package for downloading FIA data tables (see `rfia::getFIA`, https://rfia.netlify.app/).
 
 This repository includes: 
 
