@@ -11,9 +11,9 @@ In this repository we include:
 * code used to derive processed FIA datasets, from the FIA data tables.  We include those processed data products including metadata.
 * code used to processed Palmer Drought Severity Index (PDSI) data to include in our models.
 * code for fitting non-linear weighted least-squares regressions to: 
-    a) biomass-stand age relationships, 
-    b) growth-biomass relationships, and 
-    c) growth-stand age relationships.
+    - biomass-stand age relationships, 
+    - growth-biomass relationships, and 
+    - growth-stand age relationships.
 
 * code for deriving processed FIA datasets from FIA datatables
     1.  our FIA plot biomass dataset (P)
