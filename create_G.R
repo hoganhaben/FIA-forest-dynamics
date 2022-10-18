@@ -262,14 +262,14 @@ colnames(FIA_G_calc)[2] <- "PLT_CN"
 ### create p_Cond_surv --- the combined  plot condition and survey table dataframe for subsetting
 
 # for FIA plot conditions
-load("C:/Users/hogan.jaaron/Dropbox/FIA_R/Plot_Conditions_rFIA/FIA_conditions_allPlots.Rdata")
+load("C:/Users/hogan.jaaron/Dropbox/FIA_R/Plot_Conditions_rFIA/FIA_conditions_allPlots.Rdata")  # this is an Rdata object for all the FIA CONDITION tables for all lower 48 states combined (rbind)
 FIA_conditions$STATE <- as.factor(FIA_conditions$STATE)
 FIA_conditions$PROP_BASIS <- as.factor(FIA_conditions$PROP_BASIS)
 FIA_conditions$MIXEDCONFCD <- as.factor(FIA_conditions$MIXEDCONFCD)
 FIA_conditions$DWM_FUELBED_TYPCD  <-  as.factor(FIA_conditions$DWM_FUELBED_TYPCD)
 
 # for FIA plots (plot table)
-load("C:/Users/hogan.jaaron/Dropbox/FIA_R/Plot_Conditions_rFIA/FIA_plots_allPlots.Rdata")
+load("C:/Users/hogan.jaaron/Dropbox/FIA_R/Plot_Conditions_rFIA/FIA_plots_allPlots.Rdata")  # this is an Rdata object for all the FIA PLOT tables for all lower 48 states combined (rbind)
 FIA_plots$STATE <- as.factor(FIA_plots$STATE)
 FIA_plots$ECOSUBCD <- as.factor(FIA_plots$ECOSUBCD)
 
@@ -277,7 +277,7 @@ FIA_plots$ECOSUBCD <- as.factor(FIA_plots$ECOSUBCD)
 P_cond <- dplyr::left_join(FIA_conditions, FIA_plots, by = c("STATE", "PLOT", "INVYR", "PLT_CN" = "CN"))  #PLT_CN = CN  merges condition table to the plot table using PLT_CN (see FIA data user guide 8.0)
 
 #### load survey tables
-load("C:/Users/hogan.jaaron/Dropbox/FIA_R/Plot_Conditions_rFIA/FIA_survey.Rdata")
+load("C:/Users/hogan.jaaron/Dropbox/FIA_R/Plot_Conditions_rFIA/FIA_survey.Rdata")  # this is an Rdata object for all the FIA SURVEY tables for all lower 48 states combined (rbind)
 ##### COMBINE P_cond and survey tables
 P_cond_surv <- dplyr::left_join(P_cond, FIA_survey[,c("CN", "P3_OZONE_IND", "ANN_INVENTORY")], by = c("SRV_CN" = "CN"))
  
