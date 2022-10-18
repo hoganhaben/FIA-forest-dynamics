@@ -99,7 +99,7 @@ COND_STATUS_CD: The Condition Status Code from the FIA CONDITION table, which in
 
 P3_OZONE_IND: Phase 3 Ozone Indicator (logical) from the FIA SURVEY table.  Y denotes surveys that are part of the P3 Ozone inventories. 
 
-ANN_INVENTORY: Annual Inventory indicator from the FIA SURVEY table. Y means that inventory is annual (as opposed to periodic). 
+ANN_INVENTORY: Annual Inventory indicator from the FIA SURVEY table. Y means that the inventory is annual (as opposed to periodic). 
 
 ECOPROVCD: The USFS ecological province code, which are landscape scale classifications of US forest areas.  Refactored from ECOSUBCD, as a higher-order classification (see Cleland et al 2007). 
 
