@@ -242,13 +242,14 @@ for (j in 1:length(state_vec)) {
 ###############################               END CODE               #############################
 ##################################################################################################
 
+#### PROCESSING 
 ## combine results into one big dataframe
 FIA_G_calc <- rbind(al_calc, az_calc, ar_calc, ca_calc, co_calc, ct_calc, de_calc, fl_calc, ga_calc, id_calc, il_calc, in_calc, ia_calc, ks_calc, ky_calc, la_calc, me_calc, md_calc, ma_calc, mi_calc, mn_calc, ms_calc, mo_calc, mt_calc, ne_calc, nv_calc, nh_calc, nj_calc, nm_calc, ny_calc, nc_calc, nd_calc, oh_calc, ok_calc, or_calc, pa_calc, ri_calc, sc_calc, sd_calc, tn_calc, tx_calc, ut_calc, vt_calc, va_calc, wa_calc, wv_calc, wi_calc) 
 
 ## small change to the dataset -- rename column 2 (was "CN") to "PLT_CN" -
 colnames(FIA_G_calc)[2] <- "PLT_CN"
  
-# ## save result
+# ## save result  ---- can save here after 4 loop ---- then filter etc 
 # #save(FIA_G_calc, file = "FIA_G_calc.Rdata")
 
 
@@ -256,75 +257,95 @@ colnames(FIA_G_calc)[2] <- "PLT_CN"
 ## FILTER THE DATASTET -- Plot Selection Criteria
 #############################################################################################################
 
-# #############################################################################################################
-# ## FILTER THE DATASTET -- Plot Selection Criteria
-# #############################################################################################################
-# 
-# # ################################################################################## apply filters to the FIA_G_calc data frame
-# # 
-# # ### create p_Cond_surv --- the combined  plot condition and survey table dataframe for subsetting
-# # 
-# # for FIA plot conditions
-# load("C:/Users/hogan.jaaron/Dropbox/FIA_R/Plot_Conditions_rFIA/FIA_conditions_allPlots.Rdata")
-# FIA_conditions$STATE <- as.factor(FIA_conditions$STATE)
-# FIA_conditions$PROP_BASIS <- as.factor(FIA_conditions$PROP_BASIS)
-# FIA_conditions$MIXEDCONFCD <- as.factor(FIA_conditions$MIXEDCONFCD)
-# FIA_conditions$DWM_FUELBED_TYPCD  <-  as.factor(FIA_conditions$DWM_FUELBED_TYPCD)
-# 
-# # for FIA plots (plot table)
-# load("C:/Users/hogan.jaaron/Dropbox/FIA_R/Plot_Conditions_rFIA/FIA_plots_allPlots.Rdata")
-# FIA_plots$STATE <- as.factor(FIA_plots$STATE)
-# FIA_plots$ECOSUBCD <- as.factor(FIA_plots$ECOSUBCD)
-# 
-# ##### COMBINE PLOT and CODITION TABLES
-# P_cond <- dplyr::left_join(FIA_conditions, FIA_plots, by = c("STATE", "PLOT", "INVYR", "PLT_CN" = "CN"))  #PLT_CN = CN  merges condition table to the plot table using PLT_CN (see FIA data user guide 8.0)
-# 
-# #### load survey tables
-# load("C:/Users/hogan.jaaron/Dropbox/FIA_R/Plot_Conditions_rFIA/FIA_survey.Rdata")
-# ##### COMBINE P_cond and survey tables
-# P_cond_surv <- dplyr::left_join(P_cond, FIA_survey[,c("CN", "P3_OZONE_IND", "ANN_INVENTORY")], by = c("SRV_CN" = "CN"))
-# 
+################################################################################## apply filters to the FIA_G_calc data frame
+
+### create p_Cond_surv --- the combined  plot condition and survey table dataframe for subsetting
+
+# for FIA plot conditions
+load("C:/Users/hogan.jaaron/Dropbox/FIA_R/Plot_Conditions_rFIA/FIA_conditions_allPlots.Rdata")
+FIA_conditions$STATE <- as.factor(FIA_conditions$STATE)
+FIA_conditions$PROP_BASIS <- as.factor(FIA_conditions$PROP_BASIS)
+FIA_conditions$MIXEDCONFCD <- as.factor(FIA_conditions$MIXEDCONFCD)
+FIA_conditions$DWM_FUELBED_TYPCD  <-  as.factor(FIA_conditions$DWM_FUELBED_TYPCD)
+
+# for FIA plots (plot table)
+load("C:/Users/hogan.jaaron/Dropbox/FIA_R/Plot_Conditions_rFIA/FIA_plots_allPlots.Rdata")
+FIA_plots$STATE <- as.factor(FIA_plots$STATE)
+FIA_plots$ECOSUBCD <- as.factor(FIA_plots$ECOSUBCD)
+
+##### COMBINE PLOT and CODITION TABLES
+P_cond <- dplyr::left_join(FIA_conditions, FIA_plots, by = c("STATE", "PLOT", "INVYR", "PLT_CN" = "CN"))  #PLT_CN = CN  merges condition table to the plot table using PLT_CN (see FIA data user guide 8.0)
+
+#### load survey tables
+load("C:/Users/hogan.jaaron/Dropbox/FIA_R/Plot_Conditions_rFIA/FIA_survey.Rdata")
+##### COMBINE P_cond and survey tables
+P_cond_surv <- dplyr::left_join(P_cond, FIA_survey[,c("CN", "P3_OZONE_IND", "ANN_INVENTORY")], by = c("SRV_CN" = "CN"))
+ 
 # ###### COMBINE G_calc
-# G <- dplyr::left_join(FIA_G_calc, P_cond_surv[,c("STATE", "CN", "PLT_CN", "INVYR", "STDAGE", "STDORGCD", "CONDPROP_UNADJ", "SITECLCD", "STDSZCD", "COND_STATUS_CD", "P3_OZONE_IND", "ANN_INVENTORY")], by = c("STATE", "PLT_CN", "INVYR")) %>% distinct()  # 370598 observations
-# 
-# rm(P_cond, FIA_G_calc, FIA_conditions, FIA_plots, FIA_survey, P_cond_surv)  #removes other data frames
-# 
-# #### vvvvvvvvvvvvvvvv ####----------------------------------------------------------------------------------------------------------
-# #### APPLYING FILTERS ####
-# 
-# ## remove cases of NA's STDAGE columns
-# G <- G[!is.na(G$STDAGE) & !G$STDAGE == 9999,]
-# ## Filter out plantations
-# G <- G[G$STDORGCD == 0, ]
-# ## Filter plots with a single condition using a 95% threshold for CONDPROP_UNADJ
-# G <- G[G$CONDPROP_UNADJ >= 0.95, ]
-# ### Filter out SITECLCD 7 (non productive stands - those with less than 20 ft3/ac/yr)
-# G <- G[!G$SITECLCD == 7,]
-# ### Filter out non-stocked plots (with STDSZCD == 5)
-# G <- G[!G$STDSZCD == 5,]
-# 
-# ### new filters - MAY 2022
-# ### Filter out the the non-accessible plots -- COND_STATUS_CD == 1 is accessible
-# G <- G[G$COND_STATUS_CD == 1,]
-# ### Filter by survey table --- annual inventories YES
-# G <- G[G$ANN_INVENTORY == "Y",]
-# ### Filter by survey table --- B3_OZONE NO
-# G <- G[G$P3_OZONE_IND == "N",]
-# 
-# ### NOTE: 111752 after filtering
-# 
-# #### APPLYING FILTERS ####
-# #### ^^^^^^^^^^^^^^^^ ####----------------------------------------------------------------------------------------------------------
-# 
-# ## dealing with ECOPROVINCES:
-# G$ECOPROVCD <- stringr::str_replace_all(gsub('.{2}$', '', G$ECOSUBCD), stringr::fixed(" "), "")
-# 
-# G[G$ECOPROVCD == "M322A"]$ECOPROVCD
-# 
-# G$ECOPROVCD <-  as.factor(G$ECOPROVCD)
-# 
-# ### save the output -- the clean subsetted dataset
-# setwd("C:/Users/hogan.jaaron/Dropbox/FIA_R/BiomassGrowth/Biomass_Growth_calculations_june2022")
-# save(G, file = "G_clean&subsetted.Rdata")
+G <- dplyr::left_join(FIA_G_calc, P_cond_surv[,c("STATE", "CN", "PLT_CN", "INVYR", "STDAGE", "STDORGCD", "CONDPROP_UNADJ", "SITECLCD", "STDSZCD", "COND_STATUS_CD", "P3_OZONE_IND", "ANN_INVENTORY")], by = c("STATE", "PLT_CN", "INVYR")) %>% distinct()  # 370598 observations
+
+
+#### vvvvvvvvvvvvvvvv ####----------------------------------------------------------------------------------------------------------
+#### APPLYING FILTERS ####
+
+## remove cases of NA's STDAGE columns
+G <- G[!is.na(G$STDAGE) & !G$STDAGE == 9999,]
+## Filter out plantations
+G <- G[G$STDORGCD == 0, ]
+## Filter plots with a single condition using a 95% threshold for CONDPROP_UNADJ
+G <- G[G$CONDPROP_UNADJ >= 0.95, ]
+### Filter out SITECLCD 7 (non productive stands - those with less than 20 ft3/ac/yr)
+G <- G[!G$SITECLCD == 7,]
+### Filter out non-stocked plots (with STDSZCD == 5)
+G <- G[!G$STDSZCD == 5,]
+
+### new filters - MAY 2022
+### Filter out the the non-accessible plots -- COND_STATUS_CD == 1 is accessible
+G <- G[G$COND_STATUS_CD == 1,]
+### Filter by survey table --- annual inventories YES
+G <- G[G$ANN_INVENTORY == "Y",]
+### Filter by survey table --- B3_OZONE NO
+G <- G[G$P3_OZONE_IND == "N",]
+
+### NOTE: 111752 after filtering
+
+#### APPLYING FILTERS ####
+#### ^^^^^^^^^^^^^^^^ ####----------------------------------------------------------------------------------------------------------
+
+## dealing with ECOPROVINCES:
+G$ECOPROVCD <- stringr::str_replace_all(gsub('.{2}$', '', G$ECOSUBCD), stringr::fixed(" "), "")
+
+G[G$ECOPROVCD == "M322A"]$ECOPROVCD
+
+G$ECOPROVCD <-  as.factor(G$ECOPROVCD)
+
+## calculate & add MEASTIME_avg
+G$MEASTIME_avg <- (G$MEASTIME_t1 + G$MEASTIME_t2) /2
+
+
+####  For STDAGE T1  ########################
+## subset the condition table to include only the dominant condition for 
+FIA_single_conditions <- FIA_conditions %>% group_by(STATE, PLT_CN, INVYR) %>% filter(row_number() == which.max(CONDPROP_UNADJ))  %>% select(STATE, PLT_CN, INVYR, CONDPROP_UNADJ, STDAGE) %>% unique()
+
+df_STDAGE_t1 <- as.data.frame(FIA_single_conditions[FIA_single_conditions$PLT_CN %in% G$PREV_PLT_CN ,c("STATE", "PLT_CN",  "INVYR", "STDAGE")])
+                          
+colnames(df_STDAGE_t1)[2] <- "PREV_PLT_CN"
+colnames(df_STDAGE_t1)[4] <- "STDAGE_t1"
+
+## left_join  to add to the G dataframe
+G <- left_join(G, df_STDAGE_t1[,c("STATE", "PREV_PLT_CN", "STDAGE_t1")], by = c("STATE", "PREV_PLT_CN"))
+
+## for is.na STDAGE_t1 assign STDAGE_t2 value    ## done for 405 records
+G[is.na(G$STDAGE_t1),]$STDAGE_t1 <- G[is.na(G$STDAGE_t1),]$STDAGE_t2
+
+## difference in STDAGE
+G$diff_STDAGE <- G$STDAGE_t2 - G$STDAGE_t1
+#### (END For STDAGE T1) ####################
+
+rm(P_cond, FIA_G_calc, FIA_conditions, FIA_plots, FIA_survey, P_cond_surv)  #removes other data frames
+
+### save the output -- the clean subsetted dataset
+setwd("C:/Users/hogan.jaaron/Dropbox/FIA_R/BiomassGrowth/Biomass_Growth_calculations_june2022")
+save(G, file = "G_dataset.Rdata")
 
 
