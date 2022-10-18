@@ -5,7 +5,7 @@ Quantifying changes in the dynamics of U.S. forests using national forest invent
 Objective:  To estimate biomass stock and biomass growth enhancement effects usingn non-linear modeling techniques. 
 
 Data:  Data from the United States Forest Service's Forest Inventory and Analysis program were used. https://www.fia.fs.usda.gov/
-We recommend the rFIA package for downloading FIA data tables (see rfia::getFIA).  https://rfia.netlify.app/ 
+We recommend the rFIA package for downloading FIA data tables (see `rfia::getFIA`).  https://rfia.netlify.app/ 
 
 In this repository we include: 
 * code used to derive processed FIA datasets, from the FIA data tables.  We include those processed data products including metadata.
