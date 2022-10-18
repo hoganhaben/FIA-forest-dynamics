@@ -163,7 +163,7 @@ for (j in 1:length(state_vec)) {
     ## do the math for biomass of surviving trees 
     calc_df$B_surv_MgHa[i] <- sum((t2_df_b[complete.cases(t2_df_b),]$DRYBIO_AG_Mg * t2_df_b[complete.cases(t2_df_b),]$TPHa_UNADJ), na.rm = T)
     
-    ## do the math for plot G -- Mass Balance Method -- sum of (Bt2 - Bt1  * TPHa) over REMPER
+    ## do the math for plot G -- Mass Balance Method -- difference between (Bt2 - Bt1) + B_dead + B_cut  over REMPER
     calc_df$G_MassBal_MgHaYr[i] <- ((calc_df$B_plt_t2_MgHa[i] - calc_df$B_plt_t1_MgHa[i]) + calc_df$B_dead_MgHa[i] + calc_df$B_cut_MgHa[i])/ calc_df$REMPER[i]
     
     ## do the math for plot G (observed) -- Summed Tree Incremental Growth Method -- sum of (Bt2 - Bt1  * TPHa) over REMPER
