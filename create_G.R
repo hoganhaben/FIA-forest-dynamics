@@ -7,9 +7,9 @@ library(rFIA); library(dplyr)
 
 ## GOAL: In this script, I create a biomass growth (G) dataset from the raw FIA inventory data (stored separately by state)
 ## Two methods are used to calculate plot-level biomass G from the tree tables for each plot. 
-## The Mass Balance Method (MassBal) uses difference in plot level biomass between successive censuses plus the biomass of harvested and dead trees (see supplemental methods)
-## The Summed Tree Incremental Growth (TreeInc) method uses the collective biomass increment of individual trees within an FIA plot between successive censuses plus the biomass of ingrowth trees (see supplemental methods)
-## The script also calculates several additional details of plot level metrics between census intervals which help check the biomass G calculations
+## The Mass Balance Method (MassBal) uses difference in plot level biomass between successive plot measurements plus the biomass of harvested and dead trees (see supplemental methods)
+## The Summed Tree Incremental Growth (TreeInc) method uses the collective biomass increment of individual trees within an FIA plot between successive plot measurements plus the biomass of ingrowth trees (see supplemental methods)
+## The script also calculates several additional details of plot level metrics between plot measurement intervals which help check the biomass G calculations
 
 ##################################################################################################
 ###############################              START CODE              #############################
@@ -49,7 +49,9 @@ for (j in 1:length(state_vec)) {
   
   ## make placeholder datafame - each row with a unique record for each plot - t1 to t2
   ## filters out plots with before 1995(implementation of FIA 2.0), year = 9999 (non-inventories), and plots missing REMPER (i.e., no tree records for t1)
-  calc_df <-  plot_df %>% filter(INVYR >1995 & INVYR !=9999 & !is.na(REMPER)) %>% select(pltID, CN, PREV_PLT_CN, MEASYEAR, MEASMON, INVYR, REMPER, LAT, LON, ECOSUBCD) %>% arrange(pltID, INVYR)
+  calc_df <-  plot_df %>% filter(INVYR >1995 & INVYR !=9999 & !is.na(REMPER)) %>% 
+                          select(pltID, CN, PREV_PLT_CN, MEASYEAR, MEASMON, INVYR, REMPER, LAT, LON, ECOSUBCD) %>% 
+                          arrange(pltID, INVYR)
   
   ## remove rows where PREV_PLT_CN is NA - these are the very first censuses for each plot
   calc_df <-  calc_df[!is.na(calc_df$PREV_PLT_CN),]
@@ -115,7 +117,9 @@ for (j in 1:length(state_vec)) {
     ## ingrowth trees are defined as the two following cases:
     ## CASE 1: DBH t2 is 1-5 inches, and DBH_t1 (PREVDIA) is missing
     ## CASE 2: DBH_t2 >=5 and DBH_t1  (PREVDIA) missing and the tree is recoreded as RECONCILECD=2
-    t2_new_df <- tree_df[(tree_df$PLT_CN %in% calc_df$CN[i] & tree_df$DIA<5 & is.na(tree_df$PREVDIA)) | (tree_df$PLT_CN %in% calc_df$CN[i] & tree_df$DIA>=5 & is.na(tree_df$PREVDIA) & tree_df$RECONCILECD==2), c("CN", "DIA", "PREVDIA", "TPHa_UNADJ", "PREV_TRE_CN","DRYBIO_AG_Mg")]
+    t2_new_df <- tree_df[(tree_df$PLT_CN %in% calc_df$CN[i] & tree_df$DIA<5 & is.na(tree_df$PREVDIA)) | 
+                         (tree_df$PLT_CN %in% calc_df$CN[i] & tree_df$DIA>=5 & is.na(tree_df$PREVDIA) & 
+                         tree_df$RECONCILECD==2), c("CN", "DIA", "PREVDIA", "TPHa_UNADJ", "PREV_TRE_CN","DRYBIO_AG_Mg")]
     
     ## create t1 data frame - contains all live tree records at first census (trees that are dead or cut at t1 do not affect growth calculations)
     t1_df <- tree_df[tree_df$STATUSCD %in% c(1) & tree_df$PLT_CN %in% calc_df$PREV_PLT_CN[i],  c("CN","DRYBIO_AG_Mg","TPHa_UNADJ")]
@@ -141,7 +145,8 @@ for (j in 1:length(state_vec)) {
                                                    99, RECONCILECD), 
                               PREV_TRE_CN = ifelse((DIA<5 & is.na(tb_df$PREVDIA)) | (tb_df$DIA>=5 & is.na(tb_df$PREVDIA) & tb_df$RECONCILECD==2), 
                                                    7777777, PREV_TRE_CN))
-        ## this dplyr code takes all trees that meet case 1 and 2, and gives them diameter of 0 and TPHa_t1 the sapling TPHa.  They are labelled RECONCILECD = 99, PREV_TRE_CN = 7777, for subsetting complete cases later on
+        ## this dplyr code takes all trees that meet case 1 and 2, and gives them diameter of 0 and TPHa_t1 the sapling TPHa.  
+        ## They are labelled RECONCILECD = 99, PREV_TRE_CN = 7777, for subsetting complete cases later on
     
     #### ADDITIONAL CALCULATIONS
     
@@ -195,7 +200,8 @@ for (j in 1:length(state_vec)) {
     calc_df$nTree_Rec[i] <- length(tb_df$CN)
     calc_df$nTrees_t1[i] <- length(t1_df$CN)
     calc_df$nTrees_t2[i] <- length(t2_df$CN)
-    calc_df$nTrees_both[i] <-  length(tb_df[!(is.na(tb_df$TPHa_UNADJ_t1) | tb_df$TPHa_UNADJ_t1 < 0.001) & !(is.na(tb_df$TPHa_UNADJ_t2) | tb_df$TPHa_UNADJ_t2 < 0.001),]$CN)
+    calc_df$nTrees_both[i] <-  length(tb_df[!(is.na(tb_df$TPHa_UNADJ_t1) | tb_df$TPHa_UNADJ_t1 < 0.001) & 
+                                            !(is.na(tb_df$TPHa_UNADJ_t2) | tb_df$TPHa_UNADJ_t2 < 0.001),]$CN)
     
     ## InGrowth - number of ingrowth tree and T/F classifier
     calc_df$nIngrowTrees[i] <- length(t2_new_df$CN)
@@ -214,7 +220,8 @@ for (j in 1:length(state_vec)) {
     
     #### TPA changes for surviving non-ingrowth trees
     ## count the number of matching TPA values -- fuzzy match to within 2 decimal places
-    calc_df$TPHa_Match[i] <- sum(abs(tb_df[complete.cases(tb_df[!colnames(tb_df) %in% c("RECONCILECD")]),]$TPHa_UNADJ_t2 - tb_df[complete.cases(tb_df[!colnames(tb_df) %in% c("RECONCILECD")]),]$TPHa_UNADJ_t1) < 0.01)
+    calc_df$TPHa_Match[i] <- sum(abs(tb_df[complete.cases(tb_df[!colnames(tb_df) %in% c("RECONCILECD")]),]$TPHa_UNADJ_t2 - 
+                                     tb_df[complete.cases(tb_df[!colnames(tb_df) %in% c("RECONCILECD")]),]$TPHa_UNADJ_t1) < 0.01)
     
     ## percentage of matching TPA values (count / total) -- FOR NON INGROWTH TREES
     calc_df$TPHa_Match_percent[i] <- calc_df$TPHa_Match[i]/calc_df$nTrees_both[i]
@@ -244,7 +251,12 @@ for (j in 1:length(state_vec)) {
 
 #### PROCESSING 
 ## combine results into one big dataframe
-FIA_G_calc <- rbind(al_calc, az_calc, ar_calc, ca_calc, co_calc, ct_calc, de_calc, fl_calc, ga_calc, id_calc, il_calc, in_calc, ia_calc, ks_calc, ky_calc, la_calc, me_calc, md_calc, ma_calc, mi_calc, mn_calc, ms_calc, mo_calc, mt_calc, ne_calc, nv_calc, nh_calc, nj_calc, nm_calc, ny_calc, nc_calc, nd_calc, oh_calc, ok_calc, or_calc, pa_calc, ri_calc, sc_calc, sd_calc, tn_calc, tx_calc, ut_calc, vt_calc, va_calc, wa_calc, wv_calc, wi_calc) 
+FIA_G_calc <- rbind(al_calc, az_calc, ar_calc, ca_calc, co_calc, ct_calc, de_calc, fl_calc, ga_calc, 
+                    id_calc, il_calc, in_calc, ia_calc, ks_calc, ky_calc, la_calc, me_calc, md_calc, 
+                    ma_calc, mi_calc, mn_calc, ms_calc, mo_calc, mt_calc, ne_calc, nv_calc, nh_calc, 
+                    nj_calc, nm_calc, ny_calc, nc_calc, nd_calc, oh_calc, ok_calc, or_calc, pa_calc, 
+                    ri_calc, sc_calc, sd_calc, tn_calc, tx_calc, ut_calc, vt_calc, va_calc, wa_calc, 
+                    wv_calc, wi_calc) 
 
 ## small change to the dataset -- rename column 2 (was "CN") to "PLT_CN" -
 colnames(FIA_G_calc)[2] <- "PLT_CN"
@@ -262,27 +274,36 @@ colnames(FIA_G_calc)[2] <- "PLT_CN"
 ### create p_Cond_surv --- the combined  plot condition and survey table dataframe for subsetting
 
 # for FIA plot conditions
-load("C:/Users/hogan.jaaron/Dropbox/FIA_R/Plot_Conditions_rFIA/FIA_conditions_allPlots.Rdata")  # this is an Rdata object for all the FIA CONDITION tables for all lower 48 states combined (rbind)
+ # this is an Rdata object for all the FIA CONDITION tables for all lower 48 states combined (rbind)
+load("C:/Users/hogan.jaaron/Dropbox/FIA_R/Plot_Conditions_rFIA/FIA_conditions_allPlots.Rdata") 
+
 FIA_conditions$STATE <- as.factor(FIA_conditions$STATE)
 FIA_conditions$PROP_BASIS <- as.factor(FIA_conditions$PROP_BASIS)
 FIA_conditions$MIXEDCONFCD <- as.factor(FIA_conditions$MIXEDCONFCD)
 FIA_conditions$DWM_FUELBED_TYPCD  <-  as.factor(FIA_conditions$DWM_FUELBED_TYPCD)
 
 # for FIA plots (plot table)
-load("C:/Users/hogan.jaaron/Dropbox/FIA_R/Plot_Conditions_rFIA/FIA_plots_allPlots.Rdata")  # this is an Rdata object for all the FIA PLOT tables for all lower 48 states combined (rbind)
+# this is an Rdata object for all the FIA PLOT tables for all lower 48 states combined (rbind)
+load("C:/Users/hogan.jaaron/Dropbox/FIA_R/Plot_Conditions_rFIA/FIA_plots_allPlots.Rdata")  
+
 FIA_plots$STATE <- as.factor(FIA_plots$STATE)
 FIA_plots$ECOSUBCD <- as.factor(FIA_plots$ECOSUBCD)
 
 ##### COMBINE PLOT and CODITION TABLES
-P_cond <- dplyr::left_join(FIA_conditions, FIA_plots, by = c("STATE", "PLOT", "INVYR", "PLT_CN" = "CN"))  #PLT_CN = CN  merges condition table to the plot table using PLT_CN (see FIA data user guide 8.0)
+P_cond <- dplyr::left_join(FIA_conditions, FIA_plots, by = c("STATE", "PLOT", "INVYR", "PLT_CN" = "CN"))  
+#PLT_CN = CN  merges condition table to the plot table using PLT_CN (see FIA data user guide 8.0)
 
 #### load survey tables
-load("C:/Users/hogan.jaaron/Dropbox/FIA_R/Plot_Conditions_rFIA/FIA_survey.Rdata")  # this is an Rdata object for all the FIA SURVEY tables for all lower 48 states combined (rbind)
+# this is an Rdata object for all the FIA SURVEY tables for all lower 48 states combined (rbind)
+load("C:/Users/hogan.jaaron/Dropbox/FIA_R/Plot_Conditions_rFIA/FIA_survey.Rdata")  
+
 ##### COMBINE P_cond and survey tables
 P_cond_surv <- dplyr::left_join(P_cond, FIA_survey[,c("CN", "P3_OZONE_IND", "ANN_INVENTORY")], by = c("SRV_CN" = "CN"))
  
 # ###### COMBINE G_calc
-G <- dplyr::left_join(FIA_G_calc, P_cond_surv[,c("STATE", "CN", "PLT_CN", "INVYR", "STDAGE", "STDORGCD", "CONDPROP_UNADJ", "SITECLCD", "STDSZCD", "COND_STATUS_CD", "P3_OZONE_IND", "ANN_INVENTORY")], by = c("STATE", "PLT_CN", "INVYR")) %>% distinct()  # 370598 observations
+G <- dplyr::left_join(FIA_G_calc, P_cond_surv[,c("STATE", "CN", "PLT_CN", "INVYR", "STDAGE", "STDORGCD", "CONDPROP_UNADJ", "SITECLCD", 
+                                                 "STDSZCD", "COND_STATUS_CD", "P3_OZONE_IND", "ANN_INVENTORY")], by = c("STATE", "PLT_CN", "INVYR")) %>% 
+     distinct()  # 370598 observations
 
 
 #### vvvvvvvvvvvvvvvv ####----------------------------------------------------------------------------------------------------------
@@ -325,7 +346,11 @@ G$MEASTIME_avg <- (G$MEASTIME_t1 + G$MEASTIME_t2) /2
 
 ####  For STDAGE T1  ########################
 ## subset the condition table to include only the dominant condition for 
-FIA_single_conditions <- FIA_conditions %>% group_by(STATE, PLT_CN, INVYR) %>% filter(row_number() == which.max(CONDPROP_UNADJ))  %>% select(STATE, PLT_CN, INVYR, CONDPROP_UNADJ, STDAGE) %>% unique()
+FIA_single_conditions <- FIA_conditions %>%
+                         group_by(STATE, PLT_CN, INVYR) %>% 
+                         filter(row_number() == which.max(CONDPROP_UNADJ))  %>% 
+                         select(STATE, PLT_CN, INVYR, CONDPROP_UNADJ, STDAGE) %>% 
+                         unique()
 
 df_STDAGE_t1 <- as.data.frame(FIA_single_conditions[FIA_single_conditions$PLT_CN %in% G$PREV_PLT_CN ,c("STATE", "PLT_CN",  "INVYR", "STDAGE")])
                           
