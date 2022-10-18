@@ -14,7 +14,7 @@ In this repository we include:
     - growth-biomass relationships, and 
     - growth-stand age relationships.
 
-Each analysis is included in a separate sub-folder
+Each analysis is included in a separate sub-folder.
 
 
 * code used to process Palmer Drought Severity Index (PDSI) data which is included in our non-linear models.
@@ -24,7 +24,9 @@ Each analysis is included in a separate sub-folder
     1.  our FIA plot biomass dataset (P)
         - codefile: create_P.R
         - dataset: FIA_P_dataset.Rdata
+        - metadata: P_metadata.txt
     
     2. our FIA plot biomass growth dataset (G)
         - codefile: create_G.R
         - dataset: FIA_G_dataset.Rdata
+        - metadata: G_metadata.txt
