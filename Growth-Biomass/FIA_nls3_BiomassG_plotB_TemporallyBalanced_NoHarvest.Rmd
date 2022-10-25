@@ -395,7 +395,7 @@ load("C:/Users/hogan.jaaron/Dropbox/FIA_R/Starter_FIA_data_processing/G_dataset.
 # save(G_pdsi_data, file = "G_pdsi_data.Rdata")
 #####################################################
 #####################################################
-load("C:/Users/hogan.jaaron/Dropbox/FIA_R/data_PDSI/G_pdsi_data_2_JAN-AUG.Rdata")  ## simply load ths finished data product -- the above code takes some time to run...
+load("C:/Users/hogan.jaaron/Dropbox/FIA_R/data_PDSI/PDSI_calc_originals/G_pdsi_data_2_JAN-AUG.Rdata")  ## simply load ths finished data product -- the above code takes some time to run...
 
 ###### if working on P-50
 # load("C:/Users/hogie/Dropbox/FIA_R/data_PDSI/G_pdsi_data_2_JAN-AUG.Rdata")  ## simply load ths finished data product -- the above code takes some time to run...
@@ -459,6 +459,9 @@ outliers_cleanerD <- G_cleanerD[G_cleanerD$G_obs_TreeInc_MgHaYr < quantile(G_cle
 ## make list of cleaner pltIDs
 cleaner_pltIDs <- c(outliers_cleanerA$pltID, outliers_cleanerB$pltID, outliers_cleanerC$pltID, outliers_cleanerD$pltID)
 cleaner_pltIDs <- cleaner_pltIDs[order(cleaner_pltIDs)]
+
+#### APPLY CLEANERS!
+G <- G[!G$pltID %in% cleaner_pltIDs,]
 ```
 
 # Temporally-balancing the biomass growth data set
@@ -974,7 +977,7 @@ gg.211.2 <- ggplot() +
             
              stat_summary_bin(aes(x = B_plt_t1_MgHa, y = G_obs_TreeInc_MgHaYr), data = G_211, 
                               fun.data = function(x) {
-                                res <- quantile(x, probs = c(0.25,0.5,0.75))
+                                res <- c(high.CI(x), mean(x, na.rm=T), low.CI(x))
                                 names(res) <- c("ymin","y","ymax")
                                 res}, 
                               col = scales::seq_gradient_pal("#00FF00", "#FF00FF")(seq(0,1,length.out=length(bin_mids_211))), breaks = cutvec_211) +         
@@ -1032,7 +1035,7 @@ gg.211.3 <- ggplot(aes(x = data.mean, y = pred.mean, color = bin), data = DM_com
                 y = expression("nls predicted G (Mg ha"^-1*" yr"^-1*")")) +
            ggtitle("211 - Northeastern Mixed Forest") +         
            theme_classic() + 
-           theme(legend.position = "top")
+            theme(legend.position = "top") + tune::coord_obs_pred()
            
 gg.211.3
 
@@ -1337,7 +1340,7 @@ gg.212.2 <- ggplot() +
             
              stat_summary_bin(aes(x = B_plt_t1_MgHa, y = G_obs_TreeInc_MgHaYr), data = G_212, 
                               fun.data = function(x) {
-                                res <- quantile(x, probs = c(0.25,0.5,0.75))
+                                res <- c(high.CI(x), mean(x, na.rm=T), low.CI(x))
                                 names(res) <- c("ymin","y","ymax")
                                 res}, 
                               col = scales::seq_gradient_pal("#00FF00", "#FF00FF")(seq(0,1,length.out=length(bin_mids_212))), breaks = cutvec_212) +         
@@ -1395,7 +1398,7 @@ gg.212.3 <- ggplot(aes(x = data.mean, y = pred.mean, color = bin), data = DM_com
                 y = expression("nls predicted G (Mg ha"^-1*" yr"^-1*")")) +
            ggtitle("212 - Laurentian Mixed Forest") +         
            theme_classic() + 
-           theme(legend.position = "top")
+            theme(legend.position = "top") + tune::coord_obs_pred()
            
 gg.212.3
 
@@ -1699,7 +1702,7 @@ gg.221.2 <- ggplot() +
             
              stat_summary_bin(aes(x = B_plt_t1_MgHa, y = G_obs_TreeInc_MgHaYr), data = G_221, 
                               fun.data = function(x) {
-                                res <- quantile(x, probs = c(0.25,0.5,0.75))
+                                res <- c(high.CI(x), mean(x, na.rm=T), low.CI(x))
                                 names(res) <- c("ymin","y","ymax")
                                 res}, 
                               col = scales::seq_gradient_pal("#00FF00", "#FF00FF")(seq(0,1,length.out=length(bin_mids_221))), breaks = cutvec_221) +         
@@ -1757,7 +1760,7 @@ gg.221.3 <- ggplot(aes(x = data.mean, y = pred.mean, color = bin), data = DM_com
                 y = expression("nls predicted G (Mg ha"^-1*" yr"^-1*")")) +
            ggtitle("221 - Eastern Broadleaf Forest") +         
            theme_classic() + 
-           theme(legend.position = "top")
+            theme(legend.position = "top") + tune::coord_obs_pred()
            
 gg.221.3
 
@@ -2061,7 +2064,7 @@ gg.222.2 <- ggplot() +
             
              stat_summary_bin(aes(x = B_plt_t1_MgHa, y = G_obs_TreeInc_MgHaYr), data = G_222, 
                               fun.data = function(x) {
-                                res <- quantile(x, probs = c(0.25,0.5,0.75))
+                                res <- c(high.CI(x), mean(x, na.rm=T), low.CI(x))
                                 names(res) <- c("ymin","y","ymax")
                                 res}, 
                               col = scales::seq_gradient_pal("#00FF00", "#FF00FF")(seq(0,1,length.out=length(bin_mids_222))), breaks = cutvec_222) +         
@@ -2119,7 +2122,7 @@ gg.222.3 <- ggplot(aes(x = data.mean, y = pred.mean, color = bin), data = DM_com
                 y = expression("nls predicted G (Mg ha"^-1*" yr"^-1*")")) +
            ggtitle("222 - Midwest Broadleaf Forest") +         
            theme_classic() + 
-           theme(legend.position = "top")
+            theme(legend.position = "top") + tune::coord_obs_pred()
            
 gg.222.3
 
@@ -2424,7 +2427,7 @@ gg.223.2 <- ggplot() +
             
              stat_summary_bin(aes(x = B_plt_t1_MgHa, y = G_obs_TreeInc_MgHaYr), data = G_223, 
                               fun.data = function(x) {
-                                res <- quantile(x, probs = c(0.25,0.5,0.75))
+                                res <- c(high.CI(x), mean(x, na.rm=T), low.CI(x))
                                 names(res) <- c("ymin","y","ymax")
                                 res}, 
                               col = scales::seq_gradient_pal("#00FF00", "#FF00FF")(seq(0,1,length.out=length(bin_mids_223))), breaks = cutvec_223) +         
@@ -2482,7 +2485,7 @@ gg.223.3 <- ggplot(aes(x = data.mean, y = pred.mean, color = bin), data = DM_com
                 y = expression("nls predicted G (Mg ha"^-1*" yr"^-1*")")) +
            ggtitle("223 - Central Interior Broadleaf Forest") +         
            theme_classic() + 
-           theme(legend.position = "top")
+            theme(legend.position = "top") + tune::coord_obs_pred()
            
 gg.223.3
 
@@ -2787,7 +2790,7 @@ gg.231.2 <- ggplot() +
             
              stat_summary_bin(aes(x = B_plt_t1_MgHa, y = G_obs_TreeInc_MgHaYr), data = G_231, 
                               fun.data = function(x) {
-                                res <- quantile(x, probs = c(0.25,0.5,0.75))
+                                res <- c(high.CI(x), mean(x, na.rm=T), low.CI(x))
                                 names(res) <- c("ymin","y","ymax")
                                 res}, 
                               col = scales::seq_gradient_pal("#00FF00", "#FF00FF")(seq(0,1,length.out=length(bin_mids_231))), breaks = cutvec_231) +         
@@ -2845,7 +2848,7 @@ gg.231.3 <- ggplot(aes(x = data.mean, y = pred.mean, color = bin), data = DM_com
                 y = expression("nls predicted G (Mg ha"^-1*" yr"^-1*")")) +
            ggtitle("231 - Southeastern Mixed Forest") +         
            theme_classic() + 
-           theme(legend.position = "top")
+            theme(legend.position = "top") + tune::coord_obs_pred()
            
 gg.231.3
 
@@ -3149,7 +3152,7 @@ gg.232.2 <- ggplot() +
             
              stat_summary_bin(aes(x = B_plt_t1_MgHa, y = G_obs_TreeInc_MgHaYr), data = G_232, 
                               fun.data = function(x) {
-                                res <- quantile(x, probs = c(0.25,0.5,0.75))
+                                res <- c(high.CI(x), mean(x, na.rm=T), low.CI(x))
                                 names(res) <- c("ymin","y","ymax")
                                 res}, 
                               col = scales::seq_gradient_pal("#00FF00", "#FF00FF")(seq(0,1,length.out=length(bin_mids_232))), breaks = cutvec_232) +         
@@ -3207,7 +3210,7 @@ gg.232.3 <- ggplot(aes(x = data.mean, y = pred.mean, color = bin), data = DM_com
                 y = expression("nls predicted G (Mg ha"^-1*" yr"^-1*")")) +
            ggtitle("232 - Outer Coastal Plain Mixed Forest") +         
            theme_classic() + 
-           theme(legend.position = "top")
+            theme(legend.position = "top") + tune::coord_obs_pred()
            
 gg.232.3
 
@@ -3514,7 +3517,7 @@ gg.234.2 <- ggplot() +
             
              stat_summary_bin(aes(x = B_plt_t1_MgHa, y = G_obs_TreeInc_MgHaYr), data = G_234, 
                               fun.data = function(x) {
-                                res <- quantile(x, probs = c(0.25,0.5,0.75))
+                                res <- c(high.CI(x), mean(x, na.rm=T), low.CI(x))
                                 names(res) <- c("ymin","y","ymax")
                                 res}, 
                               col = scales::seq_gradient_pal("#00FF00", "#FF00FF")(seq(0,1,length.out=length(bin_mids_234))), breaks = cutvec_234) +         
@@ -3572,7 +3575,7 @@ gg.234.3 <- ggplot(aes(x = data.mean, y = pred.mean, color = bin), data = DM_com
                 y = expression("nls predicted G (Mg ha"^-1*" yr"^-1*")")) +
            ggtitle("234 - Lower Mississippi Riverine Forest") +         
            theme_classic() + 
-           theme(legend.position = "top")
+            theme(legend.position = "top") + tune::coord_obs_pred()
            
 gg.234.3
 
@@ -3877,7 +3880,7 @@ gg.242.2 <- ggplot() +
             
              stat_summary_bin(aes(x = B_plt_t1_MgHa, y = G_obs_TreeInc_MgHaYr), data = G_242, 
                               fun.data = function(x) {
-                                res <- quantile(x, probs = c(0.25,0.5,0.75))
+                                res <- c(high.CI(x), mean(x, na.rm=T), low.CI(x))
                                 names(res) <- c("ymin","y","ymax")
                                 res}, 
                               col = scales::seq_gradient_pal("#00FF00", "#FF00FF")(seq(0,1,length.out=length(bin_mids_242))), breaks = cutvec_242) +         
@@ -3935,7 +3938,7 @@ gg.242.3 <- ggplot(aes(x = data.mean, y = pred.mean, color = bin), data = DM_com
                 y = expression("nls predicted G (Mg ha"^-1*" yr"^-1*")")) +
            ggtitle("242 - Pacific Lowland Mixed Forest") +         
            theme_classic() + 
-           theme(legend.position = "top")
+            theme(legend.position = "top") + tune::coord_obs_pred()
            
 gg.242.3
 
@@ -4240,7 +4243,7 @@ gg.251.2 <- ggplot() +
             
              stat_summary_bin(aes(x = B_plt_t1_MgHa, y = G_obs_TreeInc_MgHaYr), data = G_251, 
                               fun.data = function(x) {
-                                res <- quantile(x, probs = c(0.25,0.5,0.75))
+                                res <- c(high.CI(x), mean(x, na.rm=T), low.CI(x))
                                 names(res) <- c("ymin","y","ymax")
                                 res}, 
                               col = scales::seq_gradient_pal("#00FF00", "#FF00FF")(seq(0,1,length.out=length(bin_mids_251))), breaks = cutvec_251) +         
@@ -4298,7 +4301,7 @@ gg.251.3 <- ggplot(aes(x = data.mean, y = pred.mean, color = bin), data = DM_com
                 y = expression("nls predicted G (Mg ha"^-1*" yr"^-1*")")) +
            ggtitle("251 - Prairie Parkland (Temperate)") +         
            theme_classic() + 
-           theme(legend.position = "top")
+            theme(legend.position = "top") + tune::coord_obs_pred()
            
 gg.251.3
 
@@ -4314,10 +4317,16 @@ fit.models <-  T
 
 ```{r}
 if(fit.models == T) {
-  
+
 ### cutvec and bin mids
-cutvec_255 <- c(0,creditmodel::cut_equal(G_255$B_plt_t1_MgHa, g=20)[1:19], max(G_255$B_plt_t1_MgHa))
-bin_mids_255 <- round(cutvec_255[-length(cutvec_255)] + diff(cutvec_255)/2)
+cutvec_255 <- round(quantile(G_255$B_plt_t1_MgHa, seq(0,1, length.out = 21)))
+
+## if there are duplicated cut_vec values when using 20 (i.e., 5% quantile bins), then go to 10% quantile bins
+if(any(any(duplicated(cutvec_255)))){
+  cutvec_255 <- round(quantile(G_255$B_plt_t1_MgHa, seq(0,1, length.out = 11)))
+}
+
+bin_mids_255 <- unname(round(cutvec_255[-length(cutvec_255)] + diff(cutvec_255)/2))
 
 #### add weights data column 
 ## first get the correct bin  - assign as column in data frame
@@ -4598,7 +4607,7 @@ gg.255.2 <- ggplot() +
             
              stat_summary_bin(aes(x = B_plt_t1_MgHa, y = G_obs_TreeInc_MgHaYr), data = G_255, 
                               fun.data = function(x) {
-                                res <- quantile(x, probs = c(0.25,0.5,0.75))
+                                res <- c(high.CI(x), mean(x, na.rm=T), low.CI(x))
                                 names(res) <- c("ymin","y","ymax")
                                 res}, 
                               col = scales::seq_gradient_pal("#00FF00", "#FF00FF")(seq(0,1,length.out=length(bin_mids_255))), breaks = cutvec_255) +         
@@ -4656,7 +4665,7 @@ gg.255.3 <- ggplot(aes(x = data.mean, y = pred.mean, color = bin), data = DM_com
                 y = expression("nls predicted G (Mg ha"^-1*" yr"^-1*")")) +
            ggtitle("255 - Prairie Parkland (Subtropical)") +         
            theme_classic() + 
-           theme(legend.position = "top")
+            theme(legend.position = "top") + tune::coord_obs_pred()
            
 gg.255.3
 
@@ -4962,7 +4971,7 @@ gg.261.2 <- ggplot() +
             
              stat_summary_bin(aes(x = B_plt_t1_MgHa, y = G_obs_TreeInc_MgHaYr), data = G_261, 
                               fun.data = function(x) {
-                                res <- quantile(x, probs = c(0.25,0.5,0.75))
+                                res <- c(high.CI(x), mean(x, na.rm=T), low.CI(x))
                                 names(res) <- c("ymin","y","ymax")
                                 res}, 
                               col = scales::seq_gradient_pal("#00FF00", "#FF00FF")(seq(0,1,length.out=length(bin_mids_261))), breaks = cutvec_261) +         
@@ -5020,7 +5029,7 @@ gg.261.3 <- ggplot(aes(x = data.mean, y = pred.mean, color = bin), data = DM_com
                 y = expression("nls predicted G (Mg ha"^-1*" yr"^-1*")")) +
            ggtitle("261 - California Coastal Chaparral Forest and Shrub") +         
            theme_classic() + 
-           theme(legend.position = "top")
+            theme(legend.position = "top") + tune::coord_obs_pred()
            
 gg.261.3
 
@@ -5326,7 +5335,7 @@ gg.262.2 <- ggplot() +
             
              stat_summary_bin(aes(x = B_plt_t1_MgHa, y = G_obs_TreeInc_MgHaYr), data = G_262, 
                               fun.data = function(x) {
-                                res <- quantile(x, probs = c(0.25,0.5,0.75))
+                                res <- c(high.CI(x), mean(x, na.rm=T), low.CI(x))
                                 names(res) <- c("ymin","y","ymax")
                                 res}, 
                               col = scales::seq_gradient_pal("#00FF00", "#FF00FF")(seq(0,1,length.out=length(bin_mids_262))), breaks = cutvec_262) +         
@@ -5384,7 +5393,7 @@ gg.262.3 <- ggplot(aes(x = data.mean, y = pred.mean, color = bin), data = DM_com
                 y = expression("nls predicted G (Mg ha"^-1*" yr"^-1*")")) +
            ggtitle("262 - California Dry Steppe") +         
            theme_classic() + 
-           theme(legend.position = "top")
+            theme(legend.position = "top") + tune::coord_obs_pred()
            
 gg.262.3
 
@@ -5690,7 +5699,7 @@ gg.263.2 <- ggplot() +
             
              stat_summary_bin(aes(x = B_plt_t1_MgHa, y = G_obs_TreeInc_MgHaYr), data = G_263, 
                               fun.data = function(x) {
-                                res <- quantile(x, probs = c(0.25,0.5,0.75))
+                                res <- c(high.CI(x), mean(x, na.rm=T), low.CI(x))
                                 names(res) <- c("ymin","y","ymax")
                                 res}, 
                               col = scales::seq_gradient_pal("#00FF00", "#FF00FF")(seq(0,1,length.out=length(bin_mids_263))), breaks = cutvec_263) +         
@@ -5748,7 +5757,7 @@ gg.263.3 <- ggplot(aes(x = data.mean, y = pred.mean, color = bin), data = DM_com
                 y = expression("nls predicted G (Mg ha"^-1*" yr"^-1*")")) +
            ggtitle("263 - California Coastal Steppe - Mixed Forest and Redwood Forest") +         
            theme_classic() + 
-           theme(legend.position = "top")
+            theme(legend.position = "top") + tune::coord_obs_pred()
            
 gg.263.3
 
@@ -6054,7 +6063,7 @@ gg.313.2 <- ggplot() +
             
              stat_summary_bin(aes(x = B_plt_t1_MgHa, y = G_obs_TreeInc_MgHaYr), data = G_313, 
                               fun.data = function(x) {
-                                res <- quantile(x, probs = c(0.25,0.5,0.75))
+                                res <- c(high.CI(x), mean(x, na.rm=T), low.CI(x))
                                 names(res) <- c("ymin","y","ymax")
                                 res}, 
                               col = scales::seq_gradient_pal("#00FF00", "#FF00FF")(seq(0,1,length.out=length(bin_mids_313))), breaks = cutvec_313) +         
@@ -6112,7 +6121,7 @@ gg.313.3 <- ggplot(aes(x = data.mean, y = pred.mean, color = bin), data = DM_com
                 y = expression("nls predicted G (Mg ha"^-1*" yr"^-1*")")) +
            ggtitle("313 - Colorado Plateau Semi-Desert") +         
            theme_classic() + 
-           theme(legend.position = "top")
+            theme(legend.position = "top") + tune::coord_obs_pred()
            
 gg.313.3
 
@@ -6416,7 +6425,7 @@ gg.315.2 <- ggplot() +
             
              stat_summary_bin(aes(x = B_plt_t1_MgHa, y = G_obs_TreeInc_MgHaYr), data = G_315, 
                               fun.data = function(x) {
-                                res <- quantile(x, probs = c(0.25,0.5,0.75))
+                                res <- c(high.CI(x), mean(x, na.rm=T), low.CI(x))
                                 names(res) <- c("ymin","y","ymax")
                                 res}, 
                               col = scales::seq_gradient_pal("#00FF00", "#FF00FF")(seq(0,1,length.out=length(bin_mids_315))), breaks = cutvec_315) +         
@@ -6474,7 +6483,7 @@ gg.315.3 <- ggplot(aes(x = data.mean, y = pred.mean, color = bin), data = DM_com
                 y = expression("nls predicted G (Mg ha"^-1*" yr"^-1*")")) +
            ggtitle("315 - Southwest Plateau and Plains Dry Steppe and Shrub") +         
            theme_classic() + 
-           theme(legend.position = "top")
+            theme(legend.position = "top") + tune::coord_obs_pred()
            
 gg.315.3
 
@@ -6781,7 +6790,7 @@ gg.321.2 <- ggplot() +
             
              stat_summary_bin(aes(x = B_plt_t1_MgHa, y = G_obs_TreeInc_MgHaYr), data = G_321, 
                               fun.data = function(x) {
-                                res <- quantile(x, probs = c(0.25,0.5,0.75))
+                                res <- c(high.CI(x), mean(x, na.rm=T), low.CI(x))
                                 names(res) <- c("ymin","y","ymax")
                                 res}, 
                               col = scales::seq_gradient_pal("#00FF00", "#FF00FF")(seq(0,1,length.out=length(bin_mids_321))), breaks = cutvec_321) +         
@@ -6837,7 +6846,7 @@ gg.321.3 <- ggplot(aes(x = data.mean, y = pred.mean, color = bin), data = DM_com
                 y = expression("nls predicted G (Mg ha"^-1*" yr"^-1*")")) +
            ggtitle("321 - Chihuahuan Semi-Desert") +         
            theme_classic() + 
-           theme(legend.position = "top")
+            theme(legend.position = "top") + tune::coord_obs_pred()
            
 gg.321.3
 
@@ -7143,7 +7152,7 @@ gg.322.2 <- ggplot() +
             
              stat_summary_bin(aes(x = B_plt_t1_MgHa, y = G_obs_TreeInc_MgHaYr), data = G_322, 
                               fun.data = function(x) {
-                                res <- quantile(x, probs = c(0.25,0.5,0.75))
+                                res <- c(high.CI(x), mean(x, na.rm=T), low.CI(x))
                                 names(res) <- c("ymin","y","ymax")
                                 res}, 
                               col = scales::seq_gradient_pal("#00FF00", "#FF00FF")(seq(0,1,length.out=length(bin_mids_322))), breaks = cutvec_322) +         
@@ -7201,7 +7210,7 @@ gg.322.3 <- ggplot(aes(x = data.mean, y = pred.mean, color = bin), data = DM_com
                 y = expression("nls predicted G (Mg ha"^-1*" yr"^-1*")")) +
            ggtitle("322 - American Semidesert and Desert") +         
            theme_classic() + 
-           theme(legend.position = "top")
+            theme(legend.position = "top") + tune::coord_obs_pred()
            
 gg.322.3
 
@@ -7507,7 +7516,7 @@ gg.331.2 <- ggplot() +
             
              stat_summary_bin(aes(x = B_plt_t1_MgHa, y = G_obs_TreeInc_MgHaYr), data = G_331, 
                               fun.data = function(x) {
-                                res <- quantile(x, probs = c(0.25,0.5,0.75))
+                                res <- c(high.CI(x), mean(x, na.rm=T), low.CI(x))
                                 names(res) <- c("ymin","y","ymax")
                                 res}, 
                               col = scales::seq_gradient_pal("#00FF00", "#FF00FF")(seq(0,1,length.out=length(bin_mids_331))), breaks = cutvec_331) +         
@@ -7565,7 +7574,7 @@ gg.331.3 <- ggplot(aes(x = data.mean, y = pred.mean, color = bin), data = DM_com
                 y = expression("nls predicted G (Mg ha"^-1*" yr"^-1*")")) +
            ggtitle("331 - Great Plains/Palouse Dry Steppe") +         
            theme_classic() + 
-           theme(legend.position = "top")
+            theme(legend.position = "top") + tune::coord_obs_pred()
            
 gg.331.3
 
@@ -7871,7 +7880,7 @@ gg.332.2 <- ggplot() +
             
              stat_summary_bin(aes(x = B_plt_t1_MgHa, y = G_obs_TreeInc_MgHaYr), data = G_332, 
                               fun.data = function(x) {
-                                res <- quantile(x, probs = c(0.25,0.5,0.75))
+                                res <- c(high.CI(x), mean(x, na.rm=T), low.CI(x))
                                 names(res) <- c("ymin","y","ymax")
                                 res}, 
                               col = scales::seq_gradient_pal("#00FF00", "#FF00FF")(seq(0,1,length.out=length(bin_mids_332)+1)), breaks = cutvec_332) +         
@@ -7929,7 +7938,7 @@ gg.332.3 <- ggplot(aes(x = data.mean, y = pred.mean, color = bin), data = DM_com
                 y = expression("nls predicted G (Mg ha"^-1*" yr"^-1*")")) +
            ggtitle("332 - Southwest Plateau and Plains Dry Steppe and Shrub") +         
            theme_classic() + 
-           theme(legend.position = "top")
+            theme(legend.position = "top") + tune::coord_obs_pred()
            
 gg.332.3
 
@@ -8236,7 +8245,7 @@ gg.341.2 <- ggplot() +
             
              stat_summary_bin(aes(x = B_plt_t1_MgHa, y = G_obs_TreeInc_MgHaYr), data = G_341, 
                               fun.data = function(x) {
-                                res <- quantile(x, probs = c(0.25,0.5,0.75))
+                                res <- c(high.CI(x), mean(x, na.rm=T), low.CI(x))
                                 names(res) <- c("ymin","y","ymax")
                                 res}, 
                               col = scales::seq_gradient_pal("#00FF00", "#FF00FF")(seq(0,1,length.out=length(bin_mids_341))), breaks = cutvec_341) +         
@@ -8294,7 +8303,7 @@ gg.341.3 <- ggplot(aes(x = data.mean, y = pred.mean, color = bin), data = DM_com
                 y = expression("nls predicted G (Mg ha"^-1*" yr"^-1*")")) +
            ggtitle("341 - Nevada-Utah Mountains Semi-Desert - Coniferous Forest - Alpine Meadow") +         
            theme_classic() + 
-           theme(legend.position = "top")
+            theme(legend.position = "top") + tune::coord_obs_pred()
            
 gg.341.3
 
@@ -8601,7 +8610,7 @@ gg.342.2 <- ggplot() +
             
              stat_summary_bin(aes(x = B_plt_t1_MgHa, y = G_obs_TreeInc_MgHaYr), data = G_342, 
                               fun.data = function(x) {
-                                res <- quantile(x, probs = c(0.25,0.5,0.75))
+                                res <- c(high.CI(x), mean(x, na.rm=T), low.CI(x))
                                 names(res) <- c("ymin","y","ymax")
                                 res}, 
                               col = scales::seq_gradient_pal("#00FF00", "#FF00FF")(seq(0,1,length.out=length(bin_mids_342))), breaks = cutvec_342) +         
@@ -8659,7 +8668,7 @@ gg.342.3 <- ggplot(aes(x = data.mean, y = pred.mean, color = bin), data = DM_com
                 y = expression("nls predicted G (Mg ha"^-1*" yr"^-1*")")) +
            ggtitle("342 - Intermountain Semi-Desert") +         
            theme_classic() + 
-           theme(legend.position = "top")
+            theme(legend.position = "top") + tune::coord_obs_pred()
            
 gg.342.3
 
@@ -8963,7 +8972,7 @@ gg.411.2 <- ggplot() +
             
              stat_summary_bin(aes(x = B_plt_t1_MgHa, y = G_obs_TreeInc_MgHaYr), data = G_411, 
                               fun.data = function(x) {
-                                res <- quantile(x, probs = c(0.25,0.5,0.75))
+                                res <- c(high.CI(x), mean(x, na.rm=T), low.CI(x))
                                 names(res) <- c("ymin","y","ymax")
                                 res}, 
                               col = scales::seq_gradient_pal("#00FF00", "#FF00FF")(seq(0,1,length.out=length(bin_mids_411))), breaks = cutvec_411) +         
@@ -9021,7 +9030,7 @@ gg.411.3 <- ggplot(aes(x = data.mean, y = pred.mean, color = bin), data = DM_com
                 y = expression("nls predicted G (Mg ha"^-1*" yr"^-1*")")) +
            ggtitle("411 - Everglades") +         
            theme_classic() + 
-           theme(legend.position = "top")
+            theme(legend.position = "top") + tune::coord_obs_pred()
            
 gg.411.3
 
@@ -9327,7 +9336,7 @@ gg.M211.2 <- ggplot() +
             
              stat_summary_bin(aes(x = B_plt_t1_MgHa, y = G_obs_TreeInc_MgHaYr), data = G_M211, 
                               fun.data = function(x) {
-                                res <- quantile(x, probs = c(0.25,0.5,0.75))
+                                res <- c(high.CI(x), mean(x, na.rm=T), low.CI(x))
                                 names(res) <- c("ymin","y","ymax")
                                 res}, 
                               col = scales::seq_gradient_pal("#00FF00", "#FF00FF")(seq(0,1,length.out=length(bin_mids_M211))), breaks = cutvec_M211) +         
@@ -9385,7 +9394,7 @@ gg.M211.3 <- ggplot(aes(x = data.mean, y = pred.mean, color = bin), data = DM_co
                 y = expression("nls predicted G (Mg ha"^-1*" yr"^-1*")")) +
            ggtitle("M211 - Adirondack-New England Mixed forest - Coniferous Forest - Alpine Meadow") +         
            theme_classic() + 
-           theme(legend.position = "top")
+            theme(legend.position = "top") + tune::coord_obs_pred()
            
 gg.M211.3
 
@@ -9692,7 +9701,7 @@ gg.M221.2 <- ggplot() +
             
              stat_summary_bin(aes(x = B_plt_t1_MgHa, y = G_obs_TreeInc_MgHaYr), data = G_M221, 
                               fun.data = function(x) {
-                                res <- quantile(x, probs = c(0.25,0.5,0.75))
+                                res <- c(high.CI(x), mean(x, na.rm=T), low.CI(x))
                                 names(res) <- c("ymin","y","ymax")
                                 res}, 
                               col = scales::seq_gradient_pal("#00FF00", "#FF00FF")(seq(0,1,length.out=length(bin_mids_M221))), breaks = cutvec_M221) +         
@@ -9750,7 +9759,7 @@ gg.M221.3 <- ggplot(aes(x = data.mean, y = pred.mean, color = bin), data = DM_co
                 y = expression("nls predicted G (Mg ha"^-1*" yr"^-1*")")) +
            ggtitle("M221 - Eastern Broadleaf Forest") +         
            theme_classic() + 
-           theme(legend.position = "top")
+            theme(legend.position = "top") + tune::coord_obs_pred()
            
 gg.M221.3
 
@@ -10057,7 +10066,7 @@ gg.M223.2 <- ggplot() +
             
              stat_summary_bin(aes(x = B_plt_t1_MgHa, y = G_obs_TreeInc_MgHaYr), data = G_M223, 
                               fun.data = function(x) {
-                                res <- quantile(x, probs = c(0.25,0.5,0.75))
+                                res <- c(high.CI(x), mean(x, na.rm=T), low.CI(x))
                                 names(res) <- c("ymin","y","ymax")
                                 res}, 
                               col = scales::seq_gradient_pal("#00FF00", "#FF00FF")(seq(0,1,length.out=length(bin_mids_M223))), breaks = cutvec_M223) +         
@@ -10115,7 +10124,7 @@ gg.M223.3 <- ggplot(aes(x = data.mean, y = pred.mean, color = bin), data = DM_co
                 y = expression("nls predicted G (Mg ha"^-1*" yr"^-1*")")) +
            ggtitle("M223 - Ozark Broadleaf Forest Meadow") +         
            theme_classic() + 
-           theme(legend.position = "top")
+            theme(legend.position = "top") + tune::coord_obs_pred()
            
 gg.M223.3
 
@@ -10422,7 +10431,7 @@ gg.M231.2 <- ggplot() +
             
              stat_summary_bin(aes(x = B_plt_t1_MgHa, y = G_obs_TreeInc_MgHaYr), data = G_M231, 
                               fun.data = function(x) {
-                                res <- quantile(x, probs = c(0.25,0.5,0.75))
+                                res <- c(high.CI(x), mean(x, na.rm=T), low.CI(x))
                                 names(res) <- c("ymin","y","ymax")
                                 res}, 
                               col = scales::seq_gradient_pal("#00FF00", "#FF00FF")(seq(0,1,length.out=length(bin_mids_M231)+1)), breaks = cutvec_M231) +         
@@ -10480,7 +10489,7 @@ gg.M231.3 <- ggplot(aes(x = data.mean, y = pred.mean, color = bin), data = DM_co
                 y = expression("nls predicted G (Mg ha"^-1*" yr"^-1*")")) +
            ggtitle("M231 - Ouachita Mixed Forest") +         
            theme_classic() + 
-           theme(legend.position = "top")
+            theme(legend.position = "top") + tune::coord_obs_pred()
            
 gg.M231.3
 
@@ -10787,7 +10796,7 @@ gg.M242.2 <- ggplot() +
             
              stat_summary_bin(aes(x = B_plt_t1_MgHa, y = G_obs_TreeInc_MgHaYr), data = G_M242, 
                               fun.data = function(x) {
-                                res <- quantile(x, probs = c(0.25,0.5,0.75))
+                                res <- c(high.CI(x), mean(x, na.rm=T), low.CI(x))
                                 names(res) <- c("ymin","y","ymax")
                                 res}, 
                               col = scales::seq_gradient_pal("#00FF00", "#FF00FF")(seq(0,1,length.out=length(bin_mids_M242))), breaks = cutvec_M242) +         
@@ -10845,7 +10854,7 @@ gg.M242.3 <- ggplot(aes(x = data.mean, y = pred.mean, color = bin), data = DM_co
                 y = expression("nls predicted G (Mg ha"^-1*" yr"^-1*")")) +
            ggtitle("M242 - Cascade Mixed Forest") +         
            theme_classic() + 
-           theme(legend.position = "top")
+            theme(legend.position = "top") + tune::coord_obs_pred()
            
 gg.M242.3
 
@@ -11151,7 +11160,7 @@ gg.M261.2 <- ggplot() +
             
              stat_summary_bin(aes(x = B_plt_t1_MgHa, y = G_obs_TreeInc_MgHaYr), data = G_M261, 
                               fun.data = function(x) {
-                                res <- quantile(x, probs = c(0.25,0.5,0.75))
+                                res <- c(high.CI(x), mean(x, na.rm=T), low.CI(x))
                                 names(res) <- c("ymin","y","ymax")
                                 res}, 
                               col = scales::seq_gradient_pal("#00FF00", "#FF00FF")(seq(0,1,length.out=length(bin_mids_M261))), breaks = cutvec_M261) +         
@@ -11209,7 +11218,7 @@ gg.M261.3 <- ggplot(aes(x = data.mean, y = pred.mean, color = bin), data = DM_co
                 y = expression("nls predicted G (Mg ha"^-1*" yr"^-1*")")) +
            ggtitle("M261 - Sierran Steppe - Mixed Forest - Coniferous Forest - Alpine Meadow") +         
            theme_classic() + 
-           theme(legend.position = "top")
+            theme(legend.position = "top") + tune::coord_obs_pred()
            
 gg.M261.3
 
@@ -11516,7 +11525,7 @@ gg.M262.2 <- ggplot() +
             
              stat_summary_bin(aes(x = B_plt_t1_MgHa, y = G_obs_TreeInc_MgHaYr), data = G_M262, 
                               fun.data = function(x) {
-                                res <- quantile(x, probs = c(0.25,0.5,0.75))
+                                res <- c(high.CI(x), mean(x, na.rm=T), low.CI(x))
                                 names(res) <- c("ymin","y","ymax")
                                 res}, 
                               col = scales::seq_gradient_pal("#00FF00", "#FF00FF")(seq(0,1,length.out=length(bin_mids_M262))), breaks = cutvec_M262) +         
@@ -11574,7 +11583,7 @@ gg.M262.3 <- ggplot(aes(x = data.mean, y = pred.mean, color = bin), data = DM_co
                 y = expression("nls predicted G (Mg ha"^-1*" yr"^-1*")")) +
            ggtitle("M262 - California coastal range - coniferous forest - open woodland - shrub meadow") +         
            theme_classic() + 
-           theme(legend.position = "top")
+            theme(legend.position = "top") + tune::coord_obs_pred()
            
 gg.M262.3
 
@@ -11881,7 +11890,7 @@ gg.M313.2 <- ggplot() +
             
              stat_summary_bin(aes(x = B_plt_t1_MgHa, y = G_obs_TreeInc_MgHaYr), data = G_M313, 
                               fun.data = function(x) {
-                                res <- quantile(x, probs = c(0.25,0.5,0.75))
+                                res <- c(high.CI(x), mean(x, na.rm=T), low.CI(x))
                                 names(res) <- c("ymin","y","ymax")
                                 res}, 
                               col = scales::seq_gradient_pal("#00FF00", "#FF00FF")(seq(0,1,length.out=length(bin_mids_M313))), breaks = cutvec_M313) +         
@@ -11939,7 +11948,7 @@ gg.M313.3 <- ggplot(aes(x = data.mean, y = pred.mean, color = bin), data = DM_co
                 y = expression("nls predicted G (Mg ha"^-1*" yr"^-1*")")) +
            ggtitle("M313 - Arizona-New Mexico Mountains Semi-Desert - Open Woodland - Coniferous Forest - Alpine Meadow") +         
            theme_classic() + 
-           theme(legend.position = "top")
+            theme(legend.position = "top") + tune::coord_obs_pred()
            
 gg.M313.3
 
@@ -12246,7 +12255,7 @@ gg.M331.2 <- ggplot() +
             
              stat_summary_bin(aes(x = B_plt_t1_MgHa, y = G_obs_TreeInc_MgHaYr), data = G_M331, 
                               fun.data = function(x) {
-                                res <- quantile(x, probs = c(0.25,0.5,0.75))
+                                res <- c(high.CI(x), mean(x, na.rm=T), low.CI(x))
                                 names(res) <- c("ymin","y","ymax")
                                 res}, 
                               col = scales::seq_gradient_pal("#00FF00", "#FF00FF")(seq(0,1,length.out=length(bin_mids_M331))), breaks = cutvec_M331) +         
@@ -12304,7 +12313,7 @@ gg.M331.3 <- ggplot(aes(x = data.mean, y = pred.mean, color = bin), data = DM_co
                 y = expression("nls predicted G (Mg ha"^-1*" yr"^-1*")")) +
            ggtitle("M331 - Southern Rocky Mountain Steppe - Open Woodland - Coniferous Forest - Alpine Meadow") +         
            theme_classic() + 
-           theme(legend.position = "top")
+            theme(legend.position = "top") + tune::coord_obs_pred()
            
 gg.M331.3
 
@@ -12611,7 +12620,7 @@ gg.M332.2 <- ggplot() +
             
              stat_summary_bin(aes(x = B_plt_t1_MgHa, y = G_obs_TreeInc_MgHaYr), data = G_M332, 
                               fun.data = function(x) {
-                                res <- quantile(x, probs = c(0.25,0.5,0.75))
+                                res <- c(high.CI(x), mean(x, na.rm=T), low.CI(x))
                                 names(res) <- c("ymin","y","ymax")
                                 res}, 
                               col = scales::seq_gradient_pal("#00FF00", "#FF00FF")(seq(0,1,length.out=length(bin_mids_M332))), breaks = cutvec_M332) +         
@@ -12669,7 +12678,7 @@ gg.M332.3 <- ggplot(aes(x = data.mean, y = pred.mean, color = bin), data = DM_co
                 y = expression("nls predicted G (Mg ha"^-1*" yr"^-1*")")) +
            ggtitle("M332 -  Middle Rocky Mountain Steppe - Coniferous Forest - Alpine Meadow") +         
            theme_classic() + 
-           theme(legend.position = "top")
+            theme(legend.position = "top") + tune::coord_obs_pred()
            
 gg.M332.3
 
@@ -12977,7 +12986,7 @@ gg.M333.2 <- ggplot() +
             
              stat_summary_bin(aes(x = B_plt_t1_MgHa, y = G_obs_TreeInc_MgHaYr), data = G_M333, 
                               fun.data = function(x) {
-                                res <- quantile(x, probs = c(0.25,0.5,0.75))
+                                res <- c(high.CI(x), mean(x, na.rm=T), low.CI(x))
                                 names(res) <- c("ymin","y","ymax")
                                 res}, 
                               col = scales::seq_gradient_pal("#00FF00", "#FF00FF")(seq(0,1,length.out=length(bin_mids_M333))), breaks = cutvec_M333) +         
@@ -13035,7 +13044,7 @@ gg.M333.3 <- ggplot(aes(x = data.mean, y = pred.mean, color = bin), data = DM_co
                 y = expression("nls predicted G (Mg ha"^-1*" yr"^-1*")")) +
            ggtitle("M333 - Northern Rocky Mountain Steppe - Coniferous Forest - Alpine Meadow") +         
            theme_classic() + 
-           theme(legend.position = "top")
+            theme(legend.position = "top") + tune::coord_obs_pred()
            
 gg.M333.3
 
@@ -13342,7 +13351,7 @@ gg.M334.2 <- ggplot() +
             
              stat_summary_bin(aes(x = B_plt_t1_MgHa, y = G_obs_TreeInc_MgHaYr), data = G_M334, 
                               fun.data = function(x) {
-                                res <- quantile(x, probs = c(0.25,0.5,0.75))
+                                res <- c(high.CI(x), mean(x, na.rm=T), low.CI(x))
                                 names(res) <- c("ymin","y","ymax")
                                 res}, 
                               col = scales::seq_gradient_pal("#00FF00", "#FF00FF")(seq(0,1,length.out=length(bin_mids_M334))), breaks = cutvec_M334) +         
@@ -13400,7 +13409,7 @@ gg.M334.3 <- ggplot(aes(x = data.mean, y = pred.mean, color = bin), data = DM_co
                 y = expression("nls predicted G (Mg ha"^-1*" yr"^-1*")")) +
            ggtitle("M334 - Black Hills Coniferous Forest") +         
            theme_classic() + 
-           theme(legend.position = "top")
+            theme(legend.position = "top") + tune::coord_obs_pred()
            
 gg.M334.3
 
@@ -13707,7 +13716,7 @@ gg.M341.2 <- ggplot() +
             
              stat_summary_bin(aes(x = B_plt_t1_MgHa, y = G_obs_TreeInc_MgHaYr), data = G_M341, 
                               fun.data = function(x) {
-                                res <- quantile(x, probs = c(0.25,0.5,0.75))
+                                res <- c(high.CI(x), mean(x, na.rm=T), low.CI(x))
                                 names(res) <- c("ymin","y","ymax")
                                 res}, 
                               col = scales::seq_gradient_pal("#00FF00", "#FF00FF")(seq(0,1,length.out=length(bin_mids_M341))), breaks = cutvec_M341) +         
@@ -13765,7 +13774,7 @@ gg.M341.3 <- ggplot(aes(x = data.mean, y = pred.mean, color = bin), data = DM_co
                 y = expression("nls predicted G (Mg ha"^-1*" yr"^-1*")")) +
            ggtitle("M341 - Nevada-Utah Mountains Semi-Desert - Coniferous Forest - Alpine Meadow") +         
            theme_classic() + 
-           theme(legend.position = "top")
+           theme(legend.position = "top") + tune::coord_obs_pred()
            
 gg.M341.3
 
@@ -13789,7 +13798,7 @@ knitr::kable(Best_mods.G) %>% kableExtra::kable_material(c("striped", "hover"))
 nls.param.df2[nls.param.df2 == -9999] <- NA
   
   
-knitr::kable(nls.param.df2) %>% kableExtra::kable_material(c("striped", "hover"))                      
+knitr::kable(nls.param.df2) %>% kableExtra::kable_material(c("striped", "hover"))                     
 ```
 
 ## plot ge
@@ -13824,7 +13833,7 @@ gg.ge_ECOSUBCD <- ggplot(aes(x=Ecoregion, y=ge, shape = region),
                  theme_classic() + coord_flip() + 
                  labs(y =expression(italic("ge")*"(%)"), x = "Ecoregion") + 
                  scale_shape_manual(values = c(16,15,17)) + 
-                 theme(legend.position = "top") + ylim(c(-5,9))
+                  theme(legend.position = "top") + ylim(c(-5,9))
 
 #tiff(file = "nls_ge_byEcoregion_part2_9.2.2022.tiff", width = 25, height = 14, units = "cm", res = 600, compression = "lzw")
 gg.ge_ECOSUBCD
@@ -14019,7 +14028,7 @@ gg.phi_ECOSUBCD <- ggplot(aes(x=Ecoregion, y=phi, shape = region),
                  theme_classic() + coord_flip() + 
                  labs(y = expression(italic("\u03D5")), x = "Ecoregion") + 
                  scale_shape_manual(values = c(16,15,17)) + 
-                 theme(legend.position = "top") + ylim(c(-0.25,0.25))
+                  theme(legend.position = "top") + ylim(c(-0.25,0.25))
 
 #tiff(file = "nls_ge_byEcoregion_part1_9.2.2022.tiff", width = 25, height = 14, units = "cm", res = 600, compression = "lzw")
 gg.phi_ECOSUBCD
@@ -14044,7 +14053,7 @@ gg.alpha_ECOSUBCD <- ggplot(aes(x=Ecoregion, y=alpha, shape = region),
                  theme_classic() + coord_flip() + 
                  labs(y =expression(italic("\u03B1")), x = "Ecoregion") + 
                  scale_shape_manual(values = c(16,15,17)) + 
-                 theme(legend.position = "top") + ylim(c(0,1.5))
+                  theme(legend.position = "top") + ylim(c(0,1.5))
 
 #tiff(file = "nls_ge_byEcoregion_part1_9.2.2022.tiff", width = 25, height = 14, units = "cm", res = 600, compression = "lzw")
 gg.alpha_ECOSUBCD
@@ -14069,7 +14078,7 @@ gg.A_ECOSUBCD <- ggplot(aes(x=Ecoregion, y=A, shape = region),
                  theme_classic() + coord_flip() + 
                  labs(y = expression(italic("A")*" (Mg ha"^-1*")"), x = "Ecoregion") + 
                  scale_shape_manual(values = c(16,15,17)) + 
-                 theme(legend.position = "top") + ylim(c(-2,22))
+                  theme(legend.position = "top") + ylim(c(-2,22))
 
 #tiff(file = "nls_ge_byEcoregion_part1_9.2.2022.tiff", width = 25, height = 14, units = "cm", res = 600, compression = "lzw")
 gg.A_ECOSUBCD
@@ -14094,7 +14103,7 @@ gg.k_ECOSUBCD <- ggplot(aes(x=Ecoregion, y=k, shape = region),
                  theme_classic() + coord_flip() + 
                  labs(y = expression(italic("k")*" (Mg ha"^-1*")"), x = "Ecoregion") + 
                  scale_shape_manual(values = c(16,15,17)) + 
-                 theme(legend.position = "top") + ylim(c(-300,1500))
+                  theme(legend.position = "top") + ylim(c(-300,1500))
 
 #tiff(file = "nls_ge_byEcoregion_part1_9.2.2022.tiff", width = 25, height = 14, units = "cm", res = 600, compression = "lzw")
 gg.k_ECOSUBCD
@@ -14211,4 +14220,76 @@ sum(nls.param.df2[nls.param.df2$region == "east",]$k * nls.param.df2[nls.param.d
 sum(nls.param.df2[nls.param.df2$region == "interior west",]$k * nls.param.df2[nls.param.df2$region == "interior west",]$n.plots, na.rm =T) / sum(nls.param.df2[nls.param.df2$region == "interior west",]$n.plots, na.rm =T)))
 
 weighted.k.df2
+```
+
+
+# Calculations - weighted averages subsetted to 15 ecoprovinces
+
+* ecoprovince codes: 211, 212, 221, 223, 231, 232, 234, 251, M211, M221, M223, M231, M242, M261, M332
+
+```{r}
+nls.param.df2_sub <- nls.param.df2[nls.param.df2$Code %in% c("211","212","221","223","231","232","234","251","M211","M221","M223","M242","M261","M332","M231"), ]
+```
+
+## ge
+```{r}
+weighted.ge.df2_sub <-  data.frame(
+  region = c("entire US", "pacific",  "east", "interior west"),
+## all
+  "weighted ge" = c(sum(nls.param.df2_sub$ge*nls.param.df2_sub$n.plots, na.rm = T) /sum(nls.param.df2_sub$n.plots, na.rm = T) #0.3650677
+,
+## pacific
+sum(nls.param.df2_sub[nls.param.df2_sub$region == "pacific",]$ge * nls.param.df2_sub[nls.param.df2_sub$region == "pacific",]$n.plots, na.rm = T) / sum(nls.param.df2_sub[nls.param.df2_sub$region == "pacific",]$n.plots, na.rm = T) #0.7590908
+,
+## east 
+sum(nls.param.df2_sub[nls.param.df2_sub$region == "east",]$ge * nls.param.df2_sub[nls.param.df2_sub$region == "east",]$n.plots, na.rm = T) / sum(nls.param.df2_sub[nls.param.df2_sub$region == "east",]$n.plots, na.rm = T) #0.2836302
+,
+## west
+sum(nls.param.df2_sub[nls.param.df2_sub$region == "interior west",]$ge * nls.param.df2_sub[nls.param.df2_sub$region == "interior west",]$n.plots, na.rm = T) / sum(nls.param.df2_sub[nls.param.df2_sub$region == "interior west",]$n.plots, na.rm = T) # 0.3980526 
+))
+
+weighted.ge.df2_sub
+```
+
+## phi
+```{r}
+## note numbers in comments after code are first set of results (reported for ESA 2022 intial abstract submission)
+
+weighted.phi.df2_sub <-  data.frame(
+  region = c("entire US", "pacific", "east", "interior west"),
+## all
+  "weighted phi" = c(sum(nls.param.df2_sub$phi*nls.param.df2_sub$n.plots, na.rm = T) /sum(nls.param.df2_sub$n.plots) #0.3650677
+,
+## pacific
+sum(nls.param.df2_sub[nls.param.df2_sub$region == "pacific",]$phi * nls.param.df2_sub[nls.param.df2_sub$region == "pacific",]$n.plots, na.rm = T) / sum(nls.param.df2_sub[nls.param.df2_sub$region == "pacific",]$n.plots, na.rm = T) #0.7590908
+,
+## east 
+sum(nls.param.df2_sub[nls.param.df2_sub$region == "east",]$phi * nls.param.df2_sub[nls.param.df2_sub$region == "east",]$n.plots, na.rm = T) / sum(nls.param.df2_sub[nls.param.df2_sub$region == "east",]$n.plots, na.rm = T) #0.2836302
+,
+## west
+sum(nls.param.df2_sub[nls.param.df2_sub$region == "interior west",]$phi * nls.param.df2_sub[nls.param.df2_sub$region == "interior west",]$n.plots, na.rm = T) / sum(nls.param.df2_sub[nls.param.df2_sub$region == "interior west",]$n.plots, na.rm = T))) # 0.3980526 ))
+
+weighted.phi.df2_sub
+```
+
+## alpha
+```{r}
+## note numbers in comments after code are first set of results (reported for ESA 2022 intial abstract submission)
+
+weighted.alpha.df2_sub <-  data.frame(
+  region = c("entire US", "pacific", "east", "interior west"),
+## all
+  "weighted alpha" = c(sum(nls.param.df2_sub$alpha*nls.param.df2_sub$n.plots, na.rm = T) /sum(nls.param.df2_sub$n.plots) #0.3650677
+,
+## pacific
+sum(nls.param.df2_sub[nls.param.df2_sub$region == "pacific",]$alpha * nls.param.df2_sub[nls.param.df2_sub$region == "pacific",]$n.plots, na.rm = T) / sum(nls.param.df2_sub[nls.param.df2_sub$region == "pacific",]$n.plots) #0.7590908
+,
+## east 
+sum(nls.param.df2_sub[nls.param.df2_sub$region == "east",]$alpha * nls.param.df2_sub[nls.param.df2_sub$region == "east",]$n.plots, na.rm = T) / sum(nls.param.df2_sub[nls.param.df2_sub$region == "east",]$n.plots) #0.2836302
+,
+## west
+sum(nls.param.df2_sub[nls.param.df2_sub$region == "interior west",]$alpha * nls.param.df2_sub[nls.param.df2_sub$region == "interior west",]$n.plots, na.rm = T) / sum(nls.param.df2_sub[nls.param.df2_sub$region == "interior west",]$n.plots) # 0.3980526 
+))
+
+weighted.alpha.df2_sub
 ```

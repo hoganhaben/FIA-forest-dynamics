@@ -396,7 +396,7 @@ load("C:/Users/hogan.jaaron/Dropbox/FIA_R/Starter_FIA_data_processing/G_dataset.
 # save(G_pdsi_data, file = "G_pdsi_data.Rdata")
 #####################################################
 #####################################################
-load("C:/Users/hogan.jaaron/Dropbox/FIA_R/data_PDSI/G_pdsi_data_2_JAN-AUG.Rdata")  ## simply load ths finished data product -- the above code takes some time to run...
+load("C:/Users/hogan.jaaron/Dropbox/FIA_R/data_PDSI/PDSI_calc_originals/G_pdsi_data_2_JAN-AUG.Rdata")  ## simply load ths finished data product -- the above code takes some time to run...
 
 # if working on P-50
 # load("C:/Users/hogie/Dropbox/FIA_R/data_PDSI/G_pdsi_data_2_JAN-AUG.Rdata")  ## simply load ths finished data product -- the above code takes some time to run...
@@ -462,7 +462,6 @@ cleaner_pltIDs <- c(outliers_cleanerA$pltID, outliers_cleanerB$pltID, outliers_c
 cleaner_pltIDs <- cleaner_pltIDs[order(cleaner_pltIDs)]
 
 #### APPLY CLEANERS!
-
 G <- G[!G$pltID %in% cleaner_pltIDs,]
 ```
 
@@ -957,7 +956,7 @@ gg.211.2 <- ggplot() +
             
              stat_summary_bin(aes(x = B_plt_t1_MgHa, y = G_obs_TreeInc_MgHaYr), data = G_211, 
                               fun.data = function(x) {
-                                res <- quantile(x, probs = c(0.25,0.5,0.75))
+                                res <- c(high.CI(x), mean(x, na.rm=T), low.CI(x))
                                 names(res) <- c("ymin","y","ymax")
                                 res}, 
                               col = scales::seq_gradient_pal("#00FF00", "#FF00FF")(seq(0,1,length.out=length(bin_mids_211))), breaks = cutvec_211) +         
@@ -971,7 +970,7 @@ gg.211.2 <- ggplot() +
                  y = expression("biomass growth (Mg ha"^-1*" yr"^-1*")")) + 
              ggtitle("211 - Northeastern Mixed Forest") +
              theme_classic() + theme(axis.text.x=element_text(angle=90,hjust=1)) + 
-             scale_x_continuous(limits = c(0, cutvec_211[20]*1.05), expand =c(0,0))  +
+             scale_x_continuous(limits = c(0, tail(cutvec_211, 1)*1.05), expand =c(0,0))  +
              coord_cartesian(ylim=c(-2, 10))
 
              #ylim(c(min(211_pred_df$`Prop.2.5%`)-0.25, max(211_pred_df$`Prop.97.5%`)+0.25))
@@ -1320,7 +1319,7 @@ gg.212.2 <- ggplot() +
             
              stat_summary_bin(aes(x = B_plt_t1_MgHa, y = G_obs_TreeInc_MgHaYr), data = G_212, 
                               fun.data = function(x) {
-                                res <- quantile(x, probs = c(0.25,0.5,0.75))
+                                res <- c(high.CI(x), mean(x, na.rm=T), low.CI(x))
                                 names(res) <- c("ymin","y","ymax")
                                 res}, 
                               col = scales::seq_gradient_pal("#00FF00", "#FF00FF")(seq(0,1,length.out=length(bin_mids_212))), breaks = cutvec_212) +         
@@ -1334,7 +1333,7 @@ gg.212.2 <- ggplot() +
                  y = expression("biomass growth (Mg ha"^-1*" yr"^-1*")")) + 
              ggtitle("212 - Laurentian Mixed Forest") +
              theme_classic() + theme(axis.text.x=element_text(angle=90,hjust=1)) + 
-             scale_x_continuous(limits = c(0, cutvec_212[20]*1.05), expand =c(0,0))  +
+             scale_x_continuous(limits = c(0, tail(cutvec_212, 1)*1.05), expand =c(0,0))  +
              coord_cartesian(ylim=c(-2, 10))
 
              #ylim(c(min(212_pred_df$`Prop.2.5%`)-0.25, max(212_pred_df$`Prop.97.5%`)+0.25))
@@ -1682,7 +1681,7 @@ gg.221.2 <- ggplot() +
             
              stat_summary_bin(aes(x = B_plt_t1_MgHa, y = G_obs_TreeInc_MgHaYr), data = G_221, 
                               fun.data = function(x) {
-                                res <- quantile(x, probs = c(0.25,0.5,0.75))
+                                res <- c(high.CI(x), mean(x, na.rm=T), low.CI(x))
                                 names(res) <- c("ymin","y","ymax")
                                 res}, 
                               col = scales::seq_gradient_pal("#00FF00", "#FF00FF")(seq(0,1,length.out=length(bin_mids_221))), breaks = cutvec_221) +         
@@ -1696,7 +1695,7 @@ gg.221.2 <- ggplot() +
                  y = expression("biomass growth (Mg ha"^-1*" yr"^-1*")")) + 
              ggtitle("221 - Eastern Broadleaf Forest") +
              theme_classic() + theme(axis.text.x=element_text(angle=90,hjust=1)) + 
-             scale_x_continuous(limits = c(0, cutvec_221[20]*1.05), expand =c(0,0))  +
+             scale_x_continuous(limits = c(0, tail(cutvec_221, 1)*1.05), expand =c(0,0))  +
              coord_cartesian(ylim=c(-2, 10))
  
              #ylim(c(min(221_pred_df$`Prop.2.5%`)-0.25, max(221_pred_df$`Prop.97.5%`)+0.25))
@@ -2044,10 +2043,10 @@ gg.222.2 <- ggplot() +
             
              stat_summary_bin(aes(x = B_plt_t1_MgHa, y = G_obs_TreeInc_MgHaYr), data = G_222, 
                               fun.data = function(x) {
-                                res <- quantile(x, probs = c(0.25,0.5,0.75))
+                                res <- c(high.CI(x), mean(x, na.rm=T), low.CI(x))
                                 names(res) <- c("ymin","y","ymax")
                                 res}, 
-                              col = scales::seq_gradient_pal("#00FF00", "#FF00FF")(seq(0,1,length.out=length(bin_mids_222))), breaks = cutvec_222) +         
+                              col = scales::seq_gradient_pal("#00FF00", "#FF00FF")(seq(0,1,length.out=length(bin_mids_222)+1)), breaks = cutvec_222) +         
     
              # geom_ribbon(aes(x = B_plt_t1_MgHa, ymin = `Prop.2.5%`, ymax = `Prop.97.5%`), 
              #             data = 222_pred_df, color="#FF000080", fill ="#FF000080", alpha = 0.25, lty =3) +
@@ -2058,7 +2057,7 @@ gg.222.2 <- ggplot() +
                  y = expression("biomass growth (Mg ha"^-1*" yr"^-1*")")) + 
              ggtitle("222 - Midwest Broadleaf Forest") +
              theme_classic() + theme(axis.text.x=element_text(angle=90,hjust=1)) + 
-             scale_x_continuous(limits = c(0, cutvec_222[20]*1.05), expand =c(0,0)) +
+             scale_x_continuous(limits = c(0, tail(cutvec_222, 1)*1.05), expand =c(0,0)) +
              coord_cartesian(ylim=c(-2, 10))
   
              #ylim(c(min(222_pred_df$`Prop.2.5%`)-0.25, max(222_pred_df$`Prop.97.5%`)+0.25))
@@ -2407,7 +2406,7 @@ gg.223.2 <- ggplot() +
             
              stat_summary_bin(aes(x = B_plt_t1_MgHa, y = G_obs_TreeInc_MgHaYr), data = G_223, 
                               fun.data = function(x) {
-                                res <- quantile(x, probs = c(0.25,0.5,0.75))
+                                res <- c(high.CI(x), mean(x, na.rm=T), low.CI(x))
                                 names(res) <- c("ymin","y","ymax")
                                 res}, 
                               col = scales::seq_gradient_pal("#00FF00", "#FF00FF")(seq(0,1,length.out=length(bin_mids_223))), breaks = cutvec_223) +         
@@ -2421,7 +2420,7 @@ gg.223.2 <- ggplot() +
                  y = expression("biomass growth (Mg ha"^-1*" yr"^-1*")")) + 
              ggtitle("223 - Central Interior Broadleaf Forest") +
              theme_classic() + theme(axis.text.x=element_text(angle=90,hjust=1)) + 
-             scale_x_continuous(limits = c(0, cutvec_223[20]*1.05), expand =c(0,0)) +
+             scale_x_continuous(limits = c(0, tail(cutvec_223, 1)*1.05), expand =c(0,0)) +
              coord_cartesian(ylim=c(-2, 10))
 
              #ylim(c(min(223_pred_df$`Prop.2.5%`)-0.25, max(223_pred_df$`Prop.97.5%`)+0.25))
@@ -2770,10 +2769,10 @@ gg.231.2 <- ggplot() +
             
              stat_summary_bin(aes(x = B_plt_t1_MgHa, y = G_obs_TreeInc_MgHaYr), data = G_231, 
                               fun.data = function(x) {
-                                res <- quantile(x, probs = c(0.25,0.5,0.75))
+                                res <- c(high.CI(x), mean(x, na.rm=T), low.CI(x))
                                 names(res) <- c("ymin","y","ymax")
                                 res}, 
-                              col = scales::seq_gradient_pal("#00FF00", "#FF00FF")(seq(0,1,length.out=length(bin_mids_231))), breaks = cutvec_231) +         
+                              col = scales::seq_gradient_pal("#00FF00", "#FF00FF")(seq(0,1,length.out=length(bin_mids_231)+1)), breaks = cutvec_231) +         
     
              # geom_ribbon(aes(x = B_plt_t1_MgHa, ymin = `Prop.2.5%`, ymax = `Prop.97.5%`), 
              #             data = 231_pred_df, color="#FF000080", fill ="#FF000080", alpha = 0.25, lty =3) +
@@ -2784,7 +2783,7 @@ gg.231.2 <- ggplot() +
                  y = expression("biomass growth (Mg ha"^-1*" yr"^-1*")")) + 
              ggtitle("231 - Southeastern Mixed Forest") +
              theme_classic() + theme(axis.text.x=element_text(angle=90,hjust=1)) + 
-             scale_x_continuous(limits = c(0, cutvec_231[20]*1.05), expand =c(0,0)) +
+             scale_x_continuous(limits = c(0, tail(cutvec_231, 1)*1.05), expand =c(0,0)) +
              coord_cartesian(ylim=c(-2, 10))
 
              #ylim(c(min(231_pred_df$`Prop.2.5%`)-0.25, max(231_pred_df$`Prop.97.5%`)+0.25))
@@ -3132,7 +3131,7 @@ gg.232.2 <- ggplot() +
             
              stat_summary_bin(aes(x = B_plt_t1_MgHa, y = G_obs_TreeInc_MgHaYr), data = G_232, 
                               fun.data = function(x) {
-                                res <- quantile(x, probs = c(0.25,0.5,0.75))
+                                res <- c(high.CI(x), mean(x, na.rm=T), low.CI(x))
                                 names(res) <- c("ymin","y","ymax")
                                 res}, 
                               col = scales::seq_gradient_pal("#00FF00", "#FF00FF")(seq(0,1,length.out=length(bin_mids_232))), breaks = cutvec_232) +         
@@ -3146,7 +3145,7 @@ gg.232.2 <- ggplot() +
                  y = expression("biomass growth (Mg ha"^-1*" yr"^-1*")")) + 
              ggtitle("232 - Outer Coastal Plain Mixed Forest") +
              theme_classic() + theme(axis.text.x=element_text(angle=90,hjust=1)) + 
-             scale_x_continuous(limits = c(0, cutvec_232[20]*1.05), expand =c(0,0)) +
+             scale_x_continuous(limits = c(0, tail(cutvec_232, 1)*1.05), expand =c(0,0)) +
              coord_cartesian(ylim=c(-2, 10))
 
              #ylim(c(min(232_pred_df$`Prop.2.5%`)-0.25, max(232_pred_df$`Prop.97.5%`)+0.25))
@@ -3497,7 +3496,7 @@ gg.234.2 <- ggplot() +
             
              stat_summary_bin(aes(x = B_plt_t1_MgHa, y = G_obs_TreeInc_MgHaYr), data = G_234, 
                               fun.data = function(x) {
-                                res <- quantile(x, probs = c(0.25,0.5,0.75))
+                                res <- c(high.CI(x), mean(x, na.rm=T), low.CI(x))
                                 names(res) <- c("ymin","y","ymax")
                                 res}, 
                               col = scales::seq_gradient_pal("#00FF00", "#FF00FF")(seq(0,1,length.out=length(bin_mids_234))), breaks = cutvec_234) +         
@@ -3511,7 +3510,7 @@ gg.234.2 <- ggplot() +
                  y = expression("biomass growth (Mg ha"^-1*" yr"^-1*")")) + 
              ggtitle("234 - Lower Mississippi Riverine Forest") +
              theme_classic() + theme(axis.text.x=element_text(angle=90,hjust=1)) + 
-             scale_x_continuous(limits = c(0, cutvec_234[20]*1.05), expand =c(0,0)) +
+             scale_x_continuous(limits = c(0, tail(cutvec_234, 1)*1.05), expand =c(0,0)) +
              coord_cartesian(ylim=c(-2, 10))
   
              #ylim(c(min(234_pred_df$`Prop.2.5%`)-0.25, max(234_pred_df$`Prop.97.5%`)+0.25))
@@ -3860,7 +3859,7 @@ gg.242.2 <- ggplot() +
             
              stat_summary_bin(aes(x = B_plt_t1_MgHa, y = G_obs_TreeInc_MgHaYr), data = G_242, 
                               fun.data = function(x) {
-                                res <- quantile(x, probs = c(0.25,0.5,0.75))
+                                res <- c(high.CI(x), mean(x, na.rm=T), low.CI(x))
                                 names(res) <- c("ymin","y","ymax")
                                 res}, 
                               col = scales::seq_gradient_pal("#00FF00", "#FF00FF")(seq(0,1,length.out=length(bin_mids_242))), breaks = cutvec_242) +         
@@ -3874,7 +3873,7 @@ gg.242.2 <- ggplot() +
                  y = expression("biomass growth (Mg ha"^-1*" yr"^-1*")")) + 
              ggtitle("242 - Pacific Lowland Mixed Forest") +
              theme_classic() + theme(axis.text.x=element_text(angle=90,hjust=1)) + 
-             scale_x_continuous(limits = c(0, cutvec_242[20]*1.05), expand =c(0,0)) +
+             scale_x_continuous(limits = c(0, tail(cutvec_242, 1)*1.05), expand =c(0,0)) +
              coord_cartesian(ylim=c(-2, 10))
 
              #ylim(c(min(242_pred_df$`Prop.2.5%`)-0.25, max(242_pred_df$`Prop.97.5%`)+0.25))
@@ -4223,10 +4222,10 @@ gg.251.2 <- ggplot() +
             
              stat_summary_bin(aes(x = B_plt_t1_MgHa, y = G_obs_TreeInc_MgHaYr), data = G_251, 
                               fun.data = function(x) {
-                                res <- quantile(x, probs = c(0.25,0.5,0.75))
+                                res <- c(high.CI(x), mean(x, na.rm=T), low.CI(x))
                                 names(res) <- c("ymin","y","ymax")
                                 res}, 
-                              col = scales::seq_gradient_pal("#00FF00", "#FF00FF")(seq(0,1,length.out=length(bin_mids_251))), breaks = cutvec_251) +         
+                              col = scales::seq_gradient_pal("#00FF00", "#FF00FF")(seq(0,1,length.out=length(bin_mids_251)+1)), breaks = cutvec_251) +         
     
              # geom_ribbon(aes(x = B_plt_t1_MgHa, ymin = `Prop.2.5%`, ymax = `Prop.97.5%`), 
              #             data = 251_pred_df, color="#FF000080", fill ="#FF000080", alpha = 0.25, lty =3) +
@@ -4237,7 +4236,7 @@ gg.251.2 <- ggplot() +
                  y = expression("biomass growth (Mg ha"^-1*" yr"^-1*")")) + 
              ggtitle("251 - Prairie Parkland (Temperate)") +
              theme_classic() + theme(axis.text.x=element_text(angle=90,hjust=1)) + 
-             scale_x_continuous(limits = c(0, cutvec_251[20]*1.05), expand =c(0,0))  +
+             scale_x_continuous(limits = c(0, tail(cutvec_251, 1)*1.05), expand =c(0,0))  +
              coord_cartesian(ylim=c(-2, 10))
  
              #ylim(c(min(251_pred_df$`Prop.2.5%`)-0.25, max(251_pred_df$`Prop.97.5%`)+0.25))
@@ -4299,8 +4298,14 @@ fit.models <-  T
 if(fit.models == T) {
   
 ### cutvec and bin mids
-cutvec_255 <- c(0,creditmodel::cut_equal(G_255$B_plt_t1_MgHa, g=20)[1:19], max(G_255$B_plt_t1_MgHa))
-bin_mids_255 <- round(cutvec_255[-length(cutvec_255)] + diff(cutvec_255)/2)
+cutvec_255 <- round(quantile(G_255$B_plt_t1_MgHa, seq(0,1, length.out = 21)))
+
+## if there are duplicated cut_vec values when using 20 (i.e., 5% quantile bins), then go to 10% quantile bins
+if(any(any(duplicated(cutvec_255)))){
+  cutvec_255 <- round(quantile(G_255$B_plt_t1_MgHa, seq(0,1, length.out = 11)))
+}
+
+bin_mids_255 <- unname(round(cutvec_255[-length(cutvec_255)] + diff(cutvec_255)/2))
 
 #### add weights data column 
 ## first get the correct bin  - assign as column in data frame
@@ -4581,7 +4586,7 @@ gg.255.2 <- ggplot() +
             
              stat_summary_bin(aes(x = B_plt_t1_MgHa, y = G_obs_TreeInc_MgHaYr), data = G_255, 
                               fun.data = function(x) {
-                                res <- quantile(x, probs = c(0.25,0.5,0.75))
+                                res <- c(high.CI(x), mean(x, na.rm=T), low.CI(x))
                                 names(res) <- c("ymin","y","ymax")
                                 res}, 
                               col = scales::seq_gradient_pal("#00FF00", "#FF00FF")(seq(0,1,length.out=length(bin_mids_255))), breaks = cutvec_255) +         
@@ -4595,7 +4600,7 @@ gg.255.2 <- ggplot() +
                  y = expression("biomass growth (Mg ha"^-1*" yr"^-1*")")) + 
              ggtitle("255 - Prairie Parkland (Subtropical)") +
              theme_classic() + theme(axis.text.x=element_text(angle=90,hjust=1)) + 
-             scale_x_continuous(limits = c(0, cutvec_255[20]*1.05), expand =c(0,0)) +
+             scale_x_continuous(limits = c(0, tail(cutvec_255, 1)*1.05), expand =c(0,0)) +
              coord_cartesian(ylim=c(-2, 10))
 
              #ylim(c(min(255_pred_df$`Prop.2.5%`)-0.25, max(255_pred_df$`Prop.97.5%`)+0.25))
@@ -4945,7 +4950,7 @@ gg.261.2 <- ggplot() +
             
              stat_summary_bin(aes(x = B_plt_t1_MgHa, y = G_obs_TreeInc_MgHaYr), data = G_261, 
                               fun.data = function(x) {
-                                res <- quantile(x, probs = c(0.25,0.5,0.75))
+                                res <- c(high.CI(x), mean(x, na.rm=T), low.CI(x))
                                 names(res) <- c("ymin","y","ymax")
                                 res}, 
                               col = scales::seq_gradient_pal("#00FF00", "#FF00FF")(seq(0,1,length.out=length(bin_mids_261))), breaks = cutvec_261) +         
@@ -4959,7 +4964,7 @@ gg.261.2 <- ggplot() +
                  y = expression("biomass growth (Mg ha"^-1*" yr"^-1*")")) + 
              ggtitle("261 - California Coastal Chaparral Forest and Shrub") +
              theme_classic() + theme(axis.text.x=element_text(angle=90,hjust=1)) + 
-             scale_x_continuous(limits = c(0, cutvec_261[20]*1.05), expand =c(0,0)) +
+             scale_x_continuous(limits = c(0, tail(cutvec_261, 1)*1.05), expand =c(0,0)) +
              coord_cartesian(ylim=c(-2, 10))
   
              #ylim(c(min(261_pred_df$`Prop.2.5%`)-0.25, max(261_pred_df$`Prop.97.5%`)+0.25))
@@ -5309,7 +5314,7 @@ gg.262.2 <- ggplot() +
             
              stat_summary_bin(aes(x = B_plt_t1_MgHa, y = G_obs_TreeInc_MgHaYr), data = G_262, 
                               fun.data = function(x) {
-                                res <- quantile(x, probs = c(0.25,0.5,0.75))
+                                res <- c(high.CI(x), mean(x, na.rm=T), low.CI(x))
                                 names(res) <- c("ymin","y","ymax")
                                 res}, 
                               col = scales::seq_gradient_pal("#00FF00", "#FF00FF")(seq(0,1,length.out=length(bin_mids_262))), breaks = cutvec_262) +         
@@ -5323,7 +5328,7 @@ gg.262.2 <- ggplot() +
                  y = expression("biomass growth (Mg ha"^-1*" yr"^-1*")")) + 
              ggtitle("262 - California Dry Steppe") +
              theme_classic() + theme(axis.text.x=element_text(angle=90,hjust=1)) + 
-             scale_x_continuous(limits = c(0, cutvec_262[20]*1.05), expand =c(0,0)) +
+             scale_x_continuous(limits = c(0, tail(cutvec_262, 1)*1.05), expand =c(0,0)) +
              coord_cartesian(ylim=c(-2, 10))
   
              #ylim(c(min(262_pred_df$`Prop.2.5%`)-0.25, max(262_pred_df$`Prop.97.5%`)+0.25))
@@ -5379,7 +5384,7 @@ gg.262.3
 
 ```{r}
 ## code control 
-fit.models <-  T
+fit.models <-  F
 ```
 
 ```{r}
@@ -5622,6 +5627,8 @@ try(summary(get(paste("nls_263.",  Mod.Sel2, sep =""))) )
 * add s model: `r ifelse(exists(paste("nls_263.", Mod.Sel1, "b", sep ="")), "fits", "does not fit")`
 * add s+p model: `r ifelse(exists(paste("nls_263.", Mod.Sel1, "c", sep ="")), "fits", "does not fit")`
 
+* note: model fit, but fit was funky due to data being sparse 
+
 ## plot residuals
 
 ```{r}
@@ -5673,10 +5680,10 @@ gg.263.2 <- ggplot() +
             
              stat_summary_bin(aes(x = B_plt_t1_MgHa, y = G_obs_TreeInc_MgHaYr), data = G_263, 
                               fun.data = function(x) {
-                                res <- quantile(x, probs = c(0.25,0.5,0.75))
+                                res <- c(high.CI(x), mean(x, na.rm=T), low.CI(x))
                                 names(res) <- c("ymin","y","ymax")
                                 res}, 
-                              col = scales::seq_gradient_pal("#00FF00", "#FF00FF")(seq(0,1,length.out=length(bin_mids_263))), breaks = cutvec_263) +         
+                              col = scales::seq_gradient_pal("#00FF00", "#FF00FF")(seq(0,1,length.out=length(bin_mids_263)+1)), breaks = cutvec_263) +         
     
              # geom_ribbon(aes(x = B_plt_t1_MgHa, ymin = `Prop.2.5%`, ymax = `Prop.97.5%`), 
              #             data = 263_pred_df, color="#FF000080", fill ="#FF000080", alpha = 0.25, lty =3) +
@@ -5687,7 +5694,7 @@ gg.263.2 <- ggplot() +
                  y = expression("biomass growth (Mg ha"^-1*" yr"^-1*")")) + 
              ggtitle("263 - California Coastal Steppe - Mixed Forest and Redwood Forest") +
              theme_classic() + theme(axis.text.x=element_text(angle=90,hjust=1)) + 
-             scale_x_continuous(limits = c(0, cutvec_263[20]*1.05), expand =c(0,0)) +
+             scale_x_continuous(limits = c(0, tail(cutvec_263, 1)*1.05), expand =c(0,0)) +
              coord_cartesian(ylim=c(-2, 10))
   
              #ylim(c(min(263_pred_df$`Prop.2.5%`)-0.25, max(263_pred_df$`Prop.97.5%`)+0.25))
@@ -6037,10 +6044,10 @@ gg.313.2 <- ggplot() +
             
              stat_summary_bin(aes(x = B_plt_t1_MgHa, y = G_obs_TreeInc_MgHaYr), data = G_313, 
                               fun.data = function(x) {
-                                res <- quantile(x, probs = c(0.25,0.5,0.75))
+                                res <- c(high.CI(x), mean(x, na.rm=T), low.CI(x))
                                 names(res) <- c("ymin","y","ymax")
                                 res}, 
-                              col = scales::seq_gradient_pal("#00FF00", "#FF00FF")(seq(0,1,length.out=length(bin_mids_313))), breaks = cutvec_313) +         
+                              col = scales::seq_gradient_pal("#00FF00", "#FF00FF")(seq(0,1,length.out=length(bin_mids_313)+1)), breaks = cutvec_313) +         
     
              # geom_ribbon(aes(x = B_plt_t1_MgHa, ymin = `Prop.2.5%`, ymax = `Prop.97.5%`), 
              #             data = 313_pred_df, color="#FF000080", fill ="#FF000080", alpha = 0.25, lty =3) +
@@ -6051,7 +6058,7 @@ gg.313.2 <- ggplot() +
                  y = expression("biomass growth (Mg ha"^-1*" yr"^-1*")")) + 
              ggtitle("313 - Colorado Plateau Semi-Desert") +
              theme_classic() + theme(axis.text.x=element_text(angle=90,hjust=1)) + 
-             scale_x_continuous(limits = c(0, cutvec_313[20]*1.05), expand =c(0,0)) +
+             scale_x_continuous(limits = c(0, tail(cutvec_313, 1)*1.05), expand =c(0,0)) +
              coord_cartesian(ylim=c(-2, 10))
   
              #ylim(c(min(313_pred_df$`Prop.2.5%`)-0.25, max(313_pred_df$`Prop.97.5%`)+0.25))
@@ -6399,7 +6406,7 @@ gg.315.2 <- ggplot() +
             
              stat_summary_bin(aes(x = B_plt_t1_MgHa, y = G_obs_TreeInc_MgHaYr), data = G_315, 
                               fun.data = function(x) {
-                                res <- quantile(x, probs = c(0.25,0.5,0.75))
+                                res <- c(high.CI(x), mean(x, na.rm=T), low.CI(x))
                                 names(res) <- c("ymin","y","ymax")
                                 res}, 
                               col = scales::seq_gradient_pal("#00FF00", "#FF00FF")(seq(0,1,length.out=length(bin_mids_315))), breaks = cutvec_315) +         
@@ -6413,7 +6420,7 @@ gg.315.2 <- ggplot() +
                  y = expression("biomass growth (Mg ha"^-1*" yr"^-1*")")) + 
              ggtitle("315 - Southwest Plateau and Plains Dry Steppe and Shrub") +
              theme_classic() + theme(axis.text.x=element_text(angle=90,hjust=1)) + 
-             scale_x_continuous(limits = c(0, cutvec_315[20]*1.05), expand =c(0,0)) +
+             scale_x_continuous(limits = c(0, tail(cutvec_315, 1)*1.05), expand =c(0,0)) +
              coord_cartesian(ylim=c(-2, 10))
   
              #ylim(c(min(315_pred_df$`Prop.2.5%`)-0.25, max(315_pred_df$`Prop.97.5%`)+0.25))
@@ -6764,7 +6771,7 @@ gg.321.2 <- ggplot() +
             
              stat_summary_bin(aes(x = B_plt_t1_MgHa, y = G_obs_TreeInc_MgHaYr), data = G_321, 
                               fun.data = function(x) {
-                                res <- quantile(x, probs = c(0.25,0.5,0.75))
+                                res <- c(high.CI(x), mean(x, na.rm=T), low.CI(x))
                                 names(res) <- c("ymin","y","ymax")
                                 res}, 
                               col = scales::seq_gradient_pal("#00FF00", "#FF00FF")(seq(0,1,length.out=length(bin_mids_321))), breaks = cutvec_321) +         
@@ -6778,7 +6785,7 @@ gg.321.2 <- ggplot() +
                  y = expression("biomass growth (Mg ha"^-1*" yr"^-1*")")) + 
              ggtitle("321 - Chihuahuan Semi-Desert") +
              theme_classic() + theme(axis.text.x=element_text(angle=90,hjust=1)) + 
-             scale_x_continuous(limits = c(0, cutvec_321[20]*1.05), expand =c(0,0))  
+             scale_x_continuous(limits = c(0, tail(cutvec_321, 1)*1.05), expand =c(0,0))  
              #ylim(c(min(321_pred_df$`Prop.2.5%`)-0.25, max(321_pred_df$`Prop.97.5%`)+0.25))
              #ylim(c(-2,8))
             
@@ -6910,6 +6917,7 @@ try(summary(get(paste("nls_322.",  Mod.Sel1, sep =""))) ) #model summary
 
 }
 ```
+
 ### summary 
 * simple model: `r ifelse(exists("nls_322.1"), "fits", "does not fit")`
 * phi model: `r ifelse(exists("nls_322.2"), "fits", "does not fit")`
@@ -7126,7 +7134,7 @@ gg.322.2 <- ggplot() +
             
              stat_summary_bin(aes(x = B_plt_t1_MgHa, y = G_obs_TreeInc_MgHaYr), data = G_322, 
                               fun.data = function(x) {
-                                res <- quantile(x, probs = c(0.25,0.5,0.75))
+                                res <- c(high.CI(x), mean(x, na.rm=T), low.CI(x))
                                 names(res) <- c("ymin","y","ymax")
                                 res}, 
                               col = scales::seq_gradient_pal("#00FF00", "#FF00FF")(seq(0,1,length.out=length(bin_mids_322))), breaks = cutvec_322) +         
@@ -7140,7 +7148,7 @@ gg.322.2 <- ggplot() +
                  y = expression("biomass growth (Mg ha"^-1*" yr"^-1*")")) + 
              ggtitle("322 - American Semidesert and Desert") +
              theme_classic() + theme(axis.text.x=element_text(angle=90,hjust=1)) + 
-             scale_x_continuous(limits = c(0, cutvec_322[20]*1.05), expand =c(0,0)) +
+             scale_x_continuous(limits = c(0, tail(cutvec_322, 1)*1.05), expand =c(0,0)) +
              coord_cartesian(ylim=c(-2, 10))
   
              #ylim(c(min(322_pred_df$`Prop.2.5%`)-0.25, max(322_pred_df$`Prop.97.5%`)+0.25))
@@ -7490,7 +7498,7 @@ gg.331.2 <- ggplot() +
             
              stat_summary_bin(aes(x = B_plt_t1_MgHa, y = G_obs_TreeInc_MgHaYr), data = G_331, 
                               fun.data = function(x) {
-                                res <- quantile(x, probs = c(0.25,0.5,0.75))
+                                res <- c(high.CI(x), mean(x, na.rm=T), low.CI(x))
                                 names(res) <- c("ymin","y","ymax")
                                 res}, 
                               col = scales::seq_gradient_pal("#00FF00", "#FF00FF")(seq(0,1,length.out=length(bin_mids_331))), breaks = cutvec_331) +         
@@ -7504,7 +7512,7 @@ gg.331.2 <- ggplot() +
                  y = expression("biomass growth (Mg ha"^-1*" yr"^-1*")")) + 
              ggtitle("331 - Great Plains/Palouse Dry Steppe") +
              theme_classic() + theme(axis.text.x=element_text(angle=90,hjust=1)) + 
-             scale_x_continuous(limits = c(0, cutvec_331[20]*1.05), expand =c(0,0)) +
+             scale_x_continuous(limits = c(0, tail(cutvec_331, 1)*1.05), expand =c(0,0)) +
              coord_cartesian(ylim=c(-2, 10))
   
              #ylim(c(min(331_pred_df$`Prop.2.5%`)-0.25, max(331_pred_df$`Prop.97.5%`)+0.25))
@@ -7854,10 +7862,10 @@ gg.332.2 <- ggplot() +
             
              stat_summary_bin(aes(x = B_plt_t1_MgHa, y = G_obs_TreeInc_MgHaYr), data = G_332, 
                               fun.data = function(x) {
-                                res <- quantile(x, probs = c(0.25,0.5,0.75))
+                                res <- c(high.CI(x), mean(x, na.rm=T), low.CI(x))
                                 names(res) <- c("ymin","y","ymax")
                                 res}, 
-                              col = scales::seq_gradient_pal("#00FF00", "#FF00FF")(seq(0,1,length.out=length(bin_mids_332)-1)), breaks = cutvec_332) +         
+                              col = scales::seq_gradient_pal("#00FF00", "#FF00FF")(seq(0,1,length.out=length(bin_mids_332)+1)), breaks = cutvec_332) +         
     
              # geom_ribbon(aes(x = B_plt_t1_MgHa, ymin = `Prop.2.5%`, ymax = `Prop.97.5%`), 
              #             data = 332_pred_df, color="#FF000080", fill ="#FF000080", alpha = 0.25, lty =3) +
@@ -7868,7 +7876,7 @@ gg.332.2 <- ggplot() +
                  y = expression("biomass growth (Mg ha"^-1*" yr"^-1*")")) + 
              ggtitle("332 - Southwest Plateau and Plains Dry Steppe and Shrub") +
              theme_classic() + theme(axis.text.x=element_text(angle=90,hjust=1)) + 
-             scale_x_continuous(limits = c(0, cutvec_332[20]*1.05), expand =c(0,0)) +
+             scale_x_continuous(limits = c(0, tail(cutvec_332, 1)*1.05), expand =c(0,0)) +
              coord_cartesian(ylim=c(-2, 10))
   
              #ylim(c(min(332_pred_df$`Prop.2.5%`)-0.25, max(332_pred_df$`Prop.97.5%`)+0.25))
@@ -8219,7 +8227,7 @@ gg.341.2 <- ggplot() +
             
              stat_summary_bin(aes(x = B_plt_t1_MgHa, y = G_obs_TreeInc_MgHaYr), data = G_341, 
                               fun.data = function(x) {
-                                res <- quantile(x, probs = c(0.25,0.5,0.75))
+                                res <- c(high.CI(x), mean(x, na.rm=T), low.CI(x))
                                 names(res) <- c("ymin","y","ymax")
                                 res}, 
                               col = scales::seq_gradient_pal("#00FF00", "#FF00FF")(seq(0,1,length.out=length(bin_mids_341))), breaks = cutvec_341) +         
@@ -8233,7 +8241,7 @@ gg.341.2 <- ggplot() +
                  y = expression("biomass growth (Mg ha"^-1*" yr"^-1*")")) + 
              ggtitle("341 - Nevada-Utah Mountains Semi-Desert - Coniferous Forest - Alpine Meadow") +
              theme_classic() + theme(axis.text.x=element_text(angle=90,hjust=1)) + 
-             scale_x_continuous(limits = c(0, cutvec_341[20]*1.05), expand =c(0,0)) +
+             scale_x_continuous(limits = c(0, tail(cutvec_341, 1)*1.05), expand =c(0,0)) +
              coord_cartesian(ylim=c(-2, 10))
   
              #ylim(c(min(341_pred_df$`Prop.2.5%`)-0.25, max(341_pred_df$`Prop.97.5%`)+0.25))
@@ -8584,7 +8592,7 @@ gg.342.2 <- ggplot() +
             
              stat_summary_bin(aes(x = B_plt_t1_MgHa, y = G_obs_TreeInc_MgHaYr), data = G_342, 
                               fun.data = function(x) {
-                                res <- quantile(x, probs = c(0.25,0.5,0.75))
+                                res <- c(high.CI(x), mean(x, na.rm=T), low.CI(x))
                                 names(res) <- c("ymin","y","ymax")
                                 res}, 
                               col = scales::seq_gradient_pal("#00FF00", "#FF00FF")(seq(0,1,length.out=length(bin_mids_342))), breaks = cutvec_342) +         
@@ -8598,7 +8606,7 @@ gg.342.2 <- ggplot() +
                  y = expression("biomass growth (Mg ha"^-1*" yr"^-1*")")) + 
              ggtitle("342 - Intermountain Semi-Desert") +
              theme_classic() + theme(axis.text.x=element_text(angle=90,hjust=1)) + 
-             scale_x_continuous(limits = c(0, cutvec_342[20]*1.05), expand =c(0,0))  +
+             scale_x_continuous(limits = c(0, tail(cutvec_342, 1)*1.05), expand =c(0,0))  +
              coord_cartesian(ylim=c(-2, 10))
  
              #ylim(c(min(342_pred_df$`Prop.2.5%`)-0.25, max(342_pred_df$`Prop.97.5%`)+0.25))
@@ -8946,7 +8954,7 @@ gg.411.2 <- ggplot() +
             
              stat_summary_bin(aes(x = B_plt_t1_MgHa, y = G_obs_TreeInc_MgHaYr), data = G_411, 
                               fun.data = function(x) {
-                                res <- quantile(x, probs = c(0.25,0.5,0.75))
+                                res <- c(high.CI(x), mean(x, na.rm=T), low.CI(x))
                                 names(res) <- c("ymin","y","ymax")
                                 res}, 
                               col = scales::seq_gradient_pal("#00FF00", "#FF00FF")(seq(0,1,length.out=length(bin_mids_411))), breaks = cutvec_411) +         
@@ -8960,7 +8968,7 @@ gg.411.2 <- ggplot() +
                  y = expression("biomass growth (Mg ha"^-1*" yr"^-1*")")) + 
              ggtitle("411 - Everglades") +
              theme_classic() + theme(axis.text.x=element_text(angle=90,hjust=1)) + 
-             scale_x_continuous(limits = c(0, cutvec_411[20]*1.05), expand =c(0,0)) +
+             scale_x_continuous(limits = c(0, tail(cutvec_411, 1)*1.05), expand =c(0,0)) +
              coord_cartesian(ylim=c(-2, 10))
   
              #ylim(c(min(411_pred_df$`Prop.2.5%`)-0.25, max(411_pred_df$`Prop.97.5%`)+0.25))
@@ -9310,7 +9318,7 @@ gg.M211.2 <- ggplot() +
             
              stat_summary_bin(aes(x = B_plt_t1_MgHa, y = G_obs_TreeInc_MgHaYr), data = G_M211, 
                               fun.data = function(x) {
-                                res <- quantile(x, probs = c(0.25,0.5,0.75))
+                                res <- c(high.CI(x), mean(x, na.rm=T), low.CI(x))
                                 names(res) <- c("ymin","y","ymax")
                                 res}, 
                               col = scales::seq_gradient_pal("#00FF00", "#FF00FF")(seq(0,1,length.out=length(bin_mids_M211))), breaks = cutvec_M211) +         
@@ -9324,7 +9332,7 @@ gg.M211.2 <- ggplot() +
                  y = expression("biomass growth (Mg ha"^-1*" yr"^-1*")")) + 
              ggtitle("M211 - Adirondack-New England Mixed forest - Coniferous Forest - Alpine Meadow") +
              theme_classic() + theme(axis.text.x=element_text(angle=90,hjust=1)) + 
-             scale_x_continuous(limits = c(0, cutvec_M211[20]*1.05), expand =c(0,0)) +
+             scale_x_continuous(limits = c(0, tail(cutvec_M211, 1)*1.05), expand =c(0,0)) +
              coord_cartesian(ylim=c(-2, 10))
   
              #ylim(c(min(M211_pred_df$`Prop.2.5%`)-0.25, max(M211_pred_df$`Prop.97.5%`)+0.25))
@@ -9675,7 +9683,7 @@ gg.M221.2 <- ggplot() +
             
              stat_summary_bin(aes(x = B_plt_t1_MgHa, y = G_obs_TreeInc_MgHaYr), data = G_M221, 
                               fun.data = function(x) {
-                                res <- quantile(x, probs = c(0.25,0.5,0.75))
+                                res <- c(high.CI(x), mean(x, na.rm=T), low.CI(x))
                                 names(res) <- c("ymin","y","ymax")
                                 res}, 
                               col = scales::seq_gradient_pal("#00FF00", "#FF00FF")(seq(0,1,length.out=length(bin_mids_M221))), breaks = cutvec_M221) +         
@@ -9689,7 +9697,7 @@ gg.M221.2 <- ggplot() +
                  y = expression("biomass growth (Mg ha"^-1*" yr"^-1*")")) + 
              ggtitle("M221 - Eastern Broadleaf Forest") +
              theme_classic() + theme(axis.text.x=element_text(angle=90,hjust=1)) + 
-             scale_x_continuous(limits = c(0, cutvec_M221[20]*1.05), expand =c(0,0)) +
+             scale_x_continuous(limits = c(0, tail(cutvec_M221, 1)*1.05), expand =c(0,0)) +
              coord_cartesian(ylim=c(-2, 10))
   
              #ylim(c(min(M221_pred_df$`Prop.2.5%`)-0.25, max(M221_pred_df$`Prop.97.5%`)+0.25))
@@ -10040,7 +10048,7 @@ gg.M223.2 <- ggplot() +
             
              stat_summary_bin(aes(x = B_plt_t1_MgHa, y = G_obs_TreeInc_MgHaYr), data = G_M223, 
                               fun.data = function(x) {
-                                res <- quantile(x, probs = c(0.25,0.5,0.75))
+                                res <- c(high.CI(x), mean(x, na.rm=T), low.CI(x))
                                 names(res) <- c("ymin","y","ymax")
                                 res}, 
                               col = scales::seq_gradient_pal("#00FF00", "#FF00FF")(seq(0,1,length.out=length(bin_mids_M223))), breaks = cutvec_M223) +         
@@ -10054,7 +10062,7 @@ gg.M223.2 <- ggplot() +
                  y = expression("biomass growth (Mg ha"^-1*" yr"^-1*")")) + 
              ggtitle("M223 - Ozark Broadleaf Forest Meadow") +
              theme_classic() + theme(axis.text.x=element_text(angle=90,hjust=1)) + 
-             scale_x_continuous(limits = c(0, cutvec_M223[20]*1.05), expand =c(0,0))  +
+             scale_x_continuous(limits = c(0, tail(cutvec_M223, 1)*1.05), expand =c(0,0))  +
              coord_cartesian(ylim=c(-2, 10))
  
              #ylim(c(min(M223_pred_df$`Prop.2.5%`)-0.25, max(M223_pred_df$`Prop.97.5%`)+0.25))
@@ -10405,10 +10413,10 @@ gg.M231.2 <- ggplot() +
             
              stat_summary_bin(aes(x = B_plt_t1_MgHa, y = G_obs_TreeInc_MgHaYr), data = G_M231, 
                               fun.data = function(x) {
-                                res <- quantile(x, probs = c(0.25,0.5,0.75))
+                                res <- c(high.CI(x), mean(x, na.rm=T), low.CI(x))
                                 names(res) <- c("ymin","y","ymax")
                                 res}, 
-                              col = scales::seq_gradient_pal("#00FF00", "#FF00FF")(seq(0,1,length.out=length(bin_mids_M231))), breaks = cutvec_M231) +         
+                              col = scales::seq_gradient_pal("#00FF00", "#FF00FF")(seq(0,1,length.out=length(bin_mids_M231)+1)), breaks = cutvec_M231) +         
     
              # geom_ribbon(aes(x = B_plt_t1_MgHa, ymin = `Prop.2.5%`, ymax = `Prop.97.5%`), 
              #             data = M231_pred_df, color="#FF000080", fill ="#FF000080", alpha = 0.25, lty =3) +
@@ -10419,7 +10427,7 @@ gg.M231.2 <- ggplot() +
                  y = expression("biomass growth (Mg ha"^-1*" yr"^-1*")")) + 
              ggtitle("M231 - Ouachita Mixed Forest") +
              theme_classic() + theme(axis.text.x=element_text(angle=90,hjust=1)) + 
-             scale_x_continuous(limits = c(0, cutvec_M231[20]*1.05), expand =c(0,0)) +
+             scale_x_continuous(limits = c(0, tail(cutvec_M231, 1)*1.05), expand =c(0,0)) +
              coord_cartesian(ylim=c(-2, 10))
   
              #ylim(c(min(M231_pred_df$`Prop.2.5%`)-0.25, max(M231_pred_df$`Prop.97.5%`)+0.25))
@@ -10770,10 +10778,10 @@ gg.M242.2 <- ggplot() +
             
              stat_summary_bin(aes(x = B_plt_t1_MgHa, y = G_obs_TreeInc_MgHaYr), data = G_M242, 
                               fun.data = function(x) {
-                                res <- quantile(x, probs = c(0.25,0.5,0.75))
+                                res <- c(high.CI(x), mean(x, na.rm=T), low.CI(x))
                                 names(res) <- c("ymin","y","ymax")
                                 res}, 
-                              col = scales::seq_gradient_pal("#00FF00", "#FF00FF")(seq(0,1,length.out=length(bin_mids_M242))), breaks = cutvec_M242) +         
+                              col = scales::seq_gradient_pal("#00FF00", "#FF00FF")(seq(0,1,length.out=length(bin_mids_M242)+1)), breaks = cutvec_M242) +         
     
              # geom_ribbon(aes(x = B_plt_t1_MgHa, ymin = `Prop.2.5%`, ymax = `Prop.97.5%`), 
              #             data = M242_pred_df, color="#FF000080", fill ="#FF000080", alpha = 0.25, lty =3) +
@@ -10784,7 +10792,7 @@ gg.M242.2 <- ggplot() +
                  y = expression("biomass growth (Mg ha"^-1*" yr"^-1*")")) + 
              ggtitle("M242 - Cascade Mixed Forest") +
              theme_classic() + theme(axis.text.x=element_text(angle=90,hjust=1)) + 
-             scale_x_continuous(limits = c(0, cutvec_M242[20]*1.05), expand =c(0,0)) +
+             scale_x_continuous(limits = c(0, tail(cutvec_M242, 1)*1.05), expand =c(0,0)) +
              coord_cartesian(ylim=c(-2, 10))
   
              #ylim(c(min(M242_pred_df$`Prop.2.5%`)-0.25, max(M242_pred_df$`Prop.97.5%`)+0.25))
@@ -11134,7 +11142,7 @@ gg.M261.2 <- ggplot() +
             
              stat_summary_bin(aes(x = B_plt_t1_MgHa, y = G_obs_TreeInc_MgHaYr), data = G_M261, 
                               fun.data = function(x) {
-                                res <- quantile(x, probs = c(0.25,0.5,0.75))
+                                res <- c(high.CI(x), mean(x, na.rm=T), low.CI(x))
                                 names(res) <- c("ymin","y","ymax")
                                 res}, 
                               col = scales::seq_gradient_pal("#00FF00", "#FF00FF")(seq(0,1,length.out=length(bin_mids_M261))), breaks = cutvec_M261) +         
@@ -11148,7 +11156,7 @@ gg.M261.2 <- ggplot() +
                  y = expression("biomass growth (Mg ha"^-1*" yr"^-1*")")) + 
              ggtitle("M261 - Sierran Steppe - Mixed Forest - Coniferous Forest - Alpine Meadow") +
              theme_classic() + theme(axis.text.x=element_text(angle=90,hjust=1)) + 
-             scale_x_continuous(limits = c(0, cutvec_M261[20]*1.05), expand =c(0,0)) +
+             scale_x_continuous(limits = c(0, tail(cutvec_M261, 1)*1.05), expand =c(0,0)) +
              coord_cartesian(ylim=c(-2, 10))
   
              #ylim(c(min(M261_pred_df$`Prop.2.5%`)-0.25, max(M261_pred_df$`Prop.97.5%`)+0.25))
@@ -11499,7 +11507,7 @@ gg.M262.2 <- ggplot() +
             
              stat_summary_bin(aes(x = B_plt_t1_MgHa, y = G_obs_TreeInc_MgHaYr), data = G_M262, 
                               fun.data = function(x) {
-                                res <- quantile(x, probs = c(0.25,0.5,0.75))
+                                res <- c(high.CI(x), mean(x, na.rm=T), low.CI(x))
                                 names(res) <- c("ymin","y","ymax")
                                 res}, 
                               col = scales::seq_gradient_pal("#00FF00", "#FF00FF")(seq(0,1,length.out=length(bin_mids_M262))), breaks = cutvec_M262) +         
@@ -11513,7 +11521,7 @@ gg.M262.2 <- ggplot() +
                  y = expression("biomass growth (Mg ha"^-1*" yr"^-1*")")) + 
              ggtitle("M262 - California coastal range - coniferous forest - open woodland - shrub meadow") +
              theme_classic() + theme(axis.text.x=element_text(angle=90,hjust=1)) + 
-             scale_x_continuous(limits = c(0, cutvec_M262[20]*1.05), expand =c(0,0)) +
+             scale_x_continuous(limits = c(0, tail(cutvec_M262, 1)*1.05), expand =c(0,0)) +
              coord_cartesian(ylim=c(-2, 10))
   
              #ylim(c(min(M262_pred_df$`Prop.2.5%`)-0.25, max(M262_pred_df$`Prop.97.5%`)+0.25))
@@ -11864,7 +11872,7 @@ gg.M313.2 <- ggplot() +
             
              stat_summary_bin(aes(x = B_plt_t1_MgHa, y = G_obs_TreeInc_MgHaYr), data = G_M313, 
                               fun.data = function(x) {
-                                res <- quantile(x, probs = c(0.25,0.5,0.75))
+                                res <- c(high.CI(x), mean(x, na.rm=T), low.CI(x))
                                 names(res) <- c("ymin","y","ymax")
                                 res}, 
                               col = scales::seq_gradient_pal("#00FF00", "#FF00FF")(seq(0,1,length.out=length(bin_mids_M313))), breaks = cutvec_M313) +         
@@ -11878,7 +11886,7 @@ gg.M313.2 <- ggplot() +
                  y = expression("biomass growth (Mg ha"^-1*" yr"^-1*")")) + 
              ggtitle("M313 - Arizona-New Mexico Mountains Semi-Desert - Open Woodland - Coniferous Forest - Alpine Meadow") +
              theme_classic() + theme(axis.text.x=element_text(angle=90,hjust=1)) + 
-             scale_x_continuous(limits = c(0, cutvec_M313[20]*1.05), expand =c(0,0)) +
+             scale_x_continuous(limits = c(0, tail(cutvec_M313, 1)*1.05), expand =c(0,0)) +
              coord_cartesian(ylim=c(-2, 10))
   
              #ylim(c(min(M313_pred_df$`Prop.2.5%`)-0.25, max(M313_pred_df$`Prop.97.5%`)+0.25))
@@ -12229,7 +12237,7 @@ gg.M331.2 <- ggplot() +
             
              stat_summary_bin(aes(x = B_plt_t1_MgHa, y = G_obs_TreeInc_MgHaYr), data = G_M331, 
                               fun.data = function(x) {
-                                res <- quantile(x, probs = c(0.25,0.5,0.75))
+                                res <- c(high.CI(x), mean(x, na.rm=T), low.CI(x))
                                 names(res) <- c("ymin","y","ymax")
                                 res}, 
                               col = scales::seq_gradient_pal("#00FF00", "#FF00FF")(seq(0,1,length.out=length(bin_mids_M331))), breaks = cutvec_M331) +         
@@ -12243,7 +12251,7 @@ gg.M331.2 <- ggplot() +
                  y = expression("biomass growth (Mg ha"^-1*" yr"^-1*")")) + 
              ggtitle("M331 - Southern Rocky Mountain Steppe - Open Woodland - Coniferous Forest - Alpine Meadow") +
              theme_classic() + theme(axis.text.x=element_text(angle=90,hjust=1)) + 
-             scale_x_continuous(limits = c(0, cutvec_M331[20]*1.05), expand =c(0,0)) +
+             scale_x_continuous(limits = c(0, tail(cutvec_M331, 1)*1.05), expand =c(0,0)) +
              coord_cartesian(ylim=c(-2, 10))
   
              #ylim(c(min(M331_pred_df$`Prop.2.5%`)-0.25, max(M331_pred_df$`Prop.97.5%`)+0.25))
@@ -12594,10 +12602,10 @@ gg.M332.2 <- ggplot() +
             
              stat_summary_bin(aes(x = B_plt_t1_MgHa, y = G_obs_TreeInc_MgHaYr), data = G_M332, 
                               fun.data = function(x) {
-                                res <- quantile(x, probs = c(0.25,0.5,0.75))
+                                res <- c(high.CI(x), mean(x, na.rm=T), low.CI(x))
                                 names(res) <- c("ymin","y","ymax")
                                 res}, 
-                              col = scales::seq_gradient_pal("#00FF00", "#FF00FF")(seq(0,1,length.out=length(bin_mids_M332))), breaks = cutvec_M332) +         
+                              col = scales::seq_gradient_pal("#00FF00", "#FF00FF")(seq(0,1,length.out=length(bin_mids_M332)+1)), breaks = cutvec_M332) +         
     
              # geom_ribbon(aes(x = B_plt_t1_MgHa, ymin = `Prop.2.5%`, ymax = `Prop.97.5%`), 
              #             data = M332_pred_df, color="#FF000080", fill ="#FF000080", alpha = 0.25, lty =3) +
@@ -12608,7 +12616,7 @@ gg.M332.2 <- ggplot() +
                  y = expression("biomass growth (Mg ha"^-1*" yr"^-1*")")) + 
              ggtitle("M332 -  Middle Rocky Mountain Steppe - Coniferous Forest - Alpine Meadow") +
              theme_classic() + theme(axis.text.x=element_text(angle=90,hjust=1)) + 
-             scale_x_continuous(limits = c(0, cutvec_M332[20]*1.05), expand =c(0,0)) +
+             scale_x_continuous(limits = c(0, tail(cutvec_M332, 1)*1.05), expand =c(0,0)) +
              coord_cartesian(ylim=c(-2, 10))
   
              #ylim(c(min(M332_pred_df$`Prop.2.5%`)-0.25, max(M332_pred_df$`Prop.97.5%`)+0.25))
@@ -12960,7 +12968,7 @@ gg.M333.2 <- ggplot() +
             
              stat_summary_bin(aes(x = B_plt_t1_MgHa, y = G_obs_TreeInc_MgHaYr), data = G_M333, 
                               fun.data = function(x) {
-                                res <- quantile(x, probs = c(0.25,0.5,0.75))
+                                res <- c(high.CI(x), mean(x, na.rm=T), low.CI(x))
                                 names(res) <- c("ymin","y","ymax")
                                 res}, 
                               col = scales::seq_gradient_pal("#00FF00", "#FF00FF")(seq(0,1,length.out=length(bin_mids_M333))), breaks = cutvec_M333) +         
@@ -12974,7 +12982,7 @@ gg.M333.2 <- ggplot() +
                  y = expression("biomass growth (Mg ha"^-1*" yr"^-1*")")) + 
              ggtitle("M333 - Northern Rocky Mountain Steppe - Coniferous Forest - Alpine Meadow") +
              theme_classic() + theme(axis.text.x=element_text(angle=90,hjust=1)) + 
-             scale_x_continuous(limits = c(0, cutvec_M333[20]*1.05), expand =c(0,0)) +
+             scale_x_continuous(limits = c(0, tail(cutvec_M333, 1)*1.05), expand =c(0,0)) +
              coord_cartesian(ylim=c(-2, 10))
   
              #ylim(c(min(M333_pred_df$`Prop.2.5%`)-0.25, max(M333_pred_df$`Prop.97.5%`)+0.25))
@@ -13325,7 +13333,7 @@ gg.M334.2 <- ggplot() +
             
              stat_summary_bin(aes(x = B_plt_t1_MgHa, y = G_obs_TreeInc_MgHaYr), data = G_M334, 
                               fun.data = function(x) {
-                                res <- quantile(x, probs = c(0.25,0.5,0.75))
+                                res <- c(high.CI(x), mean(x, na.rm=T), low.CI(x))
                                 names(res) <- c("ymin","y","ymax")
                                 res}, 
                               col = scales::seq_gradient_pal("#00FF00", "#FF00FF")(seq(0,1,length.out=length(bin_mids_M334))), breaks = cutvec_M334) +         
@@ -13339,7 +13347,7 @@ gg.M334.2 <- ggplot() +
                  y = expression("biomass growth (Mg ha"^-1*" yr"^-1*")")) + 
              ggtitle("M334 - Black Hills Coniferous Forest") +
              theme_classic() + theme(axis.text.x=element_text(angle=90,hjust=1)) + 
-             scale_x_continuous(limits = c(0, cutvec_M334[20]*1.05), expand =c(0,0)) +
+             scale_x_continuous(limits = c(0, tail(cutvec_M334, 1)*1.05), expand =c(0,0)) +
              coord_cartesian(ylim=c(-2, 10))
   
              #ylim(c(min(M334_pred_df$`Prop.2.5%`)-0.25, max(M334_pred_df$`Prop.97.5%`)+0.25))
@@ -13690,7 +13698,7 @@ gg.M341.2 <- ggplot() +
             
              stat_summary_bin(aes(x = B_plt_t1_MgHa, y = G_obs_TreeInc_MgHaYr), data = G_M341, 
                               fun.data = function(x) {
-                                res <- quantile(x, probs = c(0.25,0.5,0.75))
+                                res <- c(high.CI(x), mean(x, na.rm=T), low.CI(x))
                                 names(res) <- c("ymin","y","ymax")
                                 res}, 
                               col = scales::seq_gradient_pal("#00FF00", "#FF00FF")(seq(0,1,length.out=length(bin_mids_M341))), breaks = cutvec_M341) +         
@@ -13704,7 +13712,7 @@ gg.M341.2 <- ggplot() +
                  y = expression("biomass growth (Mg ha"^-1*" yr"^-1*")")) + 
              ggtitle("M341 - Nevada-Utah Mountains Semi-Desert - Coniferous Forest - Alpine Meadow") +
              theme_classic() + theme(axis.text.x=element_text(angle=90,hjust=1)) + 
-             scale_x_continuous(limits = c(0, cutvec_M341[20]*1.05), expand =c(0,0)) +
+             scale_x_continuous(limits = c(0, tail(cutvec_M341, 1)*1.05), expand =c(0,0)) +
              coord_cartesian(ylim=c(-2, 10))
   
              #ylim(c(min(M341_pred_df$`Prop.2.5%`)-0.25, max(M341_pred_df$`Prop.97.5%`)+0.25))
@@ -14195,3 +14203,77 @@ sum(nls.param.df2[nls.param.df2$region == "interior west",]$k * nls.param.df2[nl
 
 weighted.k.df2
 ```
+
+
+# Calculations - weighted averages subsetted to 15 ecoprovinces
+
+* ecoprovince codes: 211, 212, 221, 223, 231, 232, 234, 251, M211, M221, M223, M231, M242, M261, M332
+
+```{r}
+nls.param.df2_sub <- nls.param.df2[nls.param.df2$Code %in% c("211","212","221","223","231","232","234","251","M211","M221","M223","M242","M261","M332","M231"), ]
+```
+
+## ge
+```{r}
+weighted.ge.df2_sub <-  data.frame(
+  region = c("entire US", "pacific",  "east", "interior west"),
+## all
+  "weighted ge" = c(sum(nls.param.df2_sub$ge*nls.param.df2_sub$n.plots, na.rm = T) /sum(nls.param.df2_sub$n.plots, na.rm = T) #0.3650677
+,
+## pacific
+sum(nls.param.df2_sub[nls.param.df2_sub$region == "pacific",]$ge * nls.param.df2_sub[nls.param.df2_sub$region == "pacific",]$n.plots, na.rm = T) / sum(nls.param.df2_sub[nls.param.df2_sub$region == "pacific",]$n.plots, na.rm = T) #0.7590908
+,
+## east 
+sum(nls.param.df2_sub[nls.param.df2_sub$region == "east",]$ge * nls.param.df2_sub[nls.param.df2_sub$region == "east",]$n.plots, na.rm = T) / sum(nls.param.df2_sub[nls.param.df2_sub$region == "east",]$n.plots, na.rm = T) #0.2836302
+,
+## west
+sum(nls.param.df2_sub[nls.param.df2_sub$region == "interior west",]$ge * nls.param.df2_sub[nls.param.df2_sub$region == "interior west",]$n.plots, na.rm = T) / sum(nls.param.df2_sub[nls.param.df2_sub$region == "interior west",]$n.plots, na.rm = T) # 0.3980526 
+))
+
+weighted.ge.df2_sub
+```
+
+## phi
+```{r}
+## note numbers in comments after code are first set of results (reported for ESA 2022 intial abstract submission)
+
+weighted.phi.df2_sub <-  data.frame(
+  region = c("entire US", "pacific", "east", "interior west"),
+## all
+  "weighted phi" = c(sum(nls.param.df2_sub$phi*nls.param.df2_sub$n.plots, na.rm = T) /sum(nls.param.df2_sub$n.plots) #0.3650677
+,
+## pacific
+sum(nls.param.df2_sub[nls.param.df2_sub$region == "pacific",]$phi * nls.param.df2_sub[nls.param.df2_sub$region == "pacific",]$n.plots, na.rm = T) / sum(nls.param.df2_sub[nls.param.df2_sub$region == "pacific",]$n.plots, na.rm = T) #0.7590908
+,
+## east 
+sum(nls.param.df2_sub[nls.param.df2_sub$region == "east",]$phi * nls.param.df2_sub[nls.param.df2_sub$region == "east",]$n.plots, na.rm = T) / sum(nls.param.df2_sub[nls.param.df2_sub$region == "east",]$n.plots, na.rm = T) #0.2836302
+,
+## west
+sum(nls.param.df2_sub[nls.param.df2_sub$region == "interior west",]$phi * nls.param.df2_sub[nls.param.df2_sub$region == "interior west",]$n.plots, na.rm = T) / sum(nls.param.df2_sub[nls.param.df2_sub$region == "interior west",]$n.plots, na.rm = T))) # 0.3980526 ))
+
+weighted.phi.df2_sub
+```
+
+## alpha
+```{r}
+## note numbers in comments after code are first set of results (reported for ESA 2022 intial abstract submission)
+
+weighted.alpha.df2_sub <-  data.frame(
+  region = c("entire US", "pacific", "east", "interior west"),
+## all
+  "weighted alpha" = c(sum(nls.param.df2_sub$alpha*nls.param.df2_sub$n.plots, na.rm = T) /sum(nls.param.df2_sub$n.plots) #0.3650677
+,
+## pacific
+sum(nls.param.df2_sub[nls.param.df2_sub$region == "pacific",]$alpha * nls.param.df2_sub[nls.param.df2_sub$region == "pacific",]$n.plots, na.rm = T) / sum(nls.param.df2_sub[nls.param.df2_sub$region == "pacific",]$n.plots) #0.7590908
+,
+## east 
+sum(nls.param.df2_sub[nls.param.df2_sub$region == "east",]$alpha * nls.param.df2_sub[nls.param.df2_sub$region == "east",]$n.plots, na.rm = T) / sum(nls.param.df2_sub[nls.param.df2_sub$region == "east",]$n.plots) #0.2836302
+,
+## west
+sum(nls.param.df2_sub[nls.param.df2_sub$region == "interior west",]$alpha * nls.param.df2_sub[nls.param.df2_sub$region == "interior west",]$n.plots, na.rm = T) / sum(nls.param.df2_sub[nls.param.df2_sub$region == "interior west",]$n.plots) # 0.3980526 
+))
+
+weighted.alpha.df2_sub
+```
+
+
