@@ -16,7 +16,7 @@ knitr::opts_chunk$set(tidy.opts=list(width.cutoff=60),tidy=TRUE, echo = FALSE, c
 
 ```{r, message = FALSE, warning = FALSE}
 ### dependencies
-library(propagate); library(nlstools); library(ggplot2); library(dplyr)
+library(nlstools); library(ggplot2); library(dplyr)
 
 ## defined functions -- (for later) one for high.CI: mean +1.96sigma, and one for low.CI: mean -1.96sigma
 high.CI <-  function(x) {mean(x) + 1.96*plotrix::std.error(x)}
@@ -349,13 +349,13 @@ load("C:/Users/hogan.jaaron/Dropbox/FIA_R/Starter_FIA_data_processing/G_dataset.
 # save(G_pdsi_data, file = "G_pdsi_data.Rdata")
 #####################################################
 #####################################################
- load("C:/Users/hogan.jaaron/Dropbox/FIA_R/data_PDSI/G_pdsi_data_2_JAN-AUG.Rdata")  ## simply load ths finished data product -- the above code takes some time to run...
+ load("C:/Users/hogan.jaaron/Dropbox/FIA_R/data_PDSI/PDSI_calc_originals/G_pdsi_data_2_JAN-AUG.Rdata")  ## simply load ths finished data product -- the above code takes some time to run...
 
 ## IF WORKING ON P-50
 #load("C:/Users/hogie/Dropbox/FIA_R/data_PDSI/G_pdsi_data_2_JAN-AUG.Rdata")  ## simply load ths finished data product -- the above code takes some time to run...
 
 ### transfer DeltaPDSI column to G dataframe
-G$DeltaPDSI <- G_pdsi_data$DeltaPDSI
+G$DeltaPDSI <- G_pdsi_data$DeltaPDSI  
 ```
 
 ```{r}
@@ -413,6 +413,9 @@ outliers_cleanerD <- G_cleanerD[G_cleanerD$G_obs_TreeInc_MgHaYr < quantile(G_cle
 ## make list of cleaner pltIDs
 cleaner_pltIDs <- c(outliers_cleanerA$pltID, outliers_cleanerB$pltID, outliers_cleanerC$pltID, outliers_cleanerD$pltID)
 cleaner_pltIDs <- cleaner_pltIDs[order(cleaner_pltIDs)]
+
+#### APPLY CLEANERS!
+G <- G[!G$pltID %in% cleaner_pltIDs,]
 ```
 
 # Temporally-balancing the biomass growth data set
@@ -649,7 +652,7 @@ if(fit.models == T) {
 cutvec_211 <- round(quantile(G_211$STDAGE_t1, seq(0,1, length.out = 21)))
 
 ## if there are duplicated cut_vec values when using 20 (i.e., 5% quantile bins), then go to 10% quantile bins
-if(any(any(duplicated(cutvec_211)))){
+if(any(duplicated(cutvec_211))){
   cutvec_211 <- round(quantile(G_211$STDAGE_t1, seq(0,1, length.out = 11)))
 }
 
@@ -840,7 +843,7 @@ gg.211.2 <- ggplot() +
                  y = expression("biomass growth (Mg ha"^-1*" yr"^-1*")")) + 
              ggtitle("211 - Northeastern Mixed Forest") +
              theme_classic() + theme(axis.text.x=element_text(angle=90,hjust=1)) + 
-             scale_x_continuous(limits = c(0, cutvec_211[20]*1.05), expand =c(0,0))  +
+             scale_x_continuous(limits = c(0, tail(cutvec_211,1)*1.05), expand =c(0,0))  +
              coord_cartesian(ylim=c(-2, 10))
 
              #ylim(c(min(211_pred_df$`Prop.2.5%`)-0.25, max(211_pred_df$`Prop.97.5%`)+0.25))
@@ -905,7 +908,7 @@ if(fit.models == T) {
 cutvec_212 <- round(quantile(G_212$STDAGE_t1, seq(0,1, length.out = 21)))
 
 ## if there are duplicated cut_vec values when using 20 (i.e., 5% quantile bins), then go to 10% quantile bins
-if(any(any(duplicated(cutvec_212)))){
+if(any(duplicated(cutvec_212))){
   cutvec_212 <- round(quantile(G_212$STDAGE_t1, seq(0,1, length.out = 11)))
 }
 
@@ -1092,7 +1095,7 @@ gg.212.2 <- ggplot() +
                  y = expression("biomass growth (Mg ha"^-1*" yr"^-1*")")) + 
              ggtitle("212 - Laurentian Mixed Forest") +
              theme_classic() + theme(axis.text.x=element_text(angle=90,hjust=1)) + 
-             scale_x_continuous(limits = c(0, cutvec_212[20]*1.05), expand =c(0,0))  +
+             scale_x_continuous(limits = c(0, tail(cutvec_212,1)*1.05), expand =c(0,0))  +
              coord_cartesian(ylim=c(-2, 10))
 
              #ylim(c(min(212_pred_df$`Prop.2.5%`)-0.25, max(212_pred_df$`Prop.97.5%`)+0.25))
@@ -1157,7 +1160,7 @@ if(fit.models == T) {
 cutvec_221 <- round(quantile(G_221$STDAGE_t1, seq(0,1, length.out = 21)))
 
 ## if there are duplicated cut_vec values when using 20 (i.e., 5% quantile bins), then go to 10% quantile bins
-if(any(any(duplicated(cutvec_221)))){
+if(any(duplicated(cutvec_221))){
   cutvec_221 <- round(quantile(G_221$STDAGE_t1, seq(0,1, length.out = 11)))
 }
 
@@ -1352,7 +1355,7 @@ gg.221.2 <- ggplot() +
                  y = expression("biomass growth (Mg ha"^-1*" yr"^-1*")")) + 
              ggtitle("221 - Eastern Broadleaf Forest") +
              theme_classic() + theme(axis.text.x=element_text(angle=90,hjust=1)) + 
-             scale_x_continuous(limits = c(0, cutvec_221[20]*1.05), expand =c(0,0))  +
+             scale_x_continuous(limits = c(0, tail(cutvec_221,1)*1.05), expand =c(0,0))  +
              coord_cartesian(ylim=c(-2, 10))
  
              #ylim(c(min(221_pred_df$`Prop.2.5%`)-0.25, max(221_pred_df$`Prop.97.5%`)+0.25))
@@ -1417,7 +1420,7 @@ if(fit.models == T) {
 cutvec_222 <- round(quantile(G_222$STDAGE_t1, seq(0,1, length.out = 21)))
 
 ## if there are duplicated cut_vec values when using 20 (i.e., 5% quantile bins), then go to 10% quantile bins
-if(any(any(duplicated(cutvec_222)))){
+if(any(duplicated(cutvec_222))){
   cutvec_222 <- round(quantile(G_222$STDAGE_t1, seq(0,1, length.out = 11)))
 }
 
@@ -1600,7 +1603,7 @@ gg.222.2 <- ggplot() +
                  y = expression("biomass growth (Mg ha"^-1*" yr"^-1*")")) + 
              ggtitle("222 - Midwest Broadleaf Forest") +
              theme_classic() + theme(axis.text.x=element_text(angle=90,hjust=1)) + 
-             scale_x_continuous(limits = c(0, cutvec_222[20]*1.05), expand =c(0,0)) +
+             scale_x_continuous(limits = c(0, tail(cutvec_222,1)*1.05), expand =c(0,0)) +
              coord_cartesian(ylim=c(-2, 10))
   
              #ylim(c(min(222_pred_df$`Prop.2.5%`)-0.25, max(222_pred_df$`Prop.97.5%`)+0.25))
@@ -1665,7 +1668,7 @@ if(fit.models == T) {
 cutvec_223 <- round(quantile(G_223$STDAGE_t1, seq(0,1, length.out = 21)))
 
 ## if there are duplicated cut_vec values when using 20 (i.e., 5% quantile bins), then go to 10% quantile bins
-if(any(any(duplicated(cutvec_223)))){
+if(any(duplicated(cutvec_223))){
   cutvec_223 <- round(quantile(G_223$STDAGE_t1, seq(0,1, length.out = 11)))
 }
 
@@ -1851,7 +1854,7 @@ gg.223.2 <- ggplot() +
                  y = expression("biomass growth (Mg ha"^-1*" yr"^-1*")")) + 
              ggtitle("223 - Central Interior Broadleaf Forest") +
              theme_classic() + theme(axis.text.x=element_text(angle=90,hjust=1)) + 
-             scale_x_continuous(limits = c(0, cutvec_223[20]*1.05), expand =c(0,0)) +
+             scale_x_continuous(limits = c(0, tail(cutvec_223,1)*1.05), expand =c(0,0)) +
              coord_cartesian(ylim=c(-2, 10))
 
              #ylim(c(min(223_pred_df$`Prop.2.5%`)-0.25, max(223_pred_df$`Prop.97.5%`)+0.25))
@@ -1916,7 +1919,7 @@ if(fit.models == T) {
 cutvec_231 <- round(quantile(G_231$STDAGE_t1, seq(0,1, length.out = 21)))
 
 ## if there are duplicated cut_vec values when using 20 (i.e., 5% quantile bins), then go to 10% quantile bins
-if(any(any(duplicated(cutvec_231)))){
+if(any(duplicated(cutvec_231))){
   cutvec_231 <- round(quantile(G_231$STDAGE_t1, seq(0,1, length.out = 11)))
 }
 
@@ -2100,7 +2103,7 @@ gg.231.2 <- ggplot() +
                  y = expression("biomass growth (Mg ha"^-1*" yr"^-1*")")) + 
              ggtitle("231 - Southeastern Mixed Forest") +
              theme_classic() + theme(axis.text.x=element_text(angle=90,hjust=1)) + 
-             scale_x_continuous(limits = c(0, cutvec_231[20]*1.05), expand =c(0,0)) +
+             scale_x_continuous(limits = c(0, tail(cutvec_231,1)*1.05), expand =c(0,0)) +
              coord_cartesian(ylim=c(-2, 10))
 
              #ylim(c(min(231_pred_df$`Prop.2.5%`)-0.25, max(231_pred_df$`Prop.97.5%`)+0.25))
@@ -2165,7 +2168,7 @@ if(fit.models == T) {
 cutvec_232 <- round(quantile(G_232$STDAGE_t1, seq(0,1, length.out = 21)))
 
 ## if there are duplicated cut_vec values when using 20 (i.e., 5% quantile bins), then go to 10% quantile bins
-if(any(any(duplicated(cutvec_232)))){
+if(any(duplicated(cutvec_232))){
   cutvec_232 <- round(quantile(G_232$STDAGE_t1, seq(0,1, length.out = 11)))
 }
 
@@ -2350,7 +2353,7 @@ gg.232.2 <- ggplot() +
                  y = expression("biomass growth (Mg ha"^-1*" yr"^-1*")")) + 
              ggtitle("232 - Outer Coastal Plain Mixed Forest") +
              theme_classic() + theme(axis.text.x=element_text(angle=90,hjust=1)) + 
-             scale_x_continuous(limits = c(0, cutvec_232[20]*1.05), expand =c(0,0)) +
+             scale_x_continuous(limits = c(0, tail(cutvec_232,1)*1.05), expand =c(0,0)) +
              coord_cartesian(ylim=c(-2, 10))
 
              #ylim(c(min(232_pred_df$`Prop.2.5%`)-0.25, max(232_pred_df$`Prop.97.5%`)+0.25))
@@ -2415,7 +2418,7 @@ if(fit.models == T) {
 cutvec_234 <- round(quantile(G_234$STDAGE_t1, seq(0,1, length.out = 21)))
 
 ## if there are duplicated cut_vec values when using 20 (i.e., 5% quantile bins), then go to 10% quantile bins
-if(any(any(duplicated(cutvec_234)))){
+if(any(duplicated(cutvec_234))){
   cutvec_234 <- round(quantile(G_234$STDAGE_t1, seq(0,1, length.out = 11)))
 }
 
@@ -2600,7 +2603,7 @@ gg.234.2 <- ggplot() +
                  y = expression("biomass growth (Mg ha"^-1*" yr"^-1*")")) + 
              ggtitle("234 - Lower Mississippi Riverine Forest") +
              theme_classic() + theme(axis.text.x=element_text(angle=90,hjust=1)) + 
-             scale_x_continuous(limits = c(0, cutvec_234[20]*1.05), expand =c(0,0)) +
+             scale_x_continuous(limits = c(0, tail(cutvec_234,1)*1.05), expand =c(0,0)) +
              coord_cartesian(ylim=c(-2, 10))
   
              #ylim(c(min(234_pred_df$`Prop.2.5%`)-0.25, max(234_pred_df$`Prop.97.5%`)+0.25))
@@ -2664,7 +2667,7 @@ if(fit.models == T) {
 cutvec_242 <- round(quantile(G_242$STDAGE_t1, seq(0,1, length.out = 21)))
 
 ## if there are duplicated cut_vec values when using 20 (i.e., 5% quantile bins), then go to 10% quantile bins
-if(any(any(duplicated(cutvec_242)))){
+if(any(duplicated(cutvec_242))){
   cutvec_242 <- round(quantile(G_242$STDAGE_t1, seq(0,1, length.out = 11)))
 }
 
@@ -2850,7 +2853,7 @@ gg.242.2 <- ggplot() +
                  y = expression("biomass growth (Mg ha"^-1*" yr"^-1*")")) + 
              ggtitle("242 - Pacific Lowland Mixed Forest") +
              theme_classic() + theme(axis.text.x=element_text(angle=90,hjust=1)) + 
-             scale_x_continuous(limits = c(0, cutvec_242[20]*1.05), expand =c(0,0)) +
+             scale_x_continuous(limits = c(0, tail(cutvec_242,1)*1.05), expand =c(0,0)) +
              coord_cartesian(ylim=c(-2, 10))
 
              #ylim(c(min(242_pred_df$`Prop.2.5%`)-0.25, max(242_pred_df$`Prop.97.5%`)+0.25))
@@ -2915,7 +2918,7 @@ if(fit.models == T) {
 cutvec_251 <- round(quantile(G_251$STDAGE_t1, seq(0,1, length.out = 21)))
 
 ## if there are duplicated cut_vec values when using 20 (i.e., 5% quantile bins), then go to 10% quantile bins
-if(any(any(duplicated(cutvec_251)))){
+if(any(duplicated(cutvec_251))){
   cutvec_251 <- round(quantile(G_251$STDAGE_t1, seq(0,1, length.out = 11)))
 }
 
@@ -3097,7 +3100,7 @@ gg.251.2 <- ggplot() +
                  y = expression("biomass growth (Mg ha"^-1*" yr"^-1*")")) + 
              ggtitle("251 - Prairie Parkland (Temperate)") +
              theme_classic() + theme(axis.text.x=element_text(angle=90,hjust=1)) + 
-             scale_x_continuous(limits = c(0, cutvec_251[20]*1.05), expand =c(0,0))  +
+             scale_x_continuous(limits = c(0, tail(cutvec_251,1)*1.05), expand =c(0,0))  +
              coord_cartesian(ylim=c(-2, 10))
  
              #ylim(c(min(251_pred_df$`Prop.2.5%`)-0.25, max(251_pred_df$`Prop.97.5%`)+0.25))
@@ -3162,7 +3165,7 @@ if(fit.models == T) {
 cutvec_255 <- round(quantile(G_255$STDAGE_t1, seq(0,1, length.out = 21)))
 
 ## if there are duplicated cut_vec values when using 20 (i.e., 5% quantile bins), then go to 10% quantile bins
-if(any(any(duplicated(cutvec_255)))){
+if(any(duplicated(cutvec_255))){
   cutvec_255 <- round(quantile(G_255$STDAGE_t1, seq(0,1, length.out = 11)))
 }
 
@@ -3345,7 +3348,7 @@ gg.255.2 <- ggplot() +
                  y = expression("biomass growth (Mg ha"^-1*" yr"^-1*")")) + 
              ggtitle("255 - Prairie Parkland (Subtropical)") +
              theme_classic() + theme(axis.text.x=element_text(angle=90,hjust=1)) + 
-             scale_x_continuous(limits = c(0, cutvec_255[20]*1.05), expand =c(0,0)) +
+             scale_x_continuous(limits = c(0, tail(cutvec_255,1)*1.05), expand =c(0,0)) +
              coord_cartesian(ylim=c(-2, 10))
 
              #ylim(c(min(255_pred_df$`Prop.2.5%`)-0.25, max(255_pred_df$`Prop.97.5%`)+0.25))
@@ -3410,7 +3413,7 @@ if(fit.models == T) {
 cutvec_261 <- round(quantile(G_261$STDAGE_t1, seq(0,1, length.out = 21)))
 
 ## if there are duplicated cut_vec values when using 20 (i.e., 5% quantile bins), then go to 10% quantile bins
-if(any(any(duplicated(cutvec_261)))){
+if(any(duplicated(cutvec_261))){
   cutvec_261 <- round(quantile(G_261$STDAGE_t1, seq(0,1, length.out = 11)))
 }
 
@@ -3592,7 +3595,7 @@ gg.261.2 <- ggplot() +
                  y = expression("biomass growth (Mg ha"^-1*" yr"^-1*")")) + 
              ggtitle("261 - California Coastal Chaparral Forest and Shrub") +
              theme_classic() + theme(axis.text.x=element_text(angle=90,hjust=1)) + 
-             scale_x_continuous(limits = c(0, cutvec_261[20]*1.05), expand =c(0,0)) +
+             scale_x_continuous(limits = c(0, tail(cutvec_261,1)*1.05), expand =c(0,0)) +
              coord_cartesian(ylim=c(-2, 10))
   
              #ylim(c(min(261_pred_df$`Prop.2.5%`)-0.25, max(261_pred_df$`Prop.97.5%`)+0.25))
@@ -3657,7 +3660,7 @@ if(fit.models == T) {
 cutvec_262 <- round(quantile(G_262$STDAGE_t1, seq(0,1, length.out = 21)))
 
 ## if there are duplicated cut_vec values when using 20 (i.e., 5% quantile bins), then go to 10% quantile bins
-if(any(any(duplicated(cutvec_262)))){
+if(any(duplicated(cutvec_262))){
   cutvec_262 <- round(quantile(G_262$STDAGE_t1, seq(0,1, length.out = 11)))
 }
 
@@ -3845,7 +3848,7 @@ gg.262.2 <- ggplot() +
                  y = expression("biomass growth (Mg ha"^-1*" yr"^-1*")")) + 
              ggtitle("262 - California Dry Steppe") +
              theme_classic() + theme(axis.text.x=element_text(angle=90,hjust=1)) + 
-             scale_x_continuous(limits = c(0, cutvec_262[20]*1.05), expand =c(0,0)) +
+             scale_x_continuous(limits = c(0, tail(cutvec_262,1)*1.05), expand =c(0,0)) +
              coord_cartesian(ylim=c(-2, 10))
   
              #ylim(c(min(262_pred_df$`Prop.2.5%`)-0.25, max(262_pred_df$`Prop.97.5%`)+0.25))
@@ -3910,7 +3913,7 @@ if(fit.models == T) {
 cutvec_263 <- round(quantile(G_263$STDAGE_t1, seq(0,1, length.out = 21)))
 
 ## if there are duplicated cut_vec values when using 20 (i.e., 5% quantile bins), then go to 10% quantile bins
-if(any(any(duplicated(cutvec_263)))){
+if(any(duplicated(cutvec_263))){
   cutvec_263 <- round(quantile(G_263$STDAGE_t1, seq(0,1, length.out = 11)))
 }
 
@@ -4096,7 +4099,7 @@ gg.263.2 <- ggplot() +
                  y = expression("biomass growth (Mg ha"^-1*" yr"^-1*")")) + 
              ggtitle("263 - California Coastal Steppe - Mixed Forest and Redwood Forest") +
              theme_classic() + theme(axis.text.x=element_text(angle=90,hjust=1)) + 
-             scale_x_continuous(limits = c(0, cutvec_263[20]*1.05), expand =c(0,0)) +
+             scale_x_continuous(limits = c(0, tail(cutvec_263,1)*1.05), expand =c(0,0)) +
              coord_cartesian(ylim=c(-2, 10))
   
              #ylim(c(min(263_pred_df$`Prop.2.5%`)-0.25, max(263_pred_df$`Prop.97.5%`)+0.25))
@@ -4161,7 +4164,7 @@ if(fit.models == T) {
 cutvec_313 <- round(quantile(G_313$STDAGE_t1, seq(0,1, length.out = 21)))
 
 ## if there are duplicated cut_vec values when using 20 (i.e., 5% quantile bins), then go to 10% quantile bins
-if(any(any(duplicated(cutvec_313)))){
+if(any(duplicated(cutvec_313))){
   cutvec_313 <- round(quantile(G_313$STDAGE_t1, seq(0,1, length.out = 11)))
 }
 
@@ -4349,7 +4352,7 @@ gg.313.2 <- ggplot() +
                  y = expression("biomass growth (Mg ha"^-1*" yr"^-1*")")) + 
              ggtitle("313 - Colorado Plateau Semi-Desert") +
              theme_classic() + theme(axis.text.x=element_text(angle=90,hjust=1)) + 
-             scale_x_continuous(limits = c(0, cutvec_313[20]*1.05), expand =c(0,0)) +
+             scale_x_continuous(limits = c(0, tail(cutvec_313,1)*1.05), expand =c(0,0)) +
              coord_cartesian(ylim=c(-2, 10))
   
              #ylim(c(min(313_pred_df$`Prop.2.5%`)-0.25, max(313_pred_df$`Prop.97.5%`)+0.25))
@@ -4414,7 +4417,7 @@ if(fit.models == T) {
 cutvec_315 <- round(quantile(G_315$STDAGE_t1, seq(0,1, length.out = 21)))
 
 ## if there are duplicated cut_vec values when using 20 (i.e., 5% quantile bins), then go to 10% quantile bins
-if(any(any(duplicated(cutvec_315)))){
+if(any(duplicated(cutvec_315))){
   cutvec_315 <- round(quantile(G_315$STDAGE_t1, seq(0,1, length.out = 11)))
 }
 
@@ -4598,7 +4601,7 @@ gg.315.2 <- ggplot() +
                  y = expression("biomass growth (Mg ha"^-1*" yr"^-1*")")) + 
              ggtitle("315 - Southwest Plateau and Plains Dry Steppe and Shrub") +
              theme_classic() + theme(axis.text.x=element_text(angle=90,hjust=1)) + 
-             scale_x_continuous(limits = c(0, cutvec_315[20]*1.05), expand =c(0,0)) +
+             scale_x_continuous(limits = c(0, tail(cutvec_315,1)*1.05), expand =c(0,0)) +
              coord_cartesian(ylim=c(-2, 10))
   
              #ylim(c(min(315_pred_df$`Prop.2.5%`)-0.25, max(315_pred_df$`Prop.97.5%`)+0.25))
@@ -4663,7 +4666,7 @@ if(fit.models == T) {
 cutvec_321 <- round(quantile(G_321$STDAGE_t1, seq(0,1, length.out = 21)))
 
 ## if there are duplicated cut_vec values when using 20 (i.e., 5% quantile bins), then go to 10% quantile bins
-if(any(any(duplicated(cutvec_321)))){
+if(any(duplicated(cutvec_321))){
   cutvec_321 <- round(quantile(G_321$STDAGE_t1, seq(0,1, length.out = 11)))
 }
 
@@ -4846,7 +4849,7 @@ gg.321.2 <- ggplot() +
                  y = expression("biomass growth (Mg ha"^-1*" yr"^-1*")")) + 
              ggtitle("321 - Chihuahuan Semi-Desert") +
              theme_classic() + theme(axis.text.x=element_text(angle=90,hjust=1)) + 
-             scale_x_continuous(limits = c(0, cutvec_321[20]*1.05), expand =c(0,0))  
+             scale_x_continuous(limits = c(0, tail(cutvec_321,1)*1.05), expand =c(0,0))  
              #ylim(c(min(321_pred_df$`Prop.2.5%`)-0.25, max(321_pred_df$`Prop.97.5%`)+0.25))
              #ylim(c(-2,8))
             
@@ -4909,7 +4912,7 @@ if(fit.models == T) {
 cutvec_322 <- round(quantile(G_322$STDAGE_t1, seq(0,1, length.out = 21)))
 
 ## if there are duplicated cut_vec values when using 20 (i.e., 5% quantile bins), then go to 10% quantile bins
-if(any(any(duplicated(cutvec_322)))){
+if(any(duplicated(cutvec_322))){
   cutvec_322 <- round(quantile(G_322$STDAGE_t1, seq(0,1, length.out = 11)))
 }
 
@@ -5092,7 +5095,7 @@ gg.322.2 <- ggplot() +
                  y = expression("biomass growth (Mg ha"^-1*" yr"^-1*")")) + 
              ggtitle("322 - American Semidesert and Desert") +
              theme_classic() + theme(axis.text.x=element_text(angle=90,hjust=1)) + 
-             scale_x_continuous(limits = c(0, cutvec_322[20]*1.05), expand =c(0,0)) +
+             scale_x_continuous(limits = c(0, tail(cutvec_322,1)*1.05), expand =c(0,0)) +
              coord_cartesian(ylim=c(-2, 10))
   
              #ylim(c(min(322_pred_df$`Prop.2.5%`)-0.25, max(322_pred_df$`Prop.97.5%`)+0.25))
@@ -5147,7 +5150,7 @@ gg.322.3
 
 ```{r}
 ## code control 
-fit.models <-  F
+fit.models <-  T
 ```
 
 ```{r}
@@ -5157,9 +5160,11 @@ if(fit.models == T) {
 cutvec_331 <- round(quantile(G_331$STDAGE_t1, seq(0,1, length.out = 21)))
 
 ## if there are duplicated cut_vec values when using 20 (i.e., 5% quantile bins), then go to 10% quantile bins
-if(any(any(duplicated(cutvec_331)))){
+if(any(duplicated(cutvec_331))){
   cutvec_331 <- round(quantile(G_331$STDAGE_t1, seq(0,1, length.out = 11)))
 }
+
+cutvec_331[8] <-  83 ## fix duplicated 
 
 bin_mids_331 <- unname(round(cutvec_331[-length(cutvec_331)] + diff(cutvec_331)/2))
 
@@ -5344,7 +5349,7 @@ gg.331.2 <- ggplot() +
                  y = expression("biomass growth (Mg ha"^-1*" yr"^-1*")")) + 
              ggtitle("331 - Great Plains/Palouse Dry Steppe") +
              theme_classic() + theme(axis.text.x=element_text(angle=90,hjust=1)) + 
-             scale_x_continuous(limits = c(0, cutvec_331[20]*1.05), expand =c(0,0)) +
+             scale_x_continuous(limits = c(0, tail(cutvec_331,1)*1.05), expand =c(0,0)) +
              coord_cartesian(ylim=c(-2, 10))
   
              #ylim(c(min(331_pred_df$`Prop.2.5%`)-0.25, max(331_pred_df$`Prop.97.5%`)+0.25))
@@ -5409,7 +5414,7 @@ if(fit.models == T) {
 cutvec_332 <- round(quantile(G_332$STDAGE_t1, seq(0,1, length.out = 21)))
 
 ## if there are duplicated cut_vec values when using 20 (i.e., 5% quantile bins), then go to 10% quantile bins
-if(any(any(duplicated(cutvec_332)))){
+if(any(duplicated(cutvec_332))){
   cutvec_332 <- round(quantile(G_332$STDAGE_t1, seq(0,1, length.out = 11)))
 }
 
@@ -5592,7 +5597,7 @@ gg.332.2 <- ggplot() +
                  y = expression("biomass growth (Mg ha"^-1*" yr"^-1*")")) + 
              ggtitle("332 - Southwest Plateau and Plains Dry Steppe and Shrub") +
              theme_classic() + theme(axis.text.x=element_text(angle=90,hjust=1)) + 
-             scale_x_continuous(limits = c(0, cutvec_332[20]*1.05), expand =c(0,0)) +
+             scale_x_continuous(limits = c(0, tail(cutvec_332,1)*1.05), expand =c(0,0)) +
              coord_cartesian(ylim=c(-2, 10))
   
              #ylim(c(min(332_pred_df$`Prop.2.5%`)-0.25, max(332_pred_df$`Prop.97.5%`)+0.25))
@@ -5657,7 +5662,7 @@ if(fit.models == T) {
 cutvec_341 <- round(quantile(G_341$STDAGE_t1, seq(0,1, length.out = 21)))
 
 ## if there are duplicated cut_vec values when using 20 (i.e., 5% quantile bins), then go to 10% quantile bins
-if(any(any(duplicated(cutvec_341)))){
+if(any(duplicated(cutvec_341))){
   cutvec_341 <- round(quantile(G_341$STDAGE_t1, seq(0,1, length.out = 11)))
 }
 
@@ -5846,7 +5851,7 @@ gg.341.2 <- ggplot() +
                  y = expression("biomass growth (Mg ha"^-1*" yr"^-1*")")) + 
              ggtitle("341 - Nevada-Utah Mountains Semi-Desert - Coniferous Forest - Alpine Meadow") +
              theme_classic() + theme(axis.text.x=element_text(angle=90,hjust=1)) + 
-             scale_x_continuous(limits = c(0, cutvec_341[20]*1.05), expand =c(0,0)) +
+             scale_x_continuous(limits = c(0, tail(cutvec_341,1)*1.05), expand =c(0,0)) +
              coord_cartesian(ylim=c(-2, 10))
   
              #ylim(c(min(341_pred_df$`Prop.2.5%`)-0.25, max(341_pred_df$`Prop.97.5%`)+0.25))
@@ -5911,7 +5916,7 @@ if(fit.models == T) {
 cutvec_342 <- round(quantile(G_342$STDAGE_t1, seq(0,1, length.out = 21)))
 
 ## if there are duplicated cut_vec values when using 20 (i.e., 5% quantile bins), then go to 10% quantile bins
-if(any(any(duplicated(cutvec_342)))){
+if(any(duplicated(cutvec_342))){
   cutvec_342 <- round(quantile(G_342$STDAGE_t1, seq(0,1, length.out = 11)))
 }
 
@@ -6096,7 +6101,7 @@ gg.342.2 <- ggplot() +
                  y = expression("biomass growth (Mg ha"^-1*" yr"^-1*")")) + 
              ggtitle("342 - Intermountain Semi-Desert") +
              theme_classic() + theme(axis.text.x=element_text(angle=90,hjust=1)) + 
-             scale_x_continuous(limits = c(0, cutvec_342[20]*1.05), expand =c(0,0))  +
+             scale_x_continuous(limits = c(0, tail(cutvec_342,1)*1.05), expand =c(0,0))  +
              coord_cartesian(ylim=c(-2, 10))
  
              #ylim(c(min(342_pred_df$`Prop.2.5%`)-0.25, max(342_pred_df$`Prop.97.5%`)+0.25))
@@ -6161,7 +6166,7 @@ if(fit.models == T) {
 cutvec_411 <- round(quantile(G_411$STDAGE_t1, seq(0,1, length.out = 21)))
 
 ## if there are duplicated cut_vec values when using 20 (i.e., 5% quantile bins), then go to 10% quantile bins
-if(any(any(duplicated(cutvec_411)))){
+if(any(duplicated(cutvec_411))){
   cutvec_411 <- round(quantile(G_411$STDAGE_t1, seq(0,1, length.out = 11)))
 }
 
@@ -6347,7 +6352,7 @@ gg.411.2 <- ggplot() +
                  y = expression("biomass growth (Mg ha"^-1*" yr"^-1*")")) + 
              ggtitle("411 - Everglades") +
              theme_classic() + theme(axis.text.x=element_text(angle=90,hjust=1)) + 
-             scale_x_continuous(limits = c(0, cutvec_411[20]*1.05), expand =c(0,0)) +
+             scale_x_continuous(limits = c(0, tail(cutvec_411,1)*1.05), expand =c(0,0)) +
              coord_cartesian(ylim=c(-2, 10))
   
              #ylim(c(min(411_pred_df$`Prop.2.5%`)-0.25, max(411_pred_df$`Prop.97.5%`)+0.25))
@@ -6412,7 +6417,7 @@ if(fit.models == T) {
 cutvec_M211 <- round(quantile(G_M211$STDAGE_t1, seq(0,1, length.out = 21)))
 
 ## if there are duplicated cut_vec values when using 20 (i.e., 5% quantile bins), then go to 10% quantile bins
-if(any(any(duplicated(cutvec_M211)))){
+if(any(duplicated(cutvec_M211))){
   cutvec_M211 <- round(quantile(G_M211$STDAGE_t1, seq(0,1, length.out = 11)))
 }
 
@@ -6599,7 +6604,7 @@ gg.M211.2 <- ggplot() +
                  y = expression("biomass growth (Mg ha"^-1*" yr"^-1*")")) + 
              ggtitle("M211 - Adirondack-New England Mixed forest - Coniferous Forest - Alpine Meadow") +
              theme_classic() + theme(axis.text.x=element_text(angle=90,hjust=1)) + 
-             scale_x_continuous(limits = c(0, cutvec_M211[20]*1.05), expand =c(0,0)) +
+             scale_x_continuous(limits = c(0, tail(cutvec_M211,1)*1.05), expand =c(0,0)) +
              coord_cartesian(ylim=c(-2, 10))
   
              #ylim(c(min(M211_pred_df$`Prop.2.5%`)-0.25, max(M211_pred_df$`Prop.97.5%`)+0.25))
@@ -6664,7 +6669,7 @@ if(fit.models == T) {
 cutvec_M221 <- round(quantile(G_M221$STDAGE_t1, seq(0,1, length.out = 21)))
 
 ## if there are duplicated cut_vec values when using 20 (i.e., 5% quantile bins), then go to 10% quantile bins
-if(any(any(duplicated(cutvec_M221)))){
+if(any(duplicated(cutvec_M221))){
   cutvec_M221 <- round(quantile(G_M221$STDAGE_t1, seq(0,1, length.out = 11)))
 }
 
@@ -6851,7 +6856,7 @@ gg.M221.2 <- ggplot() +
                  y = expression("biomass growth (Mg ha"^-1*" yr"^-1*")")) + 
              ggtitle("M221 - Eastern Broadleaf Forest") +
              theme_classic() + theme(axis.text.x=element_text(angle=90,hjust=1)) + 
-             scale_x_continuous(limits = c(0, cutvec_M221[20]*1.05), expand =c(0,0)) +
+             scale_x_continuous(limits = c(0, tail(cutvec_M221,1)*1.05), expand =c(0,0)) +
              coord_cartesian(ylim=c(-2, 10))
   
              #ylim(c(min(M221_pred_df$`Prop.2.5%`)-0.25, max(M221_pred_df$`Prop.97.5%`)+0.25))
@@ -6916,7 +6921,7 @@ if(fit.models == T) {
 cutvec_M223 <- round(quantile(G_M223$STDAGE_t1, seq(0,1, length.out = 21)))
 
 ## if there are duplicated cut_vec values when using 20 (i.e., 5% quantile bins), then go to 10% quantile bins
-if(any(any(duplicated(cutvec_M223)))){
+if(any(duplicated(cutvec_M223))){
   cutvec_M223 <- round(quantile(G_M223$STDAGE_t1, seq(0,1, length.out = 11)))
 }
 
@@ -7103,7 +7108,7 @@ gg.M223.2 <- ggplot() +
                  y = expression("biomass growth (Mg ha"^-1*" yr"^-1*")")) + 
              ggtitle("M223 - Ozark Broadleaf Forest Meadow") +
              theme_classic() + theme(axis.text.x=element_text(angle=90,hjust=1)) + 
-             scale_x_continuous(limits = c(0, cutvec_M223[20]*1.05), expand =c(0,0))  +
+             scale_x_continuous(limits = c(0, tail(cutvec_M223,1)*1.05), expand =c(0,0))  +
              coord_cartesian(ylim=c(-2, 10))
  
              #ylim(c(min(M223_pred_df$`Prop.2.5%`)-0.25, max(M223_pred_df$`Prop.97.5%`)+0.25))
@@ -7168,7 +7173,7 @@ if(fit.models == T) {
 cutvec_M231 <- round(quantile(G_M231$STDAGE_t1, seq(0,1, length.out = 21)))
 
 ## if there are duplicated cut_vec values when using 20 (i.e., 5% quantile bins), then go to 10% quantile bins
-if(any(any(duplicated(cutvec_M231)))){
+if(any(duplicated(cutvec_M231))){
   cutvec_M231 <- round(quantile(G_M231$STDAGE_t1, seq(0,1, length.out = 11)))
 }
 
@@ -7353,7 +7358,7 @@ gg.M231.2 <- ggplot() +
                  y = expression("biomass growth (Mg ha"^-1*" yr"^-1*")")) + 
              ggtitle("M231 - Ouachita Mixed Forest") +
              theme_classic() + theme(axis.text.x=element_text(angle=90,hjust=1)) + 
-             scale_x_continuous(limits = c(0, cutvec_M231[20]*1.05), expand =c(0,0)) +
+             scale_x_continuous(limits = c(0, tail(cutvec_M231,1)*1.05), expand =c(0,0)) +
              coord_cartesian(ylim=c(-2, 10))
   
              #ylim(c(min(M231_pred_df$`Prop.2.5%`)-0.25, max(M231_pred_df$`Prop.97.5%`)+0.25))
@@ -7408,7 +7413,7 @@ gg.M231.3
 
 ```{r}
 ## code control 
-fit.models <-  T
+fit.models <-  F
 ```
 
 ```{r}
@@ -7418,7 +7423,7 @@ if(fit.models == T) {
 cutvec_M242 <- round(quantile(G_M242$STDAGE_t1, seq(0,1, length.out = 21)))
 
 ## if there are duplicated cut_vec values when using 20 (i.e., 5% quantile bins), then go to 10% quantile bins
-if(any(any(duplicated(cutvec_M242)))){
+if(any(duplicated(cutvec_M242))){
   cutvec_M242 <- round(quantile(G_M242$STDAGE_t1, seq(0,1, length.out = 11)))
 }
 
@@ -7605,7 +7610,7 @@ gg.M242.2 <- ggplot() +
                  y = expression("biomass growth (Mg ha"^-1*" yr"^-1*")")) + 
              ggtitle("M242 - Cascade Mixed Forest") +
              theme_classic() + theme(axis.text.x=element_text(angle=90,hjust=1)) + 
-             scale_x_continuous(limits = c(0, cutvec_M242[20]*1.05), expand =c(0,0)) +
+             scale_x_continuous(limits = c(0, tail(cutvec_M242,1)*1.05), expand =c(0,0)) +
              coord_cartesian(ylim=c(-2, 10))
   
              #ylim(c(min(M242_pred_df$`Prop.2.5%`)-0.25, max(M242_pred_df$`Prop.97.5%`)+0.25))
@@ -7660,7 +7665,7 @@ gg.M242.3
 
 ```{r}
 ## code control 
-fit.models <-  T
+fit.models <-  F
 ```
 
 ```{r}
@@ -7670,7 +7675,7 @@ if(fit.models == T) {
 cutvec_M261 <- round(quantile(G_M261$STDAGE_t1, seq(0,1, length.out = 21)))
 
 ## if there are duplicated cut_vec values when using 20 (i.e., 5% quantile bins), then go to 10% quantile bins
-if(any(any(duplicated(cutvec_M261)))){
+if(any(duplicated(cutvec_M261))){
   cutvec_M261 <- round(quantile(G_M261$STDAGE_t1, seq(0,1, length.out = 11)))
 }
 
@@ -7856,7 +7861,7 @@ gg.M261.2 <- ggplot() +
                  y = expression("biomass growth (Mg ha"^-1*" yr"^-1*")")) + 
              ggtitle("M261 - Sierran Steppe - Mixed Forest - Coniferous Forest - Alpine Meadow") +
              theme_classic() + theme(axis.text.x=element_text(angle=90,hjust=1)) + 
-             scale_x_continuous(limits = c(0, cutvec_M261[20]*1.05), expand =c(0,0)) +
+             scale_x_continuous(limits = c(0, tail(cutvec_M261,1)*1.05), expand =c(0,0)) +
              coord_cartesian(ylim=c(-2, 10))
   
              #ylim(c(min(M261_pred_df$`Prop.2.5%`)-0.25, max(M261_pred_df$`Prop.97.5%`)+0.25))
@@ -7921,7 +7926,7 @@ if(fit.models == T) {
 cutvec_M262 <- round(quantile(G_M262$STDAGE_t1, seq(0,1, length.out = 21)))
 
 ## if there are duplicated cut_vec values when using 20 (i.e., 5% quantile bins), then go to 10% quantile bins
-if(any(any(duplicated(cutvec_M262)))){
+if(any(duplicated(cutvec_M262))){
   cutvec_M262 <- round(quantile(G_M262$STDAGE_t1, seq(0,1, length.out = 11)))
 }
 
@@ -8106,7 +8111,7 @@ gg.M262.2 <- ggplot() +
                  y = expression("biomass growth (Mg ha"^-1*" yr"^-1*")")) + 
              ggtitle("M262 - California coastal range - coniferous forest - open woodland - shrub meadow") +
              theme_classic() + theme(axis.text.x=element_text(angle=90,hjust=1)) + 
-             scale_x_continuous(limits = c(0, cutvec_M262[20]*1.05), expand =c(0,0)) +
+             scale_x_continuous(limits = c(0, tail(cutvec_M262,1)*1.05), expand =c(0,0)) +
              coord_cartesian(ylim=c(-2, 10))
   
              #ylim(c(min(M262_pred_df$`Prop.2.5%`)-0.25, max(M262_pred_df$`Prop.97.5%`)+0.25))
@@ -8161,7 +8166,7 @@ gg.M262.3
 
 ```{r}
 ## code control 
-fit.models <-  T
+fit.models <-  F
 ```
 
 ```{r}
@@ -8171,7 +8176,7 @@ if(fit.models == T) {
 cutvec_M313 <- round(quantile(G_M313$STDAGE_t1, seq(0,1, length.out = 21)))
 
 ## if there are duplicated cut_vec values when using 20 (i.e., 5% quantile bins), then go to 10% quantile bins
-if(any(any(duplicated(cutvec_M313)))){
+if(any(duplicated(cutvec_M313))){
   cutvec_M313 <- round(quantile(G_M313$STDAGE_t1, seq(0,1, length.out = 11)))
 }
 
@@ -8356,7 +8361,7 @@ gg.M313.2 <- ggplot() +
                  y = expression("biomass growth (Mg ha"^-1*" yr"^-1*")")) + 
              ggtitle("M313 - Arizona-New Mexico Mountains Semi-Desert - Open Woodland - Coniferous Forest - Alpine Meadow") +
              theme_classic() + theme(axis.text.x=element_text(angle=90,hjust=1)) + 
-             scale_x_continuous(limits = c(0, cutvec_M313[20]*1.05), expand =c(0,0)) +
+             scale_x_continuous(limits = c(0, tail(cutvec_M313,1)*1.05), expand =c(0,0)) +
              coord_cartesian(ylim=c(-2, 10))
   
              #ylim(c(min(M313_pred_df$`Prop.2.5%`)-0.25, max(M313_pred_df$`Prop.97.5%`)+0.25))
@@ -8411,7 +8416,7 @@ gg.M313.3
 
 ```{r}
 ## code control 
-fit.models <-  T
+fit.models <-  F
 ```
 
 ```{r}
@@ -8421,7 +8426,7 @@ if(fit.models == T) {
 cutvec_M331 <- round(quantile(G_M331$STDAGE_t1, seq(0,1, length.out = 21)))
 
 ## if there are duplicated cut_vec values when using 20 (i.e., 5% quantile bins), then go to 10% quantile bins
-if(any(any(duplicated(cutvec_M331)))){
+if(any(duplicated(cutvec_M331))){
   cutvec_M331 <- round(quantile(G_M331$STDAGE_t1, seq(0,1, length.out = 11)))
 }
 
@@ -8608,7 +8613,7 @@ gg.M331.2 <- ggplot() +
                  y = expression("biomass growth (Mg ha"^-1*" yr"^-1*")")) + 
              ggtitle("M331 - Southern Rocky Mountain Steppe - Open Woodland - Coniferous Forest - Alpine Meadow") +
              theme_classic() + theme(axis.text.x=element_text(angle=90,hjust=1)) + 
-             scale_x_continuous(limits = c(0, cutvec_M331[20]*1.05), expand =c(0,0)) +
+             scale_x_continuous(limits = c(0, tail(cutvec_M331,1)*1.05), expand =c(0,0)) +
              coord_cartesian(ylim=c(-2, 10))
   
              #ylim(c(min(M331_pred_df$`Prop.2.5%`)-0.25, max(M331_pred_df$`Prop.97.5%`)+0.25))
@@ -8673,7 +8678,7 @@ if(fit.models == T) {
 cutvec_M332 <- round(quantile(G_M332$STDAGE_t1, seq(0,1, length.out = 21)))
 
 ## if there are duplicated cut_vec values when using 20 (i.e., 5% quantile bins), then go to 10% quantile bins
-if(any(any(duplicated(cutvec_M332)))){
+if(any(duplicated(cutvec_M332))){
   cutvec_M332 <- round(quantile(G_M332$STDAGE_t1, seq(0,1, length.out = 11)))
 }
 
@@ -8860,7 +8865,7 @@ gg.M332.2 <- ggplot() +
                  y = expression("biomass growth (Mg ha"^-1*" yr"^-1*")")) + 
              ggtitle("M332 -  Middle Rocky Mountain Steppe - Coniferous Forest - Alpine Meadow") +
              theme_classic() + theme(axis.text.x=element_text(angle=90,hjust=1)) + 
-             scale_x_continuous(limits = c(0, cutvec_M332[20]*1.05), expand =c(0,0)) +
+             scale_x_continuous(limits = c(0, tail(cutvec_M332,1)*1.05), expand =c(0,0)) +
              coord_cartesian(ylim=c(-2, 10))
   
              #ylim(c(min(M332_pred_df$`Prop.2.5%`)-0.25, max(M332_pred_df$`Prop.97.5%`)+0.25))
@@ -8925,7 +8930,7 @@ if(fit.models == T) {
 cutvec_M333 <- round(quantile(G_M333$STDAGE_t1, seq(0,1, length.out = 21)))
 
 ## if there are duplicated cut_vec values when using 20 (i.e., 5% quantile bins), then go to 10% quantile bins
-if(any(any(duplicated(cutvec_M333)))){
+if(any(duplicated(cutvec_M333))){
   cutvec_M333 <- round(quantile(G_M333$STDAGE_t1, seq(0,1, length.out = 11)))
 }
 
@@ -9113,7 +9118,7 @@ gg.M333.2 <- ggplot() +
                  y = expression("biomass growth (Mg ha"^-1*" yr"^-1*")")) + 
              ggtitle("M333 - Northern Rocky Mountain Steppe - Coniferous Forest - Alpine Meadow") +
              theme_classic() + theme(axis.text.x=element_text(angle=90,hjust=1)) + 
-             scale_x_continuous(limits = c(0, cutvec_M333[20]*1.05), expand =c(0,0)) +
+             scale_x_continuous(limits = c(0, tail(cutvec_M333,1)*1.05), expand =c(0,0)) +
              coord_cartesian(ylim=c(-2, 10))
   
              #ylim(c(min(M333_pred_df$`Prop.2.5%`)-0.25, max(M333_pred_df$`Prop.97.5%`)+0.25))
@@ -9168,7 +9173,7 @@ gg.M333.3
 
 ```{r}
 ## code control 
-fit.models <-  T
+fit.models <-  F
 ```
 
 ```{r}
@@ -9178,7 +9183,7 @@ if(fit.models == T) {
 cutvec_M334 <- round(quantile(G_M334$STDAGE_t1, seq(0,1, length.out = 21)))
 
 ## if there are duplicated cut_vec values when using 20 (i.e., 5% quantile bins), then go to 10% quantile bins
-if(any(any(duplicated(cutvec_M334)))){
+if(any(duplicated(cutvec_M334))){
   cutvec_M334 <- round(quantile(G_M334$STDAGE_t1, seq(0,1, length.out = 11)))
 }
 
@@ -9365,7 +9370,7 @@ gg.M334.2 <- ggplot() +
                  y = expression("biomass growth (Mg ha"^-1*" yr"^-1*")")) + 
              ggtitle("M334 - Black Hills Coniferous Forest") +
              theme_classic() + theme(axis.text.x=element_text(angle=90,hjust=1)) + 
-             scale_x_continuous(limits = c(0, cutvec_M334[20]*1.05), expand =c(0,0)) +
+             scale_x_continuous(limits = c(0, tail(cutvec_M334,1)*1.05), expand =c(0,0)) +
              coord_cartesian(ylim=c(-2, 10))
   
              #ylim(c(min(M334_pred_df$`Prop.2.5%`)-0.25, max(M334_pred_df$`Prop.97.5%`)+0.25))
@@ -9430,7 +9435,7 @@ if(fit.models == T) {
 cutvec_341 <- round(quantile(G_341$STDAGE_t1, seq(0,1, length.out = 21)))
 
 ## if there are duplicated cut_vec values when using 20 (i.e., 5% quantile bins), then go to 10% quantile bins
-if(any(any(duplicated(cutvec_341)))){
+if(any(duplicated(cutvec_341))){
   cutvec_341 <- round(quantile(G_341$STDAGE_t1, seq(0,1, length.out = 11)))
 }
 
@@ -9613,7 +9618,7 @@ gg.M341.2 <- ggplot() +
                  y = expression("biomass growth (Mg ha"^-1*" yr"^-1*")")) + 
              ggtitle("M341 - Nevada-Utah Mountains Semi-Desert - Coniferous Forest - Alpine Meadow") +
              theme_classic() + theme(axis.text.x=element_text(angle=90,hjust=1)) + 
-             scale_x_continuous(limits = c(0, cutvec_M341[20]*1.05), expand =c(0,0)) +
+             scale_x_continuous(limits = c(0, tail(cutvec_M341,1)*1.05), expand =c(0,0)) +
              coord_cartesian(ylim=c(-2, 10))
   
              #ylim(c(min(M341_pred_df$`Prop.2.5%`)-0.25, max(M341_pred_df$`Prop.97.5%`)+0.25))
@@ -10043,6 +10048,8 @@ gg.d_ECOSUBCD
 ```
 
 # Caclulations - weighted averages
+
+* ecoprovince codes: 211, 212, 221, 223, 231, 232, 234, 251, M211, M221, M223, M231, M242, M261, M332
 
 ## ge (stand biomass growth enhancement factor in % 2000-2021)
 
