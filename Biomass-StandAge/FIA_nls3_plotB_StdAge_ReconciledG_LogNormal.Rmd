@@ -73,7 +73,7 @@ f_ln_1 <- formula(B_plt_t2_MgHa ~ (1 + (MEASTIME_t2-1990)*ge/100) * (a+b*exp(-((
 ## model 2
 f_ln_2 <-  formula(B_plt_t2_MgHa ~ (1 + (MEASTIME_t2-1990)*ge/100) * (1 + phi*DeltaPDSI) * (a+b*exp(-((log(STDAGE_t2/c))/d)^2)))
 ## model 3
-f_lm_3 <- formula(B_plt_t2_MgHa ~ (1 + (MEASTIME_t2-1990)*ge/100) * (1 + phi*DeltaPDSI) * (1-alpha*B_L_prop) * (a+b*exp(-((log(STDAGE_t2/c))/d)^2)))
+f_ln_3 <- formula(B_plt_t2_MgHa ~ (1 + (MEASTIME_t2-1990)*ge/100) * (1 + phi*DeltaPDSI) * (1-alpha*B_L_prop) * (a+b*exp(-((log(STDAGE_t2/c))/d)^2)))
 
 ###########################################
 
