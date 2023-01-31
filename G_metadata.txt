@@ -1,12 +1,24 @@
 # Metadata for G_dataset.Rdata
 # J. Aaron Hogan
 # hogan.jaaron@ufl.edu
-# 10.18.2022
+# 10.18.2022 (revised 01.31.2023)
 
 ---
 
 Overview: 
 The create_G.R script uses the USFS FIA state data tables (the TREE, PLOT, CONDITION, and SURVEY tables) to create a processed data product for plot-level biomass growth that is used in model fitting.  Two methods are used to calculate plot-level biomass growth: 1) a plot mass balance method and 2) a summed tree-incremental growth method (see supplemental information of main paper for additional details). Plot-level biomass stock at t1 and t2 (the first and second plot measurements), and several other useful quantities (e.g, the amount of harvested or dead biomass over two measurement periods) are calculated. Derived quantities in the G_dataset are described below.
+
+---
+
+Running the code (create_G.R):
+1. define your data_path on Line 18 - this is the directory where the FIA data tables are stored locally (in subdirectories by state)
+2. define your save_object_path  on Line 20 - this is the directory where you will save the processed ouputs by state 
+3. set the state on Line 23 - this is the vector of states for which you will read in and process data for
+
+The code is written in a two nested for loops.  The first loops over states, pulling the TREE and PLOT tables.  The calc_df placeholder dataframe is created which takes all plots at their t2 measurments.  A series of placeholder columns are defined in the calc_df dataframe which are then populated by a second for loop which uses the CN and PREV_PLT_CN variables from the PLOT table to get the tree records from the TREE table. 
+
+The code saves each state calculated "calc_df" to the save_object_path, then those are stacked into one large dataset.  
+The plot filters are then applied using the COND table 
 
 ---
 
@@ -99,7 +111,7 @@ COND_STATUS_CD: The Condition Status Code from the FIA CONDITION table, which in
 
 P3_OZONE_IND: Phase 3 Ozone Indicator (logical) from the FIA SURVEY table.  Y denotes surveys that are part of the P3 Ozone inventories. 
 
-ANN_INVENTORY: Annual Inventory indicator from the FIA SURVEY table. Y means that the inventory is annual (as opposed to periodic). 
+ANN_INVENTORY: Annual Inventory indicator from the FIA SURVEY table. Y means that inventory is annual (as opposed to periodic). 
 
 ECOPROVCD: The USFS ecological province code, which are landscape scale classifications of US forest areas.  Refactored from ECOSUBCD, as a higher-order classification (see Cleland et al 2007). 
 
