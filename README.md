@@ -21,8 +21,9 @@ Each analysis is included in a separate sub-folder.
  
  
 * code used to derive a single processed FIA dataset from the FIA datatables. including metadata, are archived in this main directory:
-    
-    2.  a processed FIA plot biomass growth dataset (G)
+
+A single processed FIA plot biomass growth dataset (G) is used for all analyses.  This dataset is structured at the second of two FIA plot measurments (i.e., a the re-measurment).  For analyses which use plot biomass as the response variable, the very first plot measument is not included in the analyses (to make the sample of data consistent with that used in growth analyses).  For growth analyses, the growth interval is defined between successive plot meausumrement.  
+
         - codefile: create_G.R
         - dataset: G_dataset.Rdata
         - metadata: G_metadata.txt
