@@ -20,11 +20,7 @@ Each analysis is included in a separate sub-folder.
 * code used to process Palmer Drought Severity Index (PDSI) data, which is included in our non-linear models.
  
  
-* code used to derive processed FIA datasets, from the FIA datatables.  Processed datasets, including metadata, are archived in this main directory:
-    1.  a processed FIA plot biomass dataset (P)
-        - codefile: create_P.R
-        - dataset: P_dataset.Rdata
-        - metadata: P_metadata.txt
+* code used to derive a single processed FIA dataset from the FIA datatables. including metadata, are archived in this main directory:
     
     2.  a processed FIA plot biomass growth dataset (G)
         - codefile: create_G.R
