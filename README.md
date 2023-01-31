@@ -10,9 +10,9 @@ We recommend the rFIA package for downloading FIA data tables (see `rfia::getFIA
 This repository includes: 
 
 * analyses which fit non-linear weighted least-squares regressions to: 
-    - biomass-stand age relationships, 
-    - growth-biomass relationships, and 
-    - growth-stand age relationships.
+    - biomass vs. stand age, 
+    - growth vs. biomass, and 
+    - growth vs. stand age.
 
 Each analysis is included in a separate sub-folder.
 
