@@ -2,7 +2,7 @@ This folder contains analyses for biomass vs. stand age.
 
 Two analyses were carried out for biomass vs. stand age.  Both analyses use the same analytical pipeline (i.e., code) implemented to different datasets. 
 
-1. The main analysis is: FIA_nls3_plotB_StdAge_ReconciledG_FINAL.Rmd/html
+1. The main analysis is: FIA_nls3_plotB_StdAge_ReconciledG_FINAL.Rmd/html (the .Rmd is the R markdown code file that make the html output file)
 2. The addidional analyses are in: FIA_nls3_plotB_StdAge_ReconciledG_Other_Datasets.Rmd.html
 
 For the biomass vs. stand age analyses, we consider two functional forms for the age function: 1) the Michaelis-Menten form and 2) the Log-Normal form.  The model selection procedure is performed in three steps.  First the simple Michaelis-Menten form is used and the phi and alpha parameters are added to model to determine if they improve model fit.  The best-fitting model from this step is used downstream where shape (s) and intercept (terms) are added, and the best-fitting model is re-selected.  Finally, a third model selection is perfomed taking the best fitting model form the previous two steps and comparing it to the models using the Log-Normal form of the age function.  This procedure is performed separately by ecoprovince.  
