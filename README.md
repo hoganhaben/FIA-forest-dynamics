@@ -10,9 +10,9 @@ We recommend the rFIA package for downloading FIA data tables (see `rfia::getFIA
 This repository includes: 
 
 * analyses which fit non-linear weighted least-squares regressions to: 
-    - biomass-stand age relationships, 
-    - growth-biomass relationships, and 
-    - growth-stand age relationships.
+    - biomass vs. stand age, 
+    - growth vs. biomass, and 
+    - growth vs. stand age.
 
 Each analysis is included in a separate sub-folder.
 
@@ -20,13 +20,10 @@ Each analysis is included in a separate sub-folder.
 * code used to process Palmer Drought Severity Index (PDSI) data, which is included in our non-linear models.
  
  
-* code used to derive processed FIA datasets, from the FIA datatables.  Processed datasets, including metadata, are archived in this main directory:
-    1.  a processed FIA plot biomass dataset (P)
-        - codefile: create_P.R
-        - dataset: P_dataset.Rdata
-        - metadata: P_metadata.txt
-    
-    2.  a processed FIA plot biomass growth dataset (G)
+* code used to derive a single processed FIA dataset from the FIA datatables. including metadata, are archived in this main directory:
+
+A single processed FIA plot biomass growth dataset (G) is used for all analyses.  This dataset is structured at the second of two FIA plot measurments (i.e., a the re-measurment).  For analyses which use plot biomass as the response variable, the very first plot measument is not included in the analyses (to make the sample of data consistent with that used in growth analyses).  For growth analyses, the growth interval is defined between successive plot meausumrement.  
+
         - codefile: create_G.R
         - dataset: G_dataset.Rdata
         - metadata: G_metadata.txt
