@@ -1,18 +1,14 @@
-This folder contains analyses related to forest biomass - stand age relationships.
+This folder contains analyses for biomass vs. stand age.
 
-Four analyses were carried out, which use the same analytical pipeline (i.e., code) implemented to different datasets
-See the files (.html and .Rmd files) for each analysis.
+Two analyses were carried out for biomass vs. stand age.  Both analyses use the same analytical pipeline (i.e., code) implemented to different datasets. 
 
-We fitted models using two functional forms: 1) Michaelis-Menten equation and 2) Log-Normal equation.  The Log-Normal models generally fit the data better, so we went with them.  They are in the main folder here, and the Michaelis-Menten fits are in a separate sub-folder.
+1. The main analysis is: FIA_nls3_plotB_StdAge_ReconciledG_FINAL.Rmd/html (the .Rmd is the R markdown code file that makes the html output file)
+2. The addidional analyses are in: FIA_nls3_plotB_StdAge_ReconciledG_Other_Datasets.Rmd.html
 
-1. The entire FIA plot biomass dataset (P dataset).
-    - FIA_nls3_plotB_StdAge_LogNormal.Rmd/html
+For the biomass vs. stand age analyses, we consider two functional forms for the age function: 1) the Michaelis-Menten form and 2) the Log-Normal form.  The model selection procedure is performed in three steps.  First the simple Michaelis-Menten form is used and the phi and alpha parameters are added to model to determine if they improve model fit.  The best-fitting model from this step is used downstream where shape (s) and intercept (terms) are added, and the best-fitting model is re-selected.  Finally, a third model selection is perfomed taking the best fitting model form the previous two steps and comparing it to the models using the Log-Normal form of the age function.  This procedure is performed separately by ecoprovince.  
 
-2. The same plot records included in the plot biomass growth vs. plot biomass analyses (G dataset).
-    -  FIA_nls3_plotB_StdAge_ReconciledG_LogNormal.Rmd/html
+In the additional analyses (i.e., for "Other_Datasets), the same analytical approach is complete, but for two additional data subsets: 
+1. a "temporally-balanced" dataset, which includes only a single plot measurement per decade.  In cases where plots had more than 2 records, we used the first and last measurements. 
+2. a "temporally-balanced, no harvest" dataset, which takes the dataset used in 1 (above) and furhter excludes any plot locations which have experience timber harvest (at any point over the study period (2000-2022)
 
-3. The same plot records included in the plot biomass growth vs. plot biomass analyses, but "temporally-balanced" to include only one plot measurement per decade (in cases where plots had more than 2 records, we used the first and last measurements).
-    -  FIA_nls3_plotB_StdAge_TemporallyBalanced_LogNormal.Rmd/html
-
-3.  The same plot records included in the plot biomass growth vs. plot biomass analyses, but "temporally-balanced" to include only one plot measurement per decade, and excluding any plots which experienced timber harvest. 
-    -  FIA_nls3_plotB_StdAge_TemporallyBalanced_NoHarvest_LogNormal.Rmd/html
+These analyses are contained in the same .Rmd/html file one after another.
