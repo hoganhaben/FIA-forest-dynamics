@@ -10,4 +10,4 @@ Three analyses were done, which all use the same analytical approach (i.e., code
 
 3. A second additional analysis which uses additional growth estimators (1. G_MassBal_g5_MgHaYr - mass-balnce growth for trees ≥5 inches, or ≥12.5 cm dbh, and 2. G_obs_TreeInc_NoIngrow_MgHaYr - summed tree incremental growth for trees ≥5 inches, or ≥12.5 cm dbh, excluding ingrowth trees).   These analyses show results which are qualtitively consistent and vary little from the main analysis. They are included in one file, one after another.
 
-- FIA_nls3_BiomassG_plotB_OtherG.Rmd/html
+    - FIA_nls3_BiomassG_plotB_OtherG.Rmd/html
