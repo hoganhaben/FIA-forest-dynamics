@@ -261,7 +261,7 @@ for (j in 1:length(state_vec)) {
 
 } ## end  state loop
 
-## this commented code loas the 
+## this commented code loads the 
 
 ### funciton to load R data to specified name
 # loadRData <- function(fileName){
