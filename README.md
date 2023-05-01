@@ -16,7 +16,7 @@ This repository includes:
 A single processed FIA plot biomass growth dataset (G) is used for all analyses.  This dataset is structured at the second of two FIA plot measurments (i.e., at the re-measurment).  For analyses which use plot biomass as the response variable, the very first plot measument is not included in the mode fits (i.e., biomass models are fit only to the t2 obsrevations to make the sample of data consistent with that used in growth analyses).  For growth analyses, the growth interval is defined between successive plot meausurements (i.e., the growth measurements is at t2).  
 
         - codefile: create_G.R
-        - dataset: G_dataset.Rdata
+        - dataset: G.Rdata
         - metadata: G_metadata.txt
 
 * analyses which fit non-linear weighted least-squares regressions to: 
