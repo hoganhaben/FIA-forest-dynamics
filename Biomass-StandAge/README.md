@@ -4,9 +4,9 @@ For the biomass vs. stand age analyses, we consider two functional forms for the
 
 Two analyses were carried out for biomass vs. stand age.  Both analyses use the same analytical pipeline (i.e., code) implemented to different datasets. 
 
-1. The main analysis is: [FIA_nlsModels_plotB_StdAge_ReconciledG_FINAL.html](https://htmlpreview.github.io/?https://github.com/hoganhaben/FIA-forest-dynamics/blob/main/Biomass-StandAge/FIA_nlsModels_plotB_StdAge_ReconciledG_FINAL.html) (the .Rmd is the R markdown code file that makes the html output file)
+1. The main analysis is: [FIA_nlsModels_plotB_StdAge.html](https://htmlpreview.github.io/?https://github.com/hoganhaben/FIA-forest-dynamics/blob/main/Biomass-StandAge/FIA_nlsModels_plotB_StdAge.html) (the .Rmd is the R markdown code file that makes the html output file)
 
-2. The addidional analyses are in: [FIA_nls3_plotModels_StdAge_ReconciledG_Other_Datasets.html](https://htmlpreview.github.io/?https://github.com/hoganhaben/FIA-forest-dynamics/blob/main/Biomass-StandAge/FIA_nls3_plotB_StdAge_ReconciledG_Other_Datasets.html)
+2. The addidional analyses are in: [FIA_nls3_plotModels_StdAge.html](https://htmlpreview.github.io/?https://github.com/hoganhaben/FIA-forest-dynamics/blob/main/Biomass-StandAge/FIA_nlsModels_plotB_StdAge.html)
 In the additional analyses (i.e., for "Other_Datasets), the same analytical approach is completed but for two additional data subsets: 
    - a "temporally-balanced" dataset, which includes only the first and last plot re-measurement.
    - an "excluding harvest" dataset, which removees any plot locations which have experienced timber harvest at any point over the study period (2000-2022).
