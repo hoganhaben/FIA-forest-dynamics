@@ -16823,76 +16823,96 @@ if(!Best_mods.P_bal[Best_mods.P_bal$Ecoprovince == "M334",]$Best.Mod == "NA") {
 
 ```{r}
 ## function which uses f(age_first)
-predict_f.age_first <- function(X, mod.number, data, p.alpha, p.tau) {
+predict_f.age_first <- function(X, mod.number, data) {
   ## if loop to solve function given STDAGE_t1 data
   if (mod.num == 5) {
+    tau = X["tau"]
+    alpha = X["alpha"]
     a = X["a"]
     b = X["b"]
     c = X["c"]
     d = X["d"]
-    B <- (1 + (data$MEASTIME_t2_first-1990)*p.tau/100) * (1-p.alpha*data$B_L_prop_first) * 
+    B <- (1 + (data$MEASTIME_t2_first-1990)*tau/100) * (1-alpha*data$B_L_prop_first) * 
           (a+b*exp(-((log((data$STDAGE_t2_first/c)))/d)^2))
   } else if (mod.num == 2) {
+    tau = X["tau"]
+    alpha = X["alpha"]
     A = X["A"]
     k = X["k"]
-    B <- (1 + (data$MEASTIME_t2_first-1990)*p.tau/100) * (1-p.alpha*data$B_L_prop_first) * 
+    B <- (1 + (data$MEASTIME_t2_first-1990)*tau/100) * (1-alpha*data$B_L_prop_first) * 
           A*data$STDAGE_t2_first / (k+data$STDAGE_t2_first)
   } else if (mod.num == "2a") {
+    tau = X["tau"]
+    alpha = X["alpha"]
     A = X["A"]
     k = X["k"]
     p = X["p"]
-    B <- (1 + (data$MEASTIME_t2_first-1990)*p.tau/100) * (1-p.alpha*data$B_L_prop_first) * 
+    B <- (1 + (data$MEASTIME_t2_first-1990)*tau/100) * (1-alpha*data$B_L_prop_first) * 
           (p*A+((1-p)*A*data$STDAGE_t2_first / (k+data$STDAGE_t2_first)))
   } else if (mod.num == "2b") {
+    tau = X["tau"]
+    alpha = X["alpha"]
     A = X["A"]
     k = X["k"]
     s = X["s"]
-    B <- (1 + (data$MEASTIME_t2_first-1990)*p.tau/100) * (1-p.alpha*data$B_L_prop_first) *
+    B <- (1 + (data$MEASTIME_t2_first-1990)*tau/100) * (1-alpha*data$B_L_prop_first) *
           (A*data$STDAGE_t2_first^s / (k^s+data$STDAGE_t2_first^s))
   } else if (mod.num == "2c") {
+    tau = X["tau"]
+    alpha = X["alpha"]
     A = X["A"]
     k = X["k"]
     p = X["p"]
     s = X["s"]
-    B <- (1 + (data$MEASTIME_t2_first-1990)*p.tau/100) * (1-p.alpha*data$B_L_prop_first) *
+    B <- (1 + (data$MEASTIME_t2_first-1990)*tau/100) * (1-alpha*data$B_L_prop_first) *
           (p*A+((1-p)*A*data$STDAGE_t2_first^s / (k^s+data$STDAGE_t2_first^s)))    
   } ## end if 
   return(B)
 } ## end function
 
 ## for f(age_last)
-predict_f.age_last <- function(X, mod.number, data, p.alpha, p.tau) {
+predict_f.age_last <- function(X, mod.number, data) {
   ## if loop to solve function given STDAGE_t2 data
   if (mod.num == 5) {
+    tau = X["tau"]
+    alpha = X["alpha"]
     a = X["a"]
     b = X["b"]
     c = X["c"]
     d = X["d"]
-    B <- (1 + (data$MEASTIME_t2_first-1990)*p.tau/100) * (1-p.alpha*data$B_L_prop_first) *
+    B <- (1 + (data$MEASTIME_t2_first-1990)*tau/100) * (1-alpha*data$B_L_prop_first) *
           (a+b*exp(-((log((data$STDAGE_t2_last/c)))/d)^2))
   } else if (mod.num == 2) {
+    tau = X["tau"]
+    alpha = X["alpha"]
     A = X["A"]
     k = X["k"]
-    B <- (1 + (data$MEASTIME_t2_first-1990)*p.tau/100) * (1-p.alpha*data$B_L_prop_first) *
+    B <- (1 + (data$MEASTIME_t2_first-1990)*tau/100) * (1-alpha*data$B_L_prop_first) *
           A*data$STDAGE_t2_last / (k+data$STDAGE_t2_last)
   } else if (mod.num == "2a") {
+    tau = X["tau"]
+    alpha = X["alpha"]
     A = X["A"]
     k = X["k"]
     p = X["p"]
-    B <- (1 + (data$MEASTIME_t2_first-1990)*p.tau/100) * (1-p.alpha*data$B_L_prop_first) *
+    B <- (1 + (data$MEASTIME_t2_first-1990)*tau/100) * (1-alpha*data$B_L_prop_first) *
           (p*A+((1-p)*A*data$STDAGE_t2_last / (k+data$STDAGE_t2_last)))
   } else if (mod.num == "2b") {
+    tau = X["tau"]
+    alpha = X["alpha"]
     A = X["A"]
     k = X["k"]
     s = X["s"]
-    B <- (1 + (data$MEASTIME_t2_first-1990)*p.tau/100) * (1-p.alpha*data$B_L_prop_first) *
+    B <- (1 + (data$MEASTIME_t2_first-1990)*tau/100) * (1-alpha*data$B_L_prop_first) *
           (A*data$STDAGE_t2_last^s / (k^s+data$STDAGE_t2_last^s))
   } else if (mod.num == "2c") {
+    tau = X["tau"]
+    alpha = X["alpha"]
     A = X["A"]
     k = X["k"]
     p = X["p"]
     s = X["s"]
-    B <- (1 + (data$MEASTIME_t2_first-1990)*p.tau/100) * (1-p.alpha*data$B_L_prop_first) *   
+    B <- (1 + (data$MEASTIME_t2_first-1990)*tau/100) * (1-alpha*data$B_L_prop_first) *   
           (p*A+((1-p)*A*data$STDAGE_t2_last^s / (k^s+data$STDAGE_t2_last^s)))    
   } ## end if 
   return(B)
@@ -16923,14 +16943,14 @@ vcov_mat <- vcov_list[[paste(ecoprov)]]
 set.seed(77) ## for reproducibility
 parameters <- MASS::mvrnorm(nsamp, summary(mod)$param[,"Estimate"], vcov_mat)
 
+#### overwrite alpha and tau with MLE values from nls 
+parameters[,"alpha"] <- rep(nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$alpha, nsamp)
+parameters[,"tau"] <- rep(nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$tau, nsamp)
+
 ### solve f(age) function at age_first and age_last
 sim_f_age_first <- apply(parameters, 1, predict_f.age_first, data = data, mod.number = mod.num,
-                         p.alpha = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$alpha,
-                         p.tau = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$tau,
                          simplify = T)
 sim_f_age_last <- apply(parameters, 1, predict_f.age_last, data = data, mod.number = mod.num,
-                        p.alpha = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$alpha,
-                        p.tau = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$tau,
                         simplify = T)
 
 ### take difference in f(age_first) and f(age_last) over deltaT (aka MEASTIME_t2_last - MEASTIME_t2_first)  --  need to transform the numerator to get plots in rows and sim samples down columns -- then can do division 
@@ -16939,6 +16959,7 @@ sim_DeltaB <- t(sim_f_age_last - sim_f_age_first) / (data$MEASTIME_t2_last - dat
 ### take means and store in list 
 B_sim_pred_f_age_bar[[paste(ecoprov)]] <- rowMeans(sim_DeltaB, na.rm = T)
 
+
 ####  212
 ### define a few things 
 ecoprov = 212
@@ -16946,17 +16967,19 @@ mod <- get(paste("nls_", ecoprov, ".",  Best_mods.P_bal[Best_mods.P_bal$Ecoprovi
 mod.num <-  Best_mods.P_bal[Best_mods.P_bal$Ecoprovince == paste(ecoprov),]$Best.Mod
 data <- get(paste("DeltaB_df_", ecoprov, sep = ""))
 vcov_mat <- vcov_list[[paste(ecoprov)]]
+
+### sample parameters from MVNormal dist
 set.seed(77) ## for reproducibility
 parameters <- MASS::mvrnorm(nsamp, summary(mod)$param[,"Estimate"], vcov_mat)
 
+#### overwrite alpha and tau with MLE values from nls 
+parameters[,"alpha"] <- rep(nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$alpha, nsamp)
+parameters[,"tau"] <- rep(nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$tau, nsamp)
+
 ### solve f(age) function at age_first and age_last
 sim_f_age_first <- apply(parameters, 1, predict_f.age_first, data = data, mod.number = mod.num,
-                        p.alpha = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$alpha,
-                        p.tau = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$tau,
-                        simplify = T)
-sim_f_age_last <- apply(parameters, 1, predict_f.age_last, data = data, mod.number = mod.num, 
-                        p.alpha = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$alpha,
-                        p.tau = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$tau,
+                         simplify = T)
+sim_f_age_last <- apply(parameters, 1, predict_f.age_last, data = data, mod.number = mod.num,
                         simplify = T)
 
 ### take difference in f(age_first) and f(age_last) over deltaT (aka MEASTIME_t2_last - MEASTIME_t2_first)  --  need to transform the numerator to get plots in rows and sim samples down columns -- then can do division 
@@ -16973,17 +16996,19 @@ mod <- get(paste("nls_", ecoprov, ".",  Best_mods.P_bal[Best_mods.P_bal$Ecoprovi
 mod.num <-  Best_mods.P_bal[Best_mods.P_bal$Ecoprovince == paste(ecoprov),]$Best.Mod
 data <- get(paste("DeltaB_df_", ecoprov, sep = ""))
 vcov_mat <- vcov_list[[paste(ecoprov)]]
+
+### sample parameters from MVNormal dist
 set.seed(77) ## for reproducibility
 parameters <- MASS::mvrnorm(nsamp, summary(mod)$param[,"Estimate"], vcov_mat)
 
+#### overwrite alpha and tau with MLE values from nls 
+parameters[,"alpha"] <- rep(nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$alpha, nsamp)
+parameters[,"tau"] <- rep(nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$tau, nsamp)
+
 ### solve f(age) function at age_first and age_last
 sim_f_age_first <- apply(parameters, 1, predict_f.age_first, data = data, mod.number = mod.num,
-                        p.alpha = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$alpha,
-                        p.tau = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$tau,
-                        simplify = T)
-sim_f_age_last <- apply(parameters, 1, predict_f.age_last, data = data, mod.number = mod.num, 
-                        p.alpha = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$alpha,
-                        p.tau = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$tau,
+                         simplify = T)
+sim_f_age_last <- apply(parameters, 1, predict_f.age_last, data = data, mod.number = mod.num,
                         simplify = T)
 
 ### take difference in f(age_first) and f(age_last) over deltaT (aka MEASTIME_t2_last - MEASTIME_t2_first)  --  need to transform the numerator to get plots in rows and sim samples down columns -- then can do division 
@@ -17000,17 +17025,19 @@ mod <- get(paste("nls_", ecoprov, ".",  Best_mods.P_bal[Best_mods.P_bal$Ecoprovi
 mod.num <-  Best_mods.P_bal[Best_mods.P_bal$Ecoprovince == paste(ecoprov),]$Best.Mod
 data <- get(paste("DeltaB_df_", ecoprov, sep = ""))
 vcov_mat <- vcov_list[[paste(ecoprov)]]
+
+### sample parameters from MVNormal dist
 set.seed(77) ## for reproducibility
 parameters <- MASS::mvrnorm(nsamp, summary(mod)$param[,"Estimate"], vcov_mat)
 
+#### overwrite alpha and tau with MLE values from nls 
+parameters[,"alpha"] <- rep(nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$alpha, nsamp)
+parameters[,"tau"] <- rep(nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$tau, nsamp)
+
 ### solve f(age) function at age_first and age_last
 sim_f_age_first <- apply(parameters, 1, predict_f.age_first, data = data, mod.number = mod.num,
-                        p.alpha = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$alpha,
-                        p.tau = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$tau,
-                        simplify = T)
-sim_f_age_last <- apply(parameters, 1, predict_f.age_last, data = data, mod.number = mod.num, 
-                        p.alpha = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$alpha,
-                        p.tau = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$tau,
+                         simplify = T)
+sim_f_age_last <- apply(parameters, 1, predict_f.age_last, data = data, mod.number = mod.num,
                         simplify = T)
 
 ### take difference in f(age_first) and f(age_last) over deltaT (aka MEASTIME_t2_last - MEASTIME_t2_first)  --  need to transform the numerator to get plots in rows and sim samples down columns -- then can do division 
@@ -17027,17 +17054,19 @@ mod <- get(paste("nls_", ecoprov, ".",  Best_mods.P_bal[Best_mods.P_bal$Ecoprovi
 mod.num <-  Best_mods.P_bal[Best_mods.P_bal$Ecoprovince == paste(ecoprov),]$Best.Mod
 data <- get(paste("DeltaB_df_", ecoprov, sep = ""))
 vcov_mat <- vcov_list[[paste(ecoprov)]]
+
+### sample parameters from MVNormal dist
 set.seed(77) ## for reproducibility
 parameters <- MASS::mvrnorm(nsamp, summary(mod)$param[,"Estimate"], vcov_mat)
 
+#### overwrite alpha and tau with MLE values from nls 
+parameters[,"alpha"] <- rep(nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$alpha, nsamp)
+parameters[,"tau"] <- rep(nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$tau, nsamp)
+
 ### solve f(age) function at age_first and age_last
 sim_f_age_first <- apply(parameters, 1, predict_f.age_first, data = data, mod.number = mod.num,
-                        p.alpha = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$alpha,
-                        p.tau = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$tau,
-                        simplify = T)
-sim_f_age_last <- apply(parameters, 1, predict_f.age_last, data = data, mod.number = mod.num, 
-                        p.alpha = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$alpha,
-                        p.tau = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$tau,
+                         simplify = T)
+sim_f_age_last <- apply(parameters, 1, predict_f.age_last, data = data, mod.number = mod.num,
                         simplify = T)
 
 ### take difference in f(age_first) and f(age_last) over deltaT (aka MEASTIME_t2_last - MEASTIME_t2_first)  --  need to transform the numerator to get plots in rows and sim samples down columns -- then can do division 
@@ -17054,17 +17083,19 @@ mod <- get(paste("nls_", ecoprov, ".",  Best_mods.P_bal[Best_mods.P_bal$Ecoprovi
 mod.num <-  Best_mods.P_bal[Best_mods.P_bal$Ecoprovince == paste(ecoprov),]$Best.Mod
 data <- get(paste("DeltaB_df_", ecoprov, sep = ""))
 vcov_mat <- vcov_list[[paste(ecoprov)]]
+
+### sample parameters from MVNormal dist
 set.seed(77) ## for reproducibility
 parameters <- MASS::mvrnorm(nsamp, summary(mod)$param[,"Estimate"], vcov_mat)
 
+#### overwrite alpha and tau with MLE values from nls 
+parameters[,"alpha"] <- rep(nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$alpha, nsamp)
+parameters[,"tau"] <- rep(nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$tau, nsamp)
+
 ### solve f(age) function at age_first and age_last
 sim_f_age_first <- apply(parameters, 1, predict_f.age_first, data = data, mod.number = mod.num,
-                        p.alpha = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$alpha,
-                        p.tau = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$tau,
-                        simplify = T)
-sim_f_age_last <- apply(parameters, 1, predict_f.age_last, data = data, mod.number = mod.num, 
-                        p.alpha = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$alpha,
-                        p.tau = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$tau,
+                         simplify = T)
+sim_f_age_last <- apply(parameters, 1, predict_f.age_last, data = data, mod.number = mod.num,
                         simplify = T)
 
 ### take difference in f(age_first) and f(age_last) over deltaT (aka MEASTIME_t2_last - MEASTIME_t2_first)  --  need to transform the numerator to get plots in rows and sim samples down columns -- then can do division 
@@ -17081,17 +17112,19 @@ mod <- get(paste("nls_", ecoprov, ".",  Best_mods.P_bal[Best_mods.P_bal$Ecoprovi
 mod.num <-  Best_mods.P_bal[Best_mods.P_bal$Ecoprovince == paste(ecoprov),]$Best.Mod
 data <- get(paste("DeltaB_df_", ecoprov, sep = ""))
 vcov_mat <- vcov_list[[paste(ecoprov)]]
+
+### sample parameters from MVNormal dist
 set.seed(77) ## for reproducibility
 parameters <- MASS::mvrnorm(nsamp, summary(mod)$param[,"Estimate"], vcov_mat)
 
+#### overwrite alpha and tau with MLE values from nls 
+parameters[,"alpha"] <- rep(nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$alpha, nsamp)
+parameters[,"tau"] <- rep(nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$tau, nsamp)
+
 ### solve f(age) function at age_first and age_last
 sim_f_age_first <- apply(parameters, 1, predict_f.age_first, data = data, mod.number = mod.num,
-                         p.alpha = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$alpha,
-                         p.tau = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$tau,
                          simplify = T)
 sim_f_age_last <- apply(parameters, 1, predict_f.age_last, data = data, mod.number = mod.num,
-                        p.alpha = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$alpha,
-                        p.tau = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$tau,
                         simplify = T)
 
 ### take difference in f(age_first) and f(age_last) over deltaT (aka MEASTIME_t2_last - MEASTIME_t2_first)  --  need to transform the numerator to get plots in rows and sim samples down columns -- then can do division 
@@ -17108,17 +17141,19 @@ mod <- get(paste("nls_", ecoprov, ".",  Best_mods.P_bal[Best_mods.P_bal$Ecoprovi
 mod.num <-  Best_mods.P_bal[Best_mods.P_bal$Ecoprovince == paste(ecoprov),]$Best.Mod
 data <- get(paste("DeltaB_df_", ecoprov, sep = ""))
 vcov_mat <- vcov_list[[paste(ecoprov)]]
+
+### sample parameters from MVNormal dist
 set.seed(77) ## for reproducibility
 parameters <- MASS::mvrnorm(nsamp, summary(mod)$param[,"Estimate"], vcov_mat)
 
+#### overwrite alpha and tau with MLE values from nls 
+parameters[,"alpha"] <- rep(nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$alpha, nsamp)
+parameters[,"tau"] <- rep(nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$tau, nsamp)
+
 ### solve f(age) function at age_first and age_last
 sim_f_age_first <- apply(parameters, 1, predict_f.age_first, data = data, mod.number = mod.num,
-                         p.alpha = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$alpha,
-                         p.tau = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$tau,
                          simplify = T)
 sim_f_age_last <- apply(parameters, 1, predict_f.age_last, data = data, mod.number = mod.num,
-                        p.alpha = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$alpha,
-                        p.tau = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$tau,
                         simplify = T)
 
 ### take difference in f(age_first) and f(age_last) over deltaT (aka MEASTIME_t2_last - MEASTIME_t2_first)  --  need to transform the numerator to get plots in rows and sim samples down columns -- then can do division 
@@ -17135,20 +17170,22 @@ mod <- get(paste("nls_", ecoprov, ".",  Best_mods.P_bal[Best_mods.P_bal$Ecoprovi
 mod.num <-  Best_mods.P_bal[Best_mods.P_bal$Ecoprovince == paste(ecoprov),]$Best.Mod
 data <- get(paste("DeltaB_df_", ecoprov, sep = ""))
 vcov_mat <- vcov_list[[paste(ecoprov)]]
+
+### sample parameters from MVNormal dist
 set.seed(77) ## for reproducibility
 parameters <- MASS::mvrnorm(nsamp, summary(mod)$param[,"Estimate"], vcov_mat)
 
+#### overwrite alpha and tau with MLE values from nls 
+parameters[,"alpha"] <- rep(nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$alpha, nsamp)
+parameters[,"tau"] <- rep(nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$tau, nsamp)
+
 ### solve f(age) function at age_first and age_last
 sim_f_age_first <- apply(parameters, 1, predict_f.age_first, data = data, mod.number = mod.num,
-                         p.alpha = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$alpha,
-                         p.tau = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$tau,
                          simplify = T)
 sim_f_age_last <- apply(parameters, 1, predict_f.age_last, data = data, mod.number = mod.num,
-                        p.alpha = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$alpha,
-                        p.tau = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$tau,
                         simplify = T)
 
-### take difference in f(age_first) and f(age_last)  over deltaT (aka MEASTIME_t2_last - MEASTIME_t2_first)  --  need to transform the numerator to get plots in rows and sim samples down columns -- then can do division 
+### take difference in f(age_first) and f(age_last) over deltaT (aka MEASTIME_t2_last - MEASTIME_t2_first)  --  need to transform the numerator to get plots in rows and sim samples down columns -- then can do division 
 sim_DeltaB <- t(sim_f_age_last - sim_f_age_first) / (data$MEASTIME_t2_last - data$MEASTIME_t2_first) 
 
 ### take means and store in list 
@@ -17162,17 +17199,19 @@ mod <- get(paste("nls_", ecoprov, ".",  Best_mods.P_bal[Best_mods.P_bal$Ecoprovi
 mod.num <-  Best_mods.P_bal[Best_mods.P_bal$Ecoprovince == paste(ecoprov),]$Best.Mod
 data <- get(paste("DeltaB_df_", ecoprov, sep = ""))
 vcov_mat <- vcov_list[[paste(ecoprov)]]
+
+### sample parameters from MVNormal dist
 set.seed(77) ## for reproducibility
 parameters <- MASS::mvrnorm(nsamp, summary(mod)$param[,"Estimate"], vcov_mat)
 
+#### overwrite alpha and tau with MLE values from nls 
+parameters[,"alpha"] <- rep(nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$alpha, nsamp)
+parameters[,"tau"] <- rep(nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$tau, nsamp)
+
 ### solve f(age) function at age_first and age_last
 sim_f_age_first <- apply(parameters, 1, predict_f.age_first, data = data, mod.number = mod.num,
-                         p.alpha = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$alpha,
-                         p.tau = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$tau,
                          simplify = T)
-sim_f_age_last <- apply(parameters, 1, predict_f.age_last, data = data, mod.number = mod.num, 
-                        p.alpha = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$alpha,
-                        p.tau = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$tau,
+sim_f_age_last <- apply(parameters, 1, predict_f.age_last, data = data, mod.number = mod.num,
                         simplify = T)
 
 ### take difference in f(age_first) and f(age_last) over deltaT (aka MEASTIME_t2_last - MEASTIME_t2_first)  --  need to transform the numerator to get plots in rows and sim samples down columns -- then can do division 
@@ -17189,17 +17228,19 @@ mod <- get(paste("nls_", ecoprov, ".",  Best_mods.P_bal[Best_mods.P_bal$Ecoprovi
 mod.num <-  Best_mods.P_bal[Best_mods.P_bal$Ecoprovince == paste(ecoprov),]$Best.Mod
 data <- get(paste("DeltaB_df_", ecoprov, sep = ""))
 vcov_mat <- vcov_list[[paste(ecoprov)]]
+
+### sample parameters from MVNormal dist
 set.seed(77) ## for reproducibility
 parameters <- MASS::mvrnorm(nsamp, summary(mod)$param[,"Estimate"], vcov_mat)
 
+#### overwrite alpha and tau with MLE values from nls 
+parameters[,"alpha"] <- rep(nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$alpha, nsamp)
+parameters[,"tau"] <- rep(nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$tau, nsamp)
+
 ### solve f(age) function at age_first and age_last
 sim_f_age_first <- apply(parameters, 1, predict_f.age_first, data = data, mod.number = mod.num,
-                        p.alpha = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$alpha,
-                        p.tau = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$tau,
-                        simplify = T)
+                         simplify = T)
 sim_f_age_last <- apply(parameters, 1, predict_f.age_last, data = data, mod.number = mod.num,
-                        p.alpha = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$alpha,
-                        p.tau = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$tau,
                         simplify = T)
 
 ### take difference in f(age_first) and f(age_last) over deltaT (aka MEASTIME_t2_last - MEASTIME_t2_first)  --  need to transform the numerator to get plots in rows and sim samples down columns -- then can do division 
@@ -17216,17 +17257,19 @@ mod <- get(paste("nls_", ecoprov, ".",  Best_mods.P_bal[Best_mods.P_bal$Ecoprovi
 mod.num <-  Best_mods.P_bal[Best_mods.P_bal$Ecoprovince == paste(ecoprov),]$Best.Mod
 data <- get(paste("DeltaB_df_", ecoprov, sep = ""))
 vcov_mat <- vcov_list[[paste(ecoprov)]]
+
+### sample parameters from MVNormal dist
 set.seed(77) ## for reproducibility
 parameters <- MASS::mvrnorm(nsamp, summary(mod)$param[,"Estimate"], vcov_mat)
 
+#### overwrite alpha and tau with MLE values from nls 
+parameters[,"alpha"] <- rep(nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$alpha, nsamp)
+parameters[,"tau"] <- rep(nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$tau, nsamp)
+
 ### solve f(age) function at age_first and age_last
 sim_f_age_first <- apply(parameters, 1, predict_f.age_first, data = data, mod.number = mod.num,
-                        p.alpha = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$alpha,
-                        p.tau = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$tau,
-                        simplify = T)
-sim_f_age_last <- apply(parameters, 1, predict_f.age_last, data = data, mod.number = mod.num, 
-                        p.alpha = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$alpha,
-                        p.tau = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$tau,
+                         simplify = T)
+sim_f_age_last <- apply(parameters, 1, predict_f.age_last, data = data, mod.number = mod.num,
                         simplify = T)
 
 ### take difference in f(age_first) and f(age_last) over deltaT (aka MEASTIME_t2_last - MEASTIME_t2_first)  --  need to transform the numerator to get plots in rows and sim samples down columns -- then can do division 
@@ -17243,17 +17286,19 @@ mod <- get(paste("nls_", ecoprov, ".",  Best_mods.P_bal[Best_mods.P_bal$Ecoprovi
 mod.num <-  Best_mods.P_bal[Best_mods.P_bal$Ecoprovince == paste(ecoprov),]$Best.Mod
 data <- get(paste("DeltaB_df_", ecoprov, sep = ""))
 vcov_mat <- vcov_list[[paste(ecoprov)]]
+
+### sample parameters from MVNormal dist
 set.seed(77) ## for reproducibility
 parameters <- MASS::mvrnorm(nsamp, summary(mod)$param[,"Estimate"], vcov_mat)
 
+#### overwrite alpha and tau with MLE values from nls 
+parameters[,"alpha"] <- rep(nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$alpha, nsamp)
+parameters[,"tau"] <- rep(nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$tau, nsamp)
+
 ### solve f(age) function at age_first and age_last
 sim_f_age_first <- apply(parameters, 1, predict_f.age_first, data = data, mod.number = mod.num,
-                         p.alpha = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$alpha,
-                         p.tau = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$tau,
                          simplify = T)
-sim_f_age_last <- apply(parameters, 1, predict_f.age_last, data = data, mod.number = mod.num, 
-                        p.alpha = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$alpha,
-                        p.tau = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$tau,
+sim_f_age_last <- apply(parameters, 1, predict_f.age_last, data = data, mod.number = mod.num,
                         simplify = T)
 
 ### take difference in f(age_first) and f(age_last) over deltaT (aka MEASTIME_t2_last - MEASTIME_t2_first)  --  need to transform the numerator to get plots in rows and sim samples down columns -- then can do division 
@@ -17270,17 +17315,19 @@ mod <- get(paste("nls_", ecoprov, ".",  Best_mods.P_bal[Best_mods.P_bal$Ecoprovi
 mod.num <-  Best_mods.P_bal[Best_mods.P_bal$Ecoprovince == paste(ecoprov),]$Best.Mod
 data <- get(paste("DeltaB_df_", ecoprov, sep = ""))
 vcov_mat <- vcov_list[[paste(ecoprov)]]
+
+### sample parameters from MVNormal dist
 set.seed(77) ## for reproducibility
 parameters <- MASS::mvrnorm(nsamp, summary(mod)$param[,"Estimate"], vcov_mat)
 
+#### overwrite alpha and tau with MLE values from nls 
+parameters[,"alpha"] <- rep(nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$alpha, nsamp)
+parameters[,"tau"] <- rep(nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$tau, nsamp)
+
 ### solve f(age) function at age_first and age_last
 sim_f_age_first <- apply(parameters, 1, predict_f.age_first, data = data, mod.number = mod.num,
-                        p.alpha = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$alpha,
-                        p.tau = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$tau,
-                        simplify = T)
-sim_f_age_last <- apply(parameters, 1, predict_f.age_last, data = data, mod.number = mod.num, 
-                        p.alpha = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$alpha,
-                        p.tau = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$tau,
+                         simplify = T)
+sim_f_age_last <- apply(parameters, 1, predict_f.age_last, data = data, mod.number = mod.num,
                         simplify = T)
 
 ### take difference in f(age_first) and f(age_last) over deltaT (aka MEASTIME_t2_last - MEASTIME_t2_first)  --  need to transform the numerator to get plots in rows and sim samples down columns -- then can do division 
@@ -17711,79 +17758,99 @@ if(!Best_mods.P_bal[Best_mods.P_bal$Ecoprovince == "M231",]$Best.Mod == "NA"){
 
 ```{r}
 ## function which uses f(year_first)
-predict_f.year_first <- function(X, mod.number, data, p.alpha, p.tau) {
+predict_f.year_first <- function(X, mod.number, data) {
   ## if loop to solve function given MEASTIME_first data
   if (mod.num == 5) {
+    tau = X["tau"]
+    alpha = X["alpha"]
     a = X["a"]
     b = X["b"]
     c = X["c"]
     d = X["d"]
-    B <- (1 + (data$MEASTIME_t2_first-1990)*p.tau/100) * (1-p.alpha*data$B_L_prop_first) * 
+    B <- (1 + (data$MEASTIME_t2_first-1990)*tau/100) * (1-alpha*data$B_L_prop_first) * 
           (a+b*exp(-((log((data$STDAGE_t2_first/c)))/d)^2))
   } else if (mod.num == 2) {
+    tau = X["tau"]
+    alpha = X["alpha"]
     A = X["A"]
     k = X["k"]
-    B <- (1 + (data$MEASTIME_t2_first-1990)*p.tau/100) * (1-p.alpha*data$B_L_prop_first) * 
-          A*data$STDAGE_t2_first / (k+data$STDAGE_t2_first)
+    B <- (1 + (data$MEASTIME_t2_first-1990)*tau/100) * (1-alpha*data$B_L_prop_first) * 
+          A*data$STDAGE_t2_first/ (k+data$STDAGE_t2_first)
   } else if (mod.num == "2a") {
+    tau = X["tau"]
+    alpha = X["alpha"]
     A = X["A"]
     k = X["k"]
     p = X["p"]
-    B <- (1 + (data$MEASTIME_t2_first-1990)*p.tau/100) * (1-p.alpha*data$B_L_prop_first) * 
+    B <- (1 + (data$MEASTIME_t2_first-1990)*tau/100) * (1-alpha*data$B_L_prop_first) * 
           (p*A+((1-p)*A*data$STDAGE_t2_first / (k+data$STDAGE_t2_first)))
   } else if (mod.num == "2b") {
+    tau = X["tau"]
+    alpha = X["alpha"]
     A = X["A"]
     k = X["k"]
     s = X["s"]
-    B <- (1 + (data$MEASTIME_t2_first-1990)*p.tau/100) * (1-p.alpha*data$B_L_prop_first) *
+    B <- (1 + (data$MEASTIME_t2_first-1990)*tau/100) * (1-alpha*data$B_L_prop_first) *
           (A*data$STDAGE_t2_first^s / (k^s+data$STDAGE_t2_first^s))
   } else if (mod.num == "2c") {
+    tau = X["tau"]
+    alpha = X["alpha"]
     A = X["A"]
     k = X["k"]
     p = X["p"]
     s = X["s"]
-    B <- (1 + (data$MEASTIME_t2_first-1990)*p.tau/100) * (1-p.alpha*data$B_L_prop_first) *
+    B <- (1 + (data$MEASTIME_t2_first-1990)*tau/100) * (1-alpha*data$B_L_prop_first) *
           (p*A+((1-p)*A*data$STDAGE_t2_first^s / (k^s+data$STDAGE_t2_first^s)))    
   } ## end if 
-  return(B)
+  return(unname(B))
 } ## end function
 
 ## for f(year_last)
-predict_f.year_last <- function(X, mod.number, data, p.alpha, p.tau) {
+predict_f.year_last <- function(X, mod.number, data, nls.pars) {
   ## if loop to solve function given MEASTIME_last data
   if (mod.num == 5) {
+    tau = X["tau"]
+    alpha = X["alpha"]
     a = X["a"]
     b = X["b"]
     c = X["c"]
     d = X["d"]
-    B <- (1 + (data$MEASTIME_t2_last-1990)*p.tau/100) * (1-p.alpha*data$B_L_prop_first) *
+    B <- (1 + (data$MEASTIME_t2_last-1990)*tau/100) * (1-alpha*data$B_L_prop_first) *
           (a+b*exp(-((log((data$STDAGE_t2_first/c)))/d)^2))
   } else if (mod.num == 2) {
+    tau = X["tau"]
+    alpha = X["alpha"]
     A = X["A"]
     k = X["k"]
-    B <- (1 + (data$MEASTIME_t2_last-1990)*p.tau/100) * (1-p.alpha*data$B_L_prop_first) *
+    B <- (1 + (data$MEASTIME_t2_last-1990)*tau/100) * (1-alpha*data$B_L_prop_first) *
           A*data$STDAGE_t2_last / (k+data$STDAGE_t2_last)
   } else if (mod.num == "2a") {
+    tau = X["tau"]
+    alpha = X["alpha"]
     A = X["A"]
     k = X["k"]
     p = X["p"]
-    B <- (1 + (data$MEASTIME_t2_last-1990)*p.tau/100) * (1-p.alpha*data$B_L_prop_first) *
+    B <- (1 + (data$MEASTIME_t2_last-1990)*tau/100) * (1-alpha*data$B_L_prop_first) *
           (p*A+((1-p)*A*data$STDAGE_t2_last / (k+data$STDAGE_t2_last)))
   } else if (mod.num == "2b") {
+    tau = X["tau"]
+    alpha = X["alpha"]
     A = X["A"]
     k = X["k"]
     s = X["s"]
-    B <- (1 + (data$MEASTIME_t2_last-1990)*p.tau/100) * (1-p.alpha*data$B_L_prop_first) *
+    B <- (1 + (data$MEASTIME_t2_last-1990)*tau/100) * (1-alpha*data$B_L_prop_first) *
           (A*data$STDAGE_t2_last^s / (k^s+data$STDAGE_t2_last^s))
   } else if (mod.num == "2c") {
+    tau = X["tau"]
+    alpha = X["alpha"]
     A = X["A"]
     k = X["k"]
     p = X["p"]
     s = X["s"]
-    B <- (1 + (data$MEASTIME_t2_last-1990)*p.tau/100) * (1-p.alpha*data$B_L_prop_first) *   
-          (p*A+((1-p)*A*data$STDAGE_t2_last^s / (k^s+data$STDAGE_t2_last^s)))    
+    B <- (1 + (data$MEASTIME_t2_last-1990)*tau/100) * (1-alpha*data$B_L_prop_first) *   
+          (p*A+((1-p)* A*data$STDAGE_t2_last^s / (k^s+data$STDAGE_t2_last^s)))    
   } ## end if 
-  return(B)
+  return(unname(B))
 } ## end function
 
 ```
@@ -17807,25 +17874,35 @@ mod.num <-  Best_mods.P_bal[Best_mods.P_bal$Ecoprovince == paste(ecoprov),]$Best
 data <- get(paste("DeltaB_df_", ecoprov, sep = ""))
 vcov_mat <- vcov_list[[paste(ecoprov)]]
 
-### sample parameters from MVNormal dist
 set.seed(77) ## for reproducibility
-parameters <- MASS::mvrnorm(nsamp, summary(mod)$param[,"Estimate"], vcov_mat)
+parameters <- if(mod.num == 2){
+  matrix(data = c(rnorm(nsamp, summary(mod)$param["tau","Estimate"], vcov_mat["tau","tau"]), ### sample parameters from Random Normal dist
+                  rep(summary(mod)$param["alpha","Estimate"], 9999), 
+                  rep(summary(mod)$param["A","Estimate"], 9999),
+                  rep(summary(mod)$param["k","Estimate"], 9999)), nrow = 9999, ncol =4,
+         dimnames = list(NULL, c("tau", "alpha", "A", "k")))
+  } else if(mod.num == 5){
+    matrix(data = c(rnorm(nsamp, summary(mod)$param["tau","Estimate"], vcov_mat["tau","tau"]), ### sample parameters from Random Normal dist
+                    rep(summary(mod)$param["alpha","Estimate"], 9999), 
+                    rep(summary(mod)$param["a","Estimate"], 9999),
+                    rep(summary(mod)$param["b","Estimate"], 9999), 
+                    rep(summary(mod)$param["c","Estimate"], 9999),
+                    rep(summary(mod)$param["d","Estimate"], 9999)), nrow = 9999, ncol =6,
+         dimnames = list(NULL, c("tau", "alpha", "a", "b", "c", "d")))
+    }
 
-### solve f(year) function at age_first and age_last
-sim_f_year_first <- apply(parameters, 1, predict_f.year_first, data = data, mod.number = mod.num,
-                         p.alpha = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$alpha,
-                         p.tau = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$tau,
-                         simplify = T)
+### solve f(year) function at year_first and year_last
+sim_f_year_first <- apply(parameters, 1, predict_f.year_first, data = data, mod.number = mod.num, 
+                          simplify = TRUE)
 sim_f_year_last <- apply(parameters, 1, predict_f.year_last, data = data, mod.number = mod.num,
-                        p.alpha = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$alpha,
-                        p.tau = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$tau,
-                        simplify = T)
+                        simplify = TRUE)
 
-### take difference in f(age_first) and f(age_last) over deltaT (aka MEASTIME_t2_last - MEASTIME_t2_first)  --  need to transform the numerator to get plots in rows and sim samples down columns -- then can do division 
-sim_DeltaB <- t(sim_f_year_last - sim_f_year_first) / (data$MEASTIME_t2_last - data$MEASTIME_t2_first) 
+### take difference in f(year_first) and f(year_last) over deltaT (aka MEASTIME_t2_last - MEASTIME_t2_first)  --  need to transform the numerator to get plots in rows and sim samples down columns -- then can do division 
+sim_DeltaB <- t(sim_f_year_last - sim_f_year_first) / (data$MEASTIME_t2_last - data$MEASTIME_t2_first)
 
 ### take means and store in list 
 B_sim_pred_f_year_bar[[paste(ecoprov)]] <- rowMeans(sim_DeltaB, na.rm = T)
+
 
 ####  212
 ### define a few things 
@@ -17834,25 +17911,35 @@ mod <- get(paste("nls_", ecoprov, ".",  Best_mods.P_bal[Best_mods.P_bal$Ecoprovi
 mod.num <-  Best_mods.P_bal[Best_mods.P_bal$Ecoprovince == paste(ecoprov),]$Best.Mod
 data <- get(paste("DeltaB_df_", ecoprov, sep = ""))
 vcov_mat <- vcov_list[[paste(ecoprov)]]
+
 set.seed(77) ## for reproducibility
-parameters <- MASS::mvrnorm(nsamp, summary(mod)$param[,"Estimate"], vcov_mat)
+parameters <- if(mod.num == 2){
+  matrix(data = c(rnorm(nsamp, summary(mod)$param["tau","Estimate"], vcov_mat["tau","tau"]), ### sample parameters from Random Normal dist
+                  rep(summary(mod)$param["alpha","Estimate"], 9999), 
+                  rep(summary(mod)$param["A","Estimate"], 9999),
+                  rep(summary(mod)$param["k","Estimate"], 9999)), nrow = 9999, ncol =4,
+         dimnames = list(NULL, c("tau", "alpha", "A", "k")))
+  } else if(mod.num == 5){
+    matrix(data = c(rnorm(nsamp, summary(mod)$param["tau","Estimate"], vcov_mat["tau","tau"]), ### sample parameters from Random Normal dist
+                    rep(summary(mod)$param["alpha","Estimate"], 9999), 
+                    rep(summary(mod)$param["a","Estimate"], 9999),
+                    rep(summary(mod)$param["b","Estimate"], 9999), 
+                    rep(summary(mod)$param["c","Estimate"], 9999),
+                    rep(summary(mod)$param["d","Estimate"], 9999)), nrow = 9999, ncol =6,
+         dimnames = list(NULL, c("tau", "alpha", "a", "b", "c", "d")))
+    }
 
-### solve f(year) function at age_first and age_last
-sim_f_year_first <- apply(parameters, 1, predict_f.year_first, data = data, mod.number = mod.num,
-                        p.alpha = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$alpha,
-                        p.tau = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$tau,
-                        simplify = T)
-sim_f_year_last <- apply(parameters, 1, predict_f.year_last, data = data, mod.number = mod.num, 
-                        p.alpha = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$alpha,
-                        p.tau = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$tau,
-                        simplify = T)
+### solve f(year) function at year_first and year_last
+sim_f_year_first <- apply(parameters, 1, predict_f.year_first, data = data, mod.number = mod.num, 
+                          simplify = TRUE)
+sim_f_year_last <- apply(parameters, 1, predict_f.year_last, data = data, mod.number = mod.num,
+                        simplify = TRUE)
 
-### take difference in f(age_first) and f(age_last) over deltaT (aka MEASTIME_t2_last - MEASTIME_t2_first)  --  need to transform the numerator to get plots in rows and sim samples down columns -- then can do division 
-sim_DeltaB <- t(sim_f_year_last - sim_f_year_first) / (data$MEASTIME_t2_last - data$MEASTIME_t2_first) 
+### take difference in f(year_first) and f(year_last) over deltaT (aka MEASTIME_t2_last - MEASTIME_t2_first)  --  need to transform the numerator to get plots in rows and sim samples down columns -- then can do division 
+sim_DeltaB <- t(sim_f_year_last - sim_f_year_first) / (data$MEASTIME_t2_last - data$MEASTIME_t2_first)
 
 ### take means and store in list 
 B_sim_pred_f_year_bar[[paste(ecoprov)]] <- rowMeans(sim_DeltaB, na.rm = T)
-
 
 ####  221
 ### define a few things 
@@ -17861,21 +17948,32 @@ mod <- get(paste("nls_", ecoprov, ".",  Best_mods.P_bal[Best_mods.P_bal$Ecoprovi
 mod.num <-  Best_mods.P_bal[Best_mods.P_bal$Ecoprovince == paste(ecoprov),]$Best.Mod
 data <- get(paste("DeltaB_df_", ecoprov, sep = ""))
 vcov_mat <- vcov_list[[paste(ecoprov)]]
+
 set.seed(77) ## for reproducibility
-parameters <- MASS::mvrnorm(nsamp, summary(mod)$param[,"Estimate"], vcov_mat)
+parameters <- if(mod.num == 2){
+  matrix(data = c(rnorm(nsamp, summary(mod)$param["tau","Estimate"], vcov_mat["tau","tau"]), ### sample parameters from Random Normal dist
+                  rep(summary(mod)$param["alpha","Estimate"], 9999), 
+                  rep(summary(mod)$param["A","Estimate"], 9999),
+                  rep(summary(mod)$param["k","Estimate"], 9999)), nrow = 9999, ncol =4,
+         dimnames = list(NULL, c("tau", "alpha", "A", "k")))
+  } else if(mod.num == 5){
+    matrix(data = c(rnorm(nsamp, summary(mod)$param["tau","Estimate"], vcov_mat["tau","tau"]), ### sample parameters from Random Normal dist
+                    rep(summary(mod)$param["alpha","Estimate"], 9999), 
+                    rep(summary(mod)$param["a","Estimate"], 9999),
+                    rep(summary(mod)$param["b","Estimate"], 9999), 
+                    rep(summary(mod)$param["c","Estimate"], 9999),
+                    rep(summary(mod)$param["d","Estimate"], 9999)), nrow = 9999, ncol =6,
+         dimnames = list(NULL, c("tau", "alpha", "a", "b", "c", "d")))
+    }
 
-### solve f(year) function at age_first and age_last
-sim_f_year_first <- apply(parameters, 1, predict_f.year_first, data = data, mod.number = mod.num,
-                        p.alpha = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$alpha,
-                        p.tau = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$tau,
-                        simplify = T)
-sim_f_year_last <- apply(parameters, 1, predict_f.year_last, data = data, mod.number = mod.num, 
-                        p.alpha = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$alpha,
-                        p.tau = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$tau,
-                        simplify = T)
+### solve f(year) function at year_first and year_last
+sim_f_year_first <- apply(parameters, 1, predict_f.year_first, data = data, mod.number = mod.num, 
+                          simplify = TRUE)
+sim_f_year_last <- apply(parameters, 1, predict_f.year_last, data = data, mod.number = mod.num,
+                        simplify = TRUE)
 
-### take difference in f(age_first) and f(age_last) over deltaT (aka MEASTIME_t2_last - MEASTIME_t2_first)  --  need to transform the numerator to get plots in rows and sim samples down columns -- then can do division 
-sim_DeltaB <- t(sim_f_year_last - sim_f_year_first) / (data$MEASTIME_t2_last - data$MEASTIME_t2_first) 
+### take difference in f(year_first) and f(year_last) over deltaT (aka MEASTIME_t2_last - MEASTIME_t2_first)  --  need to transform the numerator to get plots in rows and sim samples down columns -- then can do division 
+sim_DeltaB <- t(sim_f_year_last - sim_f_year_first) / (data$MEASTIME_t2_last - data$MEASTIME_t2_first)
 
 ### take means and store in list 
 B_sim_pred_f_year_bar[[paste(ecoprov)]] <- rowMeans(sim_DeltaB, na.rm = T)
@@ -17888,21 +17986,32 @@ mod <- get(paste("nls_", ecoprov, ".",  Best_mods.P_bal[Best_mods.P_bal$Ecoprovi
 mod.num <-  Best_mods.P_bal[Best_mods.P_bal$Ecoprovince == paste(ecoprov),]$Best.Mod
 data <- get(paste("DeltaB_df_", ecoprov, sep = ""))
 vcov_mat <- vcov_list[[paste(ecoprov)]]
+
 set.seed(77) ## for reproducibility
-parameters <- MASS::mvrnorm(nsamp, summary(mod)$param[,"Estimate"], vcov_mat)
+parameters <- if(mod.num == 2){
+  matrix(data = c(rnorm(nsamp, summary(mod)$param["tau","Estimate"], vcov_mat["tau","tau"]), ### sample parameters from Random Normal dist
+                  rep(summary(mod)$param["alpha","Estimate"], 9999), 
+                  rep(summary(mod)$param["A","Estimate"], 9999),
+                  rep(summary(mod)$param["k","Estimate"], 9999)), nrow = 9999, ncol =4,
+         dimnames = list(NULL, c("tau", "alpha", "A", "k")))
+  } else if(mod.num == 5){
+    matrix(data = c(rnorm(nsamp, summary(mod)$param["tau","Estimate"], vcov_mat["tau","tau"]), ### sample parameters from Random Normal dist
+                    rep(summary(mod)$param["alpha","Estimate"], 9999), 
+                    rep(summary(mod)$param["a","Estimate"], 9999),
+                    rep(summary(mod)$param["b","Estimate"], 9999), 
+                    rep(summary(mod)$param["c","Estimate"], 9999),
+                    rep(summary(mod)$param["d","Estimate"], 9999)), nrow = 9999, ncol =6,
+         dimnames = list(NULL, c("tau", "alpha", "a", "b", "c", "d")))
+    }
 
-### solve f(year) function at age_first and age_last
-sim_f_year_first <- apply(parameters, 1, predict_f.year_first, data = data, mod.number = mod.num,
-                        p.alpha = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$alpha,
-                        p.tau = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$tau,
-                        simplify = T)
-sim_f_year_last <- apply(parameters, 1, predict_f.year_last, data = data, mod.number = mod.num, 
-                        p.alpha = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$alpha,
-                        p.tau = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$tau,
-                        simplify = T)
+### solve f(year) function at year_first and year_last
+sim_f_year_first <- apply(parameters, 1, predict_f.year_first, data = data, mod.number = mod.num, 
+                          simplify = TRUE)
+sim_f_year_last <- apply(parameters, 1, predict_f.year_last, data = data, mod.number = mod.num,
+                        simplify = TRUE)
 
-### take difference in f(age_first) and f(age_last) over deltaT (aka MEASTIME_t2_last - MEASTIME_t2_first)  --  need to transform the numerator to get plots in rows and sim samples down columns -- then can do division 
-sim_DeltaB <- t(sim_f_year_last - sim_f_year_first) / (data$MEASTIME_t2_last - data$MEASTIME_t2_first) 
+### take difference in f(year_first) and f(year_last) over deltaT (aka MEASTIME_t2_last - MEASTIME_t2_first)  --  need to transform the numerator to get plots in rows and sim samples down columns -- then can do division 
+sim_DeltaB <- t(sim_f_year_last - sim_f_year_first) / (data$MEASTIME_t2_last - data$MEASTIME_t2_first)
 
 ### take means and store in list 
 B_sim_pred_f_year_bar[[paste(ecoprov)]] <- rowMeans(sim_DeltaB, na.rm = T)
@@ -17915,21 +18024,32 @@ mod <- get(paste("nls_", ecoprov, ".",  Best_mods.P_bal[Best_mods.P_bal$Ecoprovi
 mod.num <-  Best_mods.P_bal[Best_mods.P_bal$Ecoprovince == paste(ecoprov),]$Best.Mod
 data <- get(paste("DeltaB_df_", ecoprov, sep = ""))
 vcov_mat <- vcov_list[[paste(ecoprov)]]
+
 set.seed(77) ## for reproducibility
-parameters <- MASS::mvrnorm(nsamp, summary(mod)$param[,"Estimate"], vcov_mat)
+parameters <- if(mod.num == 2){
+  matrix(data = c(rnorm(nsamp, summary(mod)$param["tau","Estimate"], vcov_mat["tau","tau"]), ### sample parameters from Random Normal dist
+                  rep(summary(mod)$param["alpha","Estimate"], 9999), 
+                  rep(summary(mod)$param["A","Estimate"], 9999),
+                  rep(summary(mod)$param["k","Estimate"], 9999)), nrow = 9999, ncol =4,
+         dimnames = list(NULL, c("tau", "alpha", "A", "k")))
+  } else if(mod.num == 5){
+    matrix(data = c(rnorm(nsamp, summary(mod)$param["tau","Estimate"], vcov_mat["tau","tau"]), ### sample parameters from Random Normal dist
+                    rep(summary(mod)$param["alpha","Estimate"], 9999), 
+                    rep(summary(mod)$param["a","Estimate"], 9999),
+                    rep(summary(mod)$param["b","Estimate"], 9999), 
+                    rep(summary(mod)$param["c","Estimate"], 9999),
+                    rep(summary(mod)$param["d","Estimate"], 9999)), nrow = 9999, ncol =6,
+         dimnames = list(NULL, c("tau", "alpha", "a", "b", "c", "d")))
+    }
 
-### solve f(year) function at age_first and age_last
-sim_f_year_first <- apply(parameters, 1, predict_f.year_first, data = data, mod.number = mod.num,
-                        p.alpha = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$alpha,
-                        p.tau = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$tau,
-                        simplify = T)
-sim_f_year_last <- apply(parameters, 1, predict_f.year_last, data = data, mod.number = mod.num, 
-                        p.alpha = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$alpha,
-                        p.tau = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$tau,
-                        simplify = T)
+### solve f(year) function at year_first and year_last
+sim_f_year_first <- apply(parameters, 1, predict_f.year_first, data = data, mod.number = mod.num, 
+                          simplify = TRUE)
+sim_f_year_last <- apply(parameters, 1, predict_f.year_last, data = data, mod.number = mod.num,
+                        simplify = TRUE)
 
-### take difference in f(age_first) and f(age_last) over deltaT (aka MEASTIME_t2_last - MEASTIME_t2_first)  --  need to transform the numerator to get plots in rows and sim samples down columns -- then can do division 
-sim_DeltaB <- t(sim_f_year_last - sim_f_year_first) / (data$MEASTIME_t2_last - data$MEASTIME_t2_first) 
+### take difference in f(year_first) and f(year_last) over deltaT (aka MEASTIME_t2_last - MEASTIME_t2_first)  --  need to transform the numerator to get plots in rows and sim samples down columns -- then can do division 
+sim_DeltaB <- t(sim_f_year_last - sim_f_year_first) / (data$MEASTIME_t2_last - data$MEASTIME_t2_first)
 
 ### take means and store in list 
 B_sim_pred_f_year_bar[[paste(ecoprov)]] <- rowMeans(sim_DeltaB, na.rm = T)
@@ -17942,21 +18062,32 @@ mod <- get(paste("nls_", ecoprov, ".",  Best_mods.P_bal[Best_mods.P_bal$Ecoprovi
 mod.num <-  Best_mods.P_bal[Best_mods.P_bal$Ecoprovince == paste(ecoprov),]$Best.Mod
 data <- get(paste("DeltaB_df_", ecoprov, sep = ""))
 vcov_mat <- vcov_list[[paste(ecoprov)]]
+
 set.seed(77) ## for reproducibility
-parameters <- MASS::mvrnorm(nsamp, summary(mod)$param[,"Estimate"], vcov_mat)
+parameters <- if(mod.num == 2){
+  matrix(data = c(rnorm(nsamp, summary(mod)$param["tau","Estimate"], vcov_mat["tau","tau"]), ### sample parameters from Random Normal dist
+                  rep(summary(mod)$param["alpha","Estimate"], 9999), 
+                  rep(summary(mod)$param["A","Estimate"], 9999),
+                  rep(summary(mod)$param["k","Estimate"], 9999)), nrow = 9999, ncol =4,
+         dimnames = list(NULL, c("tau", "alpha", "A", "k")))
+  } else if(mod.num == 5){
+    matrix(data = c(rnorm(nsamp, summary(mod)$param["tau","Estimate"], vcov_mat["tau","tau"]), ### sample parameters from Random Normal dist
+                    rep(summary(mod)$param["alpha","Estimate"], 9999), 
+                    rep(summary(mod)$param["a","Estimate"], 9999),
+                    rep(summary(mod)$param["b","Estimate"], 9999), 
+                    rep(summary(mod)$param["c","Estimate"], 9999),
+                    rep(summary(mod)$param["d","Estimate"], 9999)), nrow = 9999, ncol =6,
+         dimnames = list(NULL, c("tau", "alpha", "a", "b", "c", "d")))
+    }
 
-### solve f(year) function at age_first and age_last
-sim_f_year_first <- apply(parameters, 1, predict_f.year_first, data = data, mod.number = mod.num,
-                        p.alpha = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$alpha,
-                        p.tau = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$tau,
-                        simplify = T)
-sim_f_year_last <- apply(parameters, 1, predict_f.year_last, data = data, mod.number = mod.num, 
-                        p.alpha = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$alpha,
-                        p.tau = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$tau,
-                        simplify = T)
+### solve f(year) function at year_first and year_last
+sim_f_year_first <- apply(parameters, 1, predict_f.year_first, data = data, mod.number = mod.num, 
+                          simplify = TRUE)
+sim_f_year_last <- apply(parameters, 1, predict_f.year_last, data = data, mod.number = mod.num,
+                        simplify = TRUE)
 
-### take difference in f(age_first) and f(age_last) over deltaT (aka MEASTIME_t2_last - MEASTIME_t2_first)  --  need to transform the numerator to get plots in rows and sim samples down columns -- then can do division 
-sim_DeltaB <- t(sim_f_year_last - sim_f_year_first) / (data$MEASTIME_t2_last - data$MEASTIME_t2_first) 
+### take difference in f(year_first) and f(year_last) over deltaT (aka MEASTIME_t2_last - MEASTIME_t2_first)  --  need to transform the numerator to get plots in rows and sim samples down columns -- then can do division 
+sim_DeltaB <- t(sim_f_year_last - sim_f_year_first) / (data$MEASTIME_t2_last - data$MEASTIME_t2_first)
 
 ### take means and store in list 
 B_sim_pred_f_year_bar[[paste(ecoprov)]] <- rowMeans(sim_DeltaB, na.rm = T)
@@ -17969,21 +18100,32 @@ mod <- get(paste("nls_", ecoprov, ".",  Best_mods.P_bal[Best_mods.P_bal$Ecoprovi
 mod.num <-  Best_mods.P_bal[Best_mods.P_bal$Ecoprovince == paste(ecoprov),]$Best.Mod
 data <- get(paste("DeltaB_df_", ecoprov, sep = ""))
 vcov_mat <- vcov_list[[paste(ecoprov)]]
+
 set.seed(77) ## for reproducibility
-parameters <- MASS::mvrnorm(nsamp, summary(mod)$param[,"Estimate"], vcov_mat)
+parameters <- if(mod.num == 2){
+  matrix(data = c(rnorm(nsamp, summary(mod)$param["tau","Estimate"], vcov_mat["tau","tau"]), ### sample parameters from Random Normal dist
+                  rep(summary(mod)$param["alpha","Estimate"], 9999), 
+                  rep(summary(mod)$param["A","Estimate"], 9999),
+                  rep(summary(mod)$param["k","Estimate"], 9999)), nrow = 9999, ncol =4,
+         dimnames = list(NULL, c("tau", "alpha", "A", "k")))
+  } else if(mod.num == 5){
+    matrix(data = c(rnorm(nsamp, summary(mod)$param["tau","Estimate"], vcov_mat["tau","tau"]), ### sample parameters from Random Normal dist
+                    rep(summary(mod)$param["alpha","Estimate"], 9999), 
+                    rep(summary(mod)$param["a","Estimate"], 9999),
+                    rep(summary(mod)$param["b","Estimate"], 9999), 
+                    rep(summary(mod)$param["c","Estimate"], 9999),
+                    rep(summary(mod)$param["d","Estimate"], 9999)), nrow = 9999, ncol =6,
+         dimnames = list(NULL, c("tau", "alpha", "a", "b", "c", "d")))
+    }
 
-### solve f(year) function at age_first and age_last
-sim_f_year_first <- apply(parameters, 1, predict_f.year_first, data = data, mod.number = mod.num,
-                         p.alpha = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$alpha,
-                         p.tau = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$tau,
-                         simplify = T)
+### solve f(year) function at year_first and year_last
+sim_f_year_first <- apply(parameters, 1, predict_f.year_first, data = data, mod.number = mod.num, 
+                          simplify = TRUE)
 sim_f_year_last <- apply(parameters, 1, predict_f.year_last, data = data, mod.number = mod.num,
-                        p.alpha = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$alpha,
-                        p.tau = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$tau,
-                        simplify = T)
+                        simplify = TRUE)
 
-### take difference in f(age_first) and f(age_last) over deltaT (aka MEASTIME_t2_last - MEASTIME_t2_first)  --  need to transform the numerator to get plots in rows and sim samples down columns -- then can do division 
-sim_DeltaB <- t(sim_f_year_last - sim_f_year_first) / (data$MEASTIME_t2_last - data$MEASTIME_t2_first) 
+### take difference in f(year_first) and f(year_last) over deltaT (aka MEASTIME_t2_last - MEASTIME_t2_first)  --  need to transform the numerator to get plots in rows and sim samples down columns -- then can do division 
+sim_DeltaB <- t(sim_f_year_last - sim_f_year_first) / (data$MEASTIME_t2_last - data$MEASTIME_t2_first)
 
 ### take means and store in list 
 B_sim_pred_f_year_bar[[paste(ecoprov)]] <- rowMeans(sim_DeltaB, na.rm = T)
@@ -17996,21 +18138,32 @@ mod <- get(paste("nls_", ecoprov, ".",  Best_mods.P_bal[Best_mods.P_bal$Ecoprovi
 mod.num <-  Best_mods.P_bal[Best_mods.P_bal$Ecoprovince == paste(ecoprov),]$Best.Mod
 data <- get(paste("DeltaB_df_", ecoprov, sep = ""))
 vcov_mat <- vcov_list[[paste(ecoprov)]]
+
 set.seed(77) ## for reproducibility
-parameters <- MASS::mvrnorm(nsamp, summary(mod)$param[,"Estimate"], vcov_mat)
+parameters <- if(mod.num == 2){
+  matrix(data = c(rnorm(nsamp, summary(mod)$param["tau","Estimate"], vcov_mat["tau","tau"]), ### sample parameters from Random Normal dist
+                  rep(summary(mod)$param["alpha","Estimate"], 9999), 
+                  rep(summary(mod)$param["A","Estimate"], 9999),
+                  rep(summary(mod)$param["k","Estimate"], 9999)), nrow = 9999, ncol =4,
+         dimnames = list(NULL, c("tau", "alpha", "A", "k")))
+  } else if(mod.num == 5){
+    matrix(data = c(rnorm(nsamp, summary(mod)$param["tau","Estimate"], vcov_mat["tau","tau"]), ### sample parameters from Random Normal dist
+                    rep(summary(mod)$param["alpha","Estimate"], 9999), 
+                    rep(summary(mod)$param["a","Estimate"], 9999),
+                    rep(summary(mod)$param["b","Estimate"], 9999), 
+                    rep(summary(mod)$param["c","Estimate"], 9999),
+                    rep(summary(mod)$param["d","Estimate"], 9999)), nrow = 9999, ncol =6,
+         dimnames = list(NULL, c("tau", "alpha", "a", "b", "c", "d")))
+    }
 
-### solve f(year) function at age_first and age_last
-sim_f_year_first <- apply(parameters, 1, predict_f.year_first, data = data, mod.number = mod.num,
-                         p.alpha = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$alpha,
-                         p.tau = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$tau,
-                         simplify = T)
+### solve f(year) function at year_first and year_last
+sim_f_year_first <- apply(parameters, 1, predict_f.year_first, data = data, mod.number = mod.num, 
+                          simplify = TRUE)
 sim_f_year_last <- apply(parameters, 1, predict_f.year_last, data = data, mod.number = mod.num,
-                        p.alpha = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$alpha,
-                        p.tau = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$tau,
-                        simplify = T)
+                        simplify = TRUE)
 
-### take difference in f(age_first) and f(age_last) over deltaT (aka MEASTIME_t2_last - MEASTIME_t2_first)  --  need to transform the numerator to get plots in rows and sim samples down columns -- then can do division 
-sim_DeltaB <- t(sim_f_year_last - sim_f_year_first) / (data$MEASTIME_t2_last - data$MEASTIME_t2_first) 
+### take difference in f(year_first) and f(year_last) over deltaT (aka MEASTIME_t2_last - MEASTIME_t2_first)  --  need to transform the numerator to get plots in rows and sim samples down columns -- then can do division 
+sim_DeltaB <- t(sim_f_year_last - sim_f_year_first) / (data$MEASTIME_t2_last - data$MEASTIME_t2_first)
 
 ### take means and store in list 
 B_sim_pred_f_year_bar[[paste(ecoprov)]] <- rowMeans(sim_DeltaB, na.rm = T)
@@ -18023,21 +18176,32 @@ mod <- get(paste("nls_", ecoprov, ".",  Best_mods.P_bal[Best_mods.P_bal$Ecoprovi
 mod.num <-  Best_mods.P_bal[Best_mods.P_bal$Ecoprovince == paste(ecoprov),]$Best.Mod
 data <- get(paste("DeltaB_df_", ecoprov, sep = ""))
 vcov_mat <- vcov_list[[paste(ecoprov)]]
+
 set.seed(77) ## for reproducibility
-parameters <- MASS::mvrnorm(nsamp, summary(mod)$param[,"Estimate"], vcov_mat)
+parameters <- if(mod.num == 2){
+  matrix(data = c(rnorm(nsamp, summary(mod)$param["tau","Estimate"], vcov_mat["tau","tau"]), ### sample parameters from Random Normal dist
+                  rep(summary(mod)$param["alpha","Estimate"], 9999), 
+                  rep(summary(mod)$param["A","Estimate"], 9999),
+                  rep(summary(mod)$param["k","Estimate"], 9999)), nrow = 9999, ncol =4,
+         dimnames = list(NULL, c("tau", "alpha", "A", "k")))
+  } else if(mod.num == 5){
+    matrix(data = c(rnorm(nsamp, summary(mod)$param["tau","Estimate"], vcov_mat["tau","tau"]), ### sample parameters from Random Normal dist
+                    rep(summary(mod)$param["alpha","Estimate"], 9999), 
+                    rep(summary(mod)$param["a","Estimate"], 9999),
+                    rep(summary(mod)$param["b","Estimate"], 9999), 
+                    rep(summary(mod)$param["c","Estimate"], 9999),
+                    rep(summary(mod)$param["d","Estimate"], 9999)), nrow = 9999, ncol =6,
+         dimnames = list(NULL, c("tau", "alpha", "a", "b", "c", "d")))
+    }
 
-### solve f(year) function at age_first and age_last
-sim_f_year_first <- apply(parameters, 1, predict_f.year_first, data = data, mod.number = mod.num,
-                         p.alpha = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$alpha,
-                         p.tau = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$tau,
-                         simplify = T)
+### solve f(year) function at year_first and year_last
+sim_f_year_first <- apply(parameters, 1, predict_f.year_first, data = data, mod.number = mod.num, 
+                          simplify = TRUE)
 sim_f_year_last <- apply(parameters, 1, predict_f.year_last, data = data, mod.number = mod.num,
-                        p.alpha = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$alpha,
-                        p.tau = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$tau,
-                        simplify = T)
+                        simplify = TRUE)
 
-### take difference in f(age_first) and f(age_last)  over deltaT (aka MEASTIME_t2_last - MEASTIME_t2_first)  --  need to transform the numerator to get plots in rows and sim samples down columns -- then can do division 
-sim_DeltaB <- t(sim_f_year_last - sim_f_year_first) / (data$MEASTIME_t2_last - data$MEASTIME_t2_first) 
+### take difference in f(year_first) and f(year_last) over deltaT (aka MEASTIME_t2_last - MEASTIME_t2_first)  --  need to transform the numerator to get plots in rows and sim samples down columns -- then can do division 
+sim_DeltaB <- t(sim_f_year_last - sim_f_year_first) / (data$MEASTIME_t2_last - data$MEASTIME_t2_first)
 
 ### take means and store in list 
 B_sim_pred_f_year_bar[[paste(ecoprov)]] <- rowMeans(sim_DeltaB, na.rm = T)
@@ -18050,21 +18214,32 @@ mod <- get(paste("nls_", ecoprov, ".",  Best_mods.P_bal[Best_mods.P_bal$Ecoprovi
 mod.num <-  Best_mods.P_bal[Best_mods.P_bal$Ecoprovince == paste(ecoprov),]$Best.Mod
 data <- get(paste("DeltaB_df_", ecoprov, sep = ""))
 vcov_mat <- vcov_list[[paste(ecoprov)]]
+
 set.seed(77) ## for reproducibility
-parameters <- MASS::mvrnorm(nsamp, summary(mod)$param[,"Estimate"], vcov_mat)
+parameters <- if(mod.num == 2){
+  matrix(data = c(rnorm(nsamp, summary(mod)$param["tau","Estimate"], vcov_mat["tau","tau"]), ### sample parameters from Random Normal dist
+                  rep(summary(mod)$param["alpha","Estimate"], 9999), 
+                  rep(summary(mod)$param["A","Estimate"], 9999),
+                  rep(summary(mod)$param["k","Estimate"], 9999)), nrow = 9999, ncol =4,
+         dimnames = list(NULL, c("tau", "alpha", "A", "k")))
+  } else if(mod.num == 5){
+    matrix(data = c(rnorm(nsamp, summary(mod)$param["tau","Estimate"], vcov_mat["tau","tau"]), ### sample parameters from Random Normal dist
+                    rep(summary(mod)$param["alpha","Estimate"], 9999), 
+                    rep(summary(mod)$param["a","Estimate"], 9999),
+                    rep(summary(mod)$param["b","Estimate"], 9999), 
+                    rep(summary(mod)$param["c","Estimate"], 9999),
+                    rep(summary(mod)$param["d","Estimate"], 9999)), nrow = 9999, ncol =6,
+         dimnames = list(NULL, c("tau", "alpha", "a", "b", "c", "d")))
+    }
 
-### solve f(year) function at age_first and age_last
-sim_f_year_first <- apply(parameters, 1, predict_f.year_first, data = data, mod.number = mod.num,
-                         p.alpha = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$alpha,
-                         p.tau = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$tau,
-                         simplify = T)
-sim_f_year_last <- apply(parameters, 1, predict_f.year_last, data = data, mod.number = mod.num, 
-                        p.alpha = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$alpha,
-                        p.tau = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$tau,
-                        simplify = T)
+### solve f(year) function at year_first and year_last
+sim_f_year_first <- apply(parameters, 1, predict_f.year_first, data = data, mod.number = mod.num, 
+                          simplify = TRUE)
+sim_f_year_last <- apply(parameters, 1, predict_f.year_last, data = data, mod.number = mod.num,
+                        simplify = TRUE)
 
-### take constant times difference in f(age_first) and f(age_last) over deltaT (aka MEASTIME_t2_last - MEASTIME_t2_first)  --  need to transform the numerator to get plots in rows and sim samples down columns -- then can do division 
-sim_DeltaB <- t(sim_f_year_last - sim_f_year_first) / (data$MEASTIME_t2_last - data$MEASTIME_t2_first) 
+### take difference in f(year_first) and f(year_last) over deltaT (aka MEASTIME_t2_last - MEASTIME_t2_first)  --  need to transform the numerator to get plots in rows and sim samples down columns -- then can do division 
+sim_DeltaB <- t(sim_f_year_last - sim_f_year_first) / (data$MEASTIME_t2_last - data$MEASTIME_t2_first)
 
 ### take means and store in list 
 B_sim_pred_f_year_bar[[paste(ecoprov)]] <- rowMeans(sim_DeltaB, na.rm = T)
@@ -18077,21 +18252,32 @@ mod <- get(paste("nls_", ecoprov, ".",  Best_mods.P_bal[Best_mods.P_bal$Ecoprovi
 mod.num <-  Best_mods.P_bal[Best_mods.P_bal$Ecoprovince == paste(ecoprov),]$Best.Mod
 data <- get(paste("DeltaB_df_", ecoprov, sep = ""))
 vcov_mat <- vcov_list[[paste(ecoprov)]]
+
 set.seed(77) ## for reproducibility
-parameters <- MASS::mvrnorm(nsamp, summary(mod)$param[,"Estimate"], vcov_mat)
+parameters <- if(mod.num == 2){
+  matrix(data = c(rnorm(nsamp, summary(mod)$param["tau","Estimate"], vcov_mat["tau","tau"]), ### sample parameters from Random Normal dist
+                  rep(summary(mod)$param["alpha","Estimate"], 9999), 
+                  rep(summary(mod)$param["A","Estimate"], 9999),
+                  rep(summary(mod)$param["k","Estimate"], 9999)), nrow = 9999, ncol =4,
+         dimnames = list(NULL, c("tau", "alpha", "A", "k")))
+  } else if(mod.num == 5){
+    matrix(data = c(rnorm(nsamp, summary(mod)$param["tau","Estimate"], vcov_mat["tau","tau"]), ### sample parameters from Random Normal dist
+                    rep(summary(mod)$param["alpha","Estimate"], 9999), 
+                    rep(summary(mod)$param["a","Estimate"], 9999),
+                    rep(summary(mod)$param["b","Estimate"], 9999), 
+                    rep(summary(mod)$param["c","Estimate"], 9999),
+                    rep(summary(mod)$param["d","Estimate"], 9999)), nrow = 9999, ncol =6,
+         dimnames = list(NULL, c("tau", "alpha", "a", "b", "c", "d")))
+    }
 
-### solve f(year) function at age_first and age_last
-sim_f_year_first <- apply(parameters, 1, predict_f.year_first, data = data, mod.number = mod.num,
-                        p.alpha = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$alpha,
-                        p.tau = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$tau,
-                        simplify = T)
+### solve f(year) function at year_first and year_last
+sim_f_year_first <- apply(parameters, 1, predict_f.year_first, data = data, mod.number = mod.num, 
+                          simplify = TRUE)
 sim_f_year_last <- apply(parameters, 1, predict_f.year_last, data = data, mod.number = mod.num,
-                        p.alpha = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$alpha,
-                        p.tau = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$tau,
-                        simplify = T)
+                        simplify = TRUE)
 
-### take constant times difference in f(age_first) and f(age_last) over deltaT (aka MEASTIME_t2_last - MEASTIME_t2_first)  --  need to transform the numerator to get plots in rows and sim samples down columns -- then can do division 
-sim_DeltaB <- t(sim_f_year_last - sim_f_year_first) / (data$MEASTIME_t2_last - data$MEASTIME_t2_first) 
+### take difference in f(year_first) and f(year_last) over deltaT (aka MEASTIME_t2_last - MEASTIME_t2_first)  --  need to transform the numerator to get plots in rows and sim samples down columns -- then can do division 
+sim_DeltaB <- t(sim_f_year_last - sim_f_year_first) / (data$MEASTIME_t2_last - data$MEASTIME_t2_first)
 
 ### take means and store in list 
 B_sim_pred_f_year_bar[[paste(ecoprov)]] <- rowMeans(sim_DeltaB, na.rm = T)
@@ -18104,21 +18290,32 @@ mod <- get(paste("nls_", ecoprov, ".",  Best_mods.P_bal[Best_mods.P_bal$Ecoprovi
 mod.num <-  Best_mods.P_bal[Best_mods.P_bal$Ecoprovince == paste(ecoprov),]$Best.Mod
 data <- get(paste("DeltaB_df_", ecoprov, sep = ""))
 vcov_mat <- vcov_list[[paste(ecoprov)]]
+
 set.seed(77) ## for reproducibility
-parameters <- MASS::mvrnorm(nsamp, summary(mod)$param[,"Estimate"], vcov_mat)
+parameters <- if(mod.num == 2){
+  matrix(data = c(rnorm(nsamp, summary(mod)$param["tau","Estimate"], vcov_mat["tau","tau"]), ### sample parameters from Random Normal dist
+                  rep(summary(mod)$param["alpha","Estimate"], 9999), 
+                  rep(summary(mod)$param["A","Estimate"], 9999),
+                  rep(summary(mod)$param["k","Estimate"], 9999)), nrow = 9999, ncol =4,
+         dimnames = list(NULL, c("tau", "alpha", "A", "k")))
+  } else if(mod.num == 5){
+    matrix(data = c(rnorm(nsamp, summary(mod)$param["tau","Estimate"], vcov_mat["tau","tau"]), ### sample parameters from Random Normal dist
+                    rep(summary(mod)$param["alpha","Estimate"], 9999), 
+                    rep(summary(mod)$param["a","Estimate"], 9999),
+                    rep(summary(mod)$param["b","Estimate"], 9999), 
+                    rep(summary(mod)$param["c","Estimate"], 9999),
+                    rep(summary(mod)$param["d","Estimate"], 9999)), nrow = 9999, ncol =6,
+         dimnames = list(NULL, c("tau", "alpha", "a", "b", "c", "d")))
+    }
 
-### solve f(year) function at age_first and age_last
-sim_f_year_first <- apply(parameters, 1, predict_f.year_first, data = data, mod.number = mod.num,
-                        p.alpha = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$alpha,
-                        p.tau = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$tau,
-                        simplify = T)
-sim_f_year_last <- apply(parameters, 1, predict_f.year_last, data = data, mod.number = mod.num, 
-                        p.alpha = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$alpha,
-                        p.tau = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$tau,
-                        simplify = T)
+### solve f(year) function at year_first and year_last
+sim_f_year_first <- apply(parameters, 1, predict_f.year_first, data = data, mod.number = mod.num, 
+                          simplify = TRUE)
+sim_f_year_last <- apply(parameters, 1, predict_f.year_last, data = data, mod.number = mod.num,
+                        simplify = TRUE)
 
-### take constant times difference in f(age_first) and f(age_last) over deltaT (aka MEASTIME_t2_last - MEASTIME_t2_first)  --  need to transform the numerator to get plots in rows and sim samples down columns -- then can do division 
-sim_DeltaB <- t(sim_f_year_last - sim_f_year_first) / (data$MEASTIME_t2_last - data$MEASTIME_t2_first) 
+### take difference in f(year_first) and f(year_last) over deltaT (aka MEASTIME_t2_last - MEASTIME_t2_first)  --  need to transform the numerator to get plots in rows and sim samples down columns -- then can do division 
+sim_DeltaB <- t(sim_f_year_last - sim_f_year_first) / (data$MEASTIME_t2_last - data$MEASTIME_t2_first)
 
 ### take means and store in list 
 B_sim_pred_f_year_bar[[paste(ecoprov)]] <- rowMeans(sim_DeltaB, na.rm = T)
@@ -18131,21 +18328,32 @@ mod <- get(paste("nls_", ecoprov, ".",  Best_mods.P_bal[Best_mods.P_bal$Ecoprovi
 mod.num <-  Best_mods.P_bal[Best_mods.P_bal$Ecoprovince == paste(ecoprov),]$Best.Mod
 data <- get(paste("DeltaB_df_", ecoprov, sep = ""))
 vcov_mat <- vcov_list[[paste(ecoprov)]]
+
 set.seed(77) ## for reproducibility
-parameters <- MASS::mvrnorm(nsamp, summary(mod)$param[,"Estimate"], vcov_mat)
+parameters <- if(mod.num == 2){
+  matrix(data = c(rnorm(nsamp, summary(mod)$param["tau","Estimate"], vcov_mat["tau","tau"]), ### sample parameters from Random Normal dist
+                  rep(summary(mod)$param["alpha","Estimate"], 9999), 
+                  rep(summary(mod)$param["A","Estimate"], 9999),
+                  rep(summary(mod)$param["k","Estimate"], 9999)), nrow = 9999, ncol =4,
+         dimnames = list(NULL, c("tau", "alpha", "A", "k")))
+  } else if(mod.num == 5){
+    matrix(data = c(rnorm(nsamp, summary(mod)$param["tau","Estimate"], vcov_mat["tau","tau"]), ### sample parameters from Random Normal dist
+                    rep(summary(mod)$param["alpha","Estimate"], 9999), 
+                    rep(summary(mod)$param["a","Estimate"], 9999),
+                    rep(summary(mod)$param["b","Estimate"], 9999), 
+                    rep(summary(mod)$param["c","Estimate"], 9999),
+                    rep(summary(mod)$param["d","Estimate"], 9999)), nrow = 9999, ncol =6,
+         dimnames = list(NULL, c("tau", "alpha", "a", "b", "c", "d")))
+    }
 
-### solve f(year) function at age_first and age_last
-sim_f_year_first <- apply(parameters, 1, predict_f.year_first, data = data, mod.number = mod.num,
-                         p.alpha = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$alpha,
-                         p.tau = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$tau,
-                         simplify = T)
-sim_f_year_last <- apply(parameters, 1, predict_f.year_last, data = data, mod.number = mod.num, 
-                        p.alpha = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$alpha,
-                        p.tau = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$tau,
-                        simplify = T)
+### solve f(year) function at year_first and year_last
+sim_f_year_first <- apply(parameters, 1, predict_f.year_first, data = data, mod.number = mod.num, 
+                          simplify = TRUE)
+sim_f_year_last <- apply(parameters, 1, predict_f.year_last, data = data, mod.number = mod.num,
+                        simplify = TRUE)
 
-### take constant times difference in f(age_first) and f(age_last) over deltaT (aka MEASTIME_t2_last - MEASTIME_t2_first)  --  need to transform the numerator to get plots in rows and sim samples down columns -- then can do division 
-sim_DeltaB <- t(sim_f_year_last - sim_f_year_first) / (data$MEASTIME_t2_last - data$MEASTIME_t2_first) 
+### take difference in f(year_first) and f(year_last) over deltaT (aka MEASTIME_t2_last - MEASTIME_t2_first)  --  need to transform the numerator to get plots in rows and sim samples down columns -- then can do division 
+sim_DeltaB <- t(sim_f_year_last - sim_f_year_first) / (data$MEASTIME_t2_last - data$MEASTIME_t2_first)
 
 ### take means and store in list 
 B_sim_pred_f_year_bar[[paste(ecoprov)]] <- rowMeans(sim_DeltaB, na.rm = T)
@@ -18158,21 +18366,32 @@ mod <- get(paste("nls_", ecoprov, ".",  Best_mods.P_bal[Best_mods.P_bal$Ecoprovi
 mod.num <-  Best_mods.P_bal[Best_mods.P_bal$Ecoprovince == paste(ecoprov),]$Best.Mod
 data <- get(paste("DeltaB_df_", ecoprov, sep = ""))
 vcov_mat <- vcov_list[[paste(ecoprov)]]
+
 set.seed(77) ## for reproducibility
-parameters <- MASS::mvrnorm(nsamp, summary(mod)$param[,"Estimate"], vcov_mat)
+parameters <- if(mod.num == 2){
+  matrix(data = c(rnorm(nsamp, summary(mod)$param["tau","Estimate"], vcov_mat["tau","tau"]), ### sample parameters from Random Normal dist
+                  rep(summary(mod)$param["alpha","Estimate"], 9999), 
+                  rep(summary(mod)$param["A","Estimate"], 9999),
+                  rep(summary(mod)$param["k","Estimate"], 9999)), nrow = 9999, ncol =4,
+         dimnames = list(NULL, c("tau", "alpha", "A", "k")))
+  } else if(mod.num == 5){
+    matrix(data = c(rnorm(nsamp, summary(mod)$param["tau","Estimate"], vcov_mat["tau","tau"]), ### sample parameters from Random Normal dist
+                    rep(summary(mod)$param["alpha","Estimate"], 9999), 
+                    rep(summary(mod)$param["a","Estimate"], 9999),
+                    rep(summary(mod)$param["b","Estimate"], 9999), 
+                    rep(summary(mod)$param["c","Estimate"], 9999),
+                    rep(summary(mod)$param["d","Estimate"], 9999)), nrow = 9999, ncol =6,
+         dimnames = list(NULL, c("tau", "alpha", "a", "b", "c", "d")))
+    }
 
-### solve f(year) function at age_first and age_last
-sim_f_year_first <- apply(parameters, 1, predict_f.year_first, data = data, mod.number = mod.num,
-                        p.alpha = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$alpha,
-                        p.tau = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$tau,
-                        simplify = T)
-sim_f_year_last <- apply(parameters, 1, predict_f.year_last, data = data, mod.number = mod.num, 
-                        p.alpha = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$alpha,
-                        p.tau = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$tau,
-                        simplify = T)
+### solve f(year) function at year_first and year_last
+sim_f_year_first <- apply(parameters, 1, predict_f.year_first, data = data, mod.number = mod.num, 
+                          simplify = TRUE)
+sim_f_year_last <- apply(parameters, 1, predict_f.year_last, data = data, mod.number = mod.num,
+                        simplify = TRUE)
 
-### take constant times difference in f(age_first) and f(age_last) over deltaT (aka MEASTIME_t2_last - MEASTIME_t2_first)  --  need to transform the numerator to get plots in rows and sim samples down columns -- then can do division 
-sim_DeltaB <- t(sim_f_year_last - sim_f_year_first) / (data$MEASTIME_t2_last - data$MEASTIME_t2_first) 
+### take difference in f(year_first) and f(year_last) over deltaT (aka MEASTIME_t2_last - MEASTIME_t2_first)  --  need to transform the numerator to get plots in rows and sim samples down columns -- then can do division 
+sim_DeltaB <- t(sim_f_year_last - sim_f_year_first) / (data$MEASTIME_t2_last - data$MEASTIME_t2_first)
 
 ### take means and store in list 
 B_sim_pred_f_year_bar[[paste(ecoprov)]] <- rowMeans(sim_DeltaB, na.rm = T)
@@ -18636,79 +18855,99 @@ DeltaB_df_M231$DeltaB_SUM_total <- DeltaB_df_M231$DeltaB_age +  DeltaB_df_M231$D
 
 ```{r}
 ## function which uses f(B_L_prop_first)
-predict_f.disturbance_first <- function(X, mod.number, data, p.alpha, p.tau) {
+predict_f.disturbance_first <- function(X, mod.number, data) {
   ## if loop to solve function given first data
   if (mod.num == 5) {
+    tau = X["tau"]
+    alpha = X["alpha"]
     a = X["a"]
     b = X["b"]
     c = X["c"]
     d = X["d"]
-    B <- (1 + (data$MEASTIME_t2_first-1990)*p.tau/100) * (1-p.alpha*data$B_L_prop_first) * 
+    B <- (1 + (data$MEASTIME_t2_first-1990)*tau/100) * (1-alpha*data$B_L_prop_first) * 
           (a+b*exp(-((log((data$STDAGE_t2_first/c)))/d)^2))
   } else if (mod.num == 2) {
+    tau = X["tau"]
+    alpha = X["alpha"]
     A = X["A"]
     k = X["k"]
-    B <- (1 + (data$MEASTIME_t2_first-1990)*p.tau/100) * (1-p.alpha*data$B_L_prop_first) * 
+    B <- (1 + (data$MEASTIME_t2_first-1990)*tau/100) * (1-alpha*data$B_L_prop_first) * 
           A*data$STDAGE_t2_first / (k+data$STDAGE_t2_first)
   } else if (mod.num == "2a") {
+      tau = X["tau"]
+    alpha = X["alpha"]
     A = X["A"]
     k = X["k"]
     p = X["p"]
-    B <- (1 + (data$MEASTIME_t2_first-1990)*p.tau/100) * (1-p.alpha*data$B_L_prop_first) * 
+    B <- (1 + (data$MEASTIME_t2_first-1990)*tau/100) * (1-alpha*data$B_L_prop_first) * 
           (p*A+((1-p)*A*data$STDAGE_t2_first / (k+data$STDAGE_t2_first)))
   } else if (mod.num == "2b") {
+    tau = X["tau"]
+    alpha = X["alpha"]
     A = X["A"]
     k = X["k"]
     s = X["s"]
-    B <- (1 + (data$MEASTIME_t2_first-1990)*p.tau/100) * (1-p.alpha*data$B_L_prop_first) *
+    B <- (1 + (data$MEASTIME_t2_first-1990)*tau/100) * (1-alpha*data$B_L_prop_first) *
           (A*data$STDAGE_t2_first^s / (k^s+data$STDAGE_t2_first^s))
   } else if (mod.num == "2c") {
+    tau = X["tau"]
+    alpha = X["alpha"]
     A = X["A"]
     k = X["k"]
     p = X["p"]
     s = X["s"]
-    B <- (1 + (data$MEASTIME_t2_first-1990)*p.tau/100) * (1-p.alpha*data$B_L_prop_first) *
+    B <- (1 + (data$MEASTIME_t2_first-1990)*tau/100) * (1-alpha*data$B_L_prop_first) *
           (p*A+((1-p)*A*data$STDAGE_t2_first^s / (k^s+data$STDAGE_t2_first^s)))    
   } ## end if 
-  return(B)
+  return(unname(B))
 } ## end function
 
 ## for f(B_L_prop_last)
-predict_f.disturbance_last <- function(X, mod.number, data, p.alpha, p.tau) {
+predict_f.disturbance_last <- function(X, mod.number, data, nls.pars) {
   ## if loop to solve function given last data
   if (mod.num == 5) {
+    tau = X["tau"]
+    alpha = X["alpha"]
     a = X["a"]
     b = X["b"]
     c = X["c"]
     d = X["d"]
-    B <- (1 + (data$MEASTIME_t2_first-1990)*p.tau/100) * (1-p.alpha*data$B_L_prop_last) *
+    B <- (1 + (data$MEASTIME_t2_first-1990)*tau/100) * (1-alpha*data$B_L_prop_last) *
           (a+b*exp(-((log((data$STDAGE_t2_first/c)))/d)^2))
   } else if (mod.num == 2) {
+    tau = X["tau"]
+    alpha = X["alpha"]
     A = X["A"]
     k = X["k"]
-    B <- (1 + (data$MEASTIME_t2_first-1990)*p.tau/100) * (1-p.alpha*data$B_L_prop_last) *
+    B <- (1 + (data$MEASTIME_t2_first-1990)*tau/100) * (1-alpha*data$B_L_prop_last) *
           A*data$STDAGE_t2_last / (k+data$STDAGE_t2_last)
   } else if (mod.num == "2a") {
+    tau = X["tau"]
+    alpha = X["alpha"]
     A = X["A"]
     k = X["k"]
     p = X["p"]
-    B <- (1 + (data$MEASTIME_t2_first-1990)*p.tau/100) * (1-p.alpha*data$B_L_prop_last) *
+    B <- (1 + (data$MEASTIME_t2_first-1990)*tau/100) * (1-alpha*data$B_L_prop_last) *
           (p*A+((1-p)*A*data$STDAGE_t2_last / (k+data$STDAGE_t2_last)))
   } else if (mod.num == "2b") {
+    tau = X["tau"]
+    alpha = X["alpha"]
     A = X["A"]
     k = X["k"]
     s = X["s"]
-    B <- (1 + (data$MEASTIME_t2_first-1990)*p.tau/100) * (1-p.alpha*data$B_L_prop_last) *
+    B <- (1 + (data$MEASTIME_t2_first-1990)*tau/100) * (1-alpha*data$B_L_prop_last) *
           (A*data$STDAGE_t2_last^s / (k^s+data$STDAGE_t2_last^s))
   } else if (mod.num == "2c") {
+    tau = X["tau"]
+    alpha = X["alpha"]
     A = X["A"]
     k = X["k"]
     p = X["p"]
     s = X["s"]
-    B <- (1 + (data$MEASTIME_t2_first-1990)*p.tau/100) * (1-p.alpha*data$B_L_prop_last) *   
+    B <- (1 + (data$MEASTIME_t2_first-1990)*tau/100) * (1-alpha*data$B_L_prop_last) *   
           (p*A+((1-p)*A*data$STDAGE_t2_last^s / (k^s+data$STDAGE_t2_last^s)))    
   } ## end if 
-  return(B)
+  return(unname(B))
 } ## end function
 ```
 
@@ -18731,25 +18970,35 @@ mod.num <-  Best_mods.P_bal[Best_mods.P_bal$Ecoprovince == paste(ecoprov),]$Best
 data <- get(paste("DeltaB_df_", ecoprov, sep = ""))
 vcov_mat <- vcov_list[[paste(ecoprov)]]
 
-### sample parameters from MVNormal dist
 set.seed(77) ## for reproducibility
-parameters <- MASS::mvrnorm(nsamp, summary(mod)$param[,"Estimate"], vcov_mat)
+parameters <- if(mod.num == 2){
+  matrix(data = c(rep(summary(mod)$param["tau","Estimate"], 9999), 
+                  rnorm(nsamp, summary(mod)$param["alpha","Estimate"], vcov_mat["alpha","alpha"]), ### sample parameters from Random Normal distrep
+                  rep(summary(mod)$param["A","Estimate"], 9999),
+                  rep(summary(mod)$param["k","Estimate"], 9999)), nrow = 9999, ncol =4,
+         dimnames = list(NULL, c("tau", "alpha", "A", "k")))
+} else if(mod.num == 5){
+  matrix(data = c(rep(summary(mod)$param["tau","Estimate"], 9999), 
+                  rnorm(nsamp, summary(mod)$param["alpha","Estimate"], vcov_mat["alpha","alpha"]), ### sample parameters from Random Normal distrep
+                  rep(summary(mod)$param["a","Estimate"], 9999),
+                  rep(summary(mod)$param["b","Estimate"], 9999), 
+                  rep(summary(mod)$param["c","Estimate"], 9999),
+                  rep(summary(mod)$param["d","Estimate"], 9999)), nrow = 9999, ncol =6,
+         dimnames = list(NULL, c("tau", "alpha", "a", "b", "c", "d")))
+}
 
-### solve f(disturbance) function at B_L_prop_first and B_L_prop_last
+### solve f(disturbance) function at B_L_first and B_L_last
 sim_f_disturbance_first <- apply(parameters, 1, predict_f.disturbance_first, data = data, mod.number = mod.num,
-                         p.alpha = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$alpha,
-                         p.tau = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$tau,
-                         simplify = T)
+                                 simplify = TRUE)
 sim_f_disturbance_last <- apply(parameters, 1, predict_f.disturbance_last, data = data, mod.number = mod.num,
-                        p.alpha = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$alpha,
-                        p.tau = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$tau,
-                        simplify = T)
+                                simplify = TRUE)
 
-### take difference in f(B_L_prop_first) and f(B_L_prop_last)over deltaT (aka MEASTIME_t2_last - MEASTIME_t2_first)  --  need to transform the numerator to get plots in rows and sim samples down columns -- then can do division 
-sim_DeltaB <- t(sim_f_disturbance_last - sim_f_disturbance_first) / (data$MEASTIME_t2_last - data$MEASTIME_t2_first) 
+### take difference in f(disturbance_first) and f(disturbance_last) over deltaT (aka MEASTIME_t2_last - MEASTIME_t2_first)  --  need to transform the numerator to get plots in rows and sim samples down columns -- then can do division 
+sim_DeltaB <- t(sim_f_disturbance_last - sim_f_disturbance_first) / (data$MEASTIME_t2_last - data$MEASTIME_t2_first)
 
 ### take means and store in list 
 B_sim_pred_f_disturbance_bar[[paste(ecoprov)]] <- rowMeans(sim_DeltaB, na.rm = T)
+
 
 ####  212
 ### define a few things 
@@ -18758,25 +19007,35 @@ mod <- get(paste("nls_", ecoprov, ".",  Best_mods.P_bal[Best_mods.P_bal$Ecoprovi
 mod.num <-  Best_mods.P_bal[Best_mods.P_bal$Ecoprovince == paste(ecoprov),]$Best.Mod
 data <- get(paste("DeltaB_df_", ecoprov, sep = ""))
 vcov_mat <- vcov_list[[paste(ecoprov)]]
+
 set.seed(77) ## for reproducibility
-parameters <- MASS::mvrnorm(nsamp, summary(mod)$param[,"Estimate"], vcov_mat)
+parameters <- if(mod.num == 2){
+  matrix(data = c(rep(summary(mod)$param["tau","Estimate"], 9999), 
+                  rnorm(nsamp, summary(mod)$param["alpha","Estimate"], vcov_mat["alpha","alpha"]), ### sample parameters from Random Normal distrep
+                  rep(summary(mod)$param["A","Estimate"], 9999),
+                  rep(summary(mod)$param["k","Estimate"], 9999)), nrow = 9999, ncol =4,
+         dimnames = list(NULL, c("tau", "alpha", "A", "k")))
+} else if(mod.num == 5){
+  matrix(data = c(rep(summary(mod)$param["tau","Estimate"], 9999), 
+                  rnorm(nsamp, summary(mod)$param["alpha","Estimate"], vcov_mat["alpha","alpha"]), ### sample parameters from Random Normal distrep
+                  rep(summary(mod)$param["a","Estimate"], 9999),
+                  rep(summary(mod)$param["b","Estimate"], 9999), 
+                  rep(summary(mod)$param["c","Estimate"], 9999),
+                  rep(summary(mod)$param["d","Estimate"], 9999)), nrow = 9999, ncol =6,
+         dimnames = list(NULL, c("tau", "alpha", "a", "b", "c", "d")))
+}
 
-### solve f(disturbance) function at B_L_prop_first and B_L_prop_last
+### solve f(disturbance) function at B_L_first and B_L_last
 sim_f_disturbance_first <- apply(parameters, 1, predict_f.disturbance_first, data = data, mod.number = mod.num,
-                        p.alpha = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$alpha,
-                        p.tau = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$tau,
-                        simplify = T)
-sim_f_disturbance_last <- apply(parameters, 1, predict_f.disturbance_last, data = data, mod.number = mod.num, 
-                        p.alpha = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$alpha,
-                        p.tau = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$tau,
-                        simplify = T)
+                                 simplify = TRUE)
+sim_f_disturbance_last <- apply(parameters, 1, predict_f.disturbance_last, data = data, mod.number = mod.num,
+                                simplify = TRUE)
 
-### take difference in f(B_L_prop_first) and f(B_L_prop_last)over deltaT (aka MEASTIME_t2_last - MEASTIME_t2_first)  --  need to transform the numerator to get plots in rows and sim samples down columns -- then can do division 
-sim_DeltaB <- t(sim_f_disturbance_last - sim_f_disturbance_first) / (data$MEASTIME_t2_last - data$MEASTIME_t2_first) 
+### take difference in f(disturbance_first) and f(disturbance_last) over deltaT (aka MEASTIME_t2_last - MEASTIME_t2_first)  --  need to transform the numerator to get plots in rows and sim samples down columns -- then can do division 
+sim_DeltaB <- t(sim_f_disturbance_last - sim_f_disturbance_first) / (data$MEASTIME_t2_last - data$MEASTIME_t2_first)
 
 ### take means and store in list 
 B_sim_pred_f_disturbance_bar[[paste(ecoprov)]] <- rowMeans(sim_DeltaB, na.rm = T)
-
 
 ####  221
 ### define a few things 
@@ -18785,21 +19044,32 @@ mod <- get(paste("nls_", ecoprov, ".",  Best_mods.P_bal[Best_mods.P_bal$Ecoprovi
 mod.num <-  Best_mods.P_bal[Best_mods.P_bal$Ecoprovince == paste(ecoprov),]$Best.Mod
 data <- get(paste("DeltaB_df_", ecoprov, sep = ""))
 vcov_mat <- vcov_list[[paste(ecoprov)]]
+
 set.seed(77) ## for reproducibility
-parameters <- MASS::mvrnorm(nsamp, summary(mod)$param[,"Estimate"], vcov_mat)
+parameters <- if(mod.num == 2){
+  matrix(data = c(rep(summary(mod)$param["tau","Estimate"], 9999), 
+                  rnorm(nsamp, summary(mod)$param["alpha","Estimate"], vcov_mat["alpha","alpha"]), ### sample parameters from Random Normal distrep
+                  rep(summary(mod)$param["A","Estimate"], 9999),
+                  rep(summary(mod)$param["k","Estimate"], 9999)), nrow = 9999, ncol =4,
+         dimnames = list(NULL, c("tau", "alpha", "A", "k")))
+} else if(mod.num == 5){
+  matrix(data = c(rep(summary(mod)$param["tau","Estimate"], 9999), 
+                  rnorm(nsamp, summary(mod)$param["alpha","Estimate"], vcov_mat["alpha","alpha"]), ### sample parameters from Random Normal distrep
+                  rep(summary(mod)$param["a","Estimate"], 9999),
+                  rep(summary(mod)$param["b","Estimate"], 9999), 
+                  rep(summary(mod)$param["c","Estimate"], 9999),
+                  rep(summary(mod)$param["d","Estimate"], 9999)), nrow = 9999, ncol =6,
+         dimnames = list(NULL, c("tau", "alpha", "a", "b", "c", "d")))
+}
 
-### solve f(disturbance) function at B_L_prop_first and B_L_prop_last
+### solve f(disturbance) function at B_L_first and B_L_last
 sim_f_disturbance_first <- apply(parameters, 1, predict_f.disturbance_first, data = data, mod.number = mod.num,
-                        p.alpha = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$alpha,
-                        p.tau = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$tau,
-                        simplify = T)
-sim_f_disturbance_last <- apply(parameters, 1, predict_f.disturbance_last, data = data, mod.number = mod.num, 
-                        p.alpha = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$alpha,
-                        p.tau = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$tau,
-                        simplify = T)
+                                 simplify = TRUE)
+sim_f_disturbance_last <- apply(parameters, 1, predict_f.disturbance_last, data = data, mod.number = mod.num,
+                                simplify = TRUE)
 
-### take difference in f(B_L_prop_first) and f(B_L_prop_last)over deltaT (aka MEASTIME_t2_last - MEASTIME_t2_first)  --  need to transform the numerator to get plots in rows and sim samples down columns -- then can do division 
-sim_DeltaB <- t(sim_f_disturbance_last - sim_f_disturbance_first) / (data$MEASTIME_t2_last - data$MEASTIME_t2_first) 
+### take difference in f(disturbance_first) and f(disturbance_last) over deltaT (aka MEASTIME_t2_last - MEASTIME_t2_first)  --  need to transform the numerator to get plots in rows and sim samples down columns -- then can do division 
+sim_DeltaB <- t(sim_f_disturbance_last - sim_f_disturbance_first) / (data$MEASTIME_t2_last - data$MEASTIME_t2_first)
 
 ### take means and store in list 
 B_sim_pred_f_disturbance_bar[[paste(ecoprov)]] <- rowMeans(sim_DeltaB, na.rm = T)
@@ -18812,21 +19082,32 @@ mod <- get(paste("nls_", ecoprov, ".",  Best_mods.P_bal[Best_mods.P_bal$Ecoprovi
 mod.num <-  Best_mods.P_bal[Best_mods.P_bal$Ecoprovince == paste(ecoprov),]$Best.Mod
 data <- get(paste("DeltaB_df_", ecoprov, sep = ""))
 vcov_mat <- vcov_list[[paste(ecoprov)]]
+
 set.seed(77) ## for reproducibility
-parameters <- MASS::mvrnorm(nsamp, summary(mod)$param[,"Estimate"], vcov_mat)
+parameters <- if(mod.num == 2){
+  matrix(data = c(rep(summary(mod)$param["tau","Estimate"], 9999), 
+                  rnorm(nsamp, summary(mod)$param["alpha","Estimate"], vcov_mat["alpha","alpha"]), ### sample parameters from Random Normal distrep
+                  rep(summary(mod)$param["A","Estimate"], 9999),
+                  rep(summary(mod)$param["k","Estimate"], 9999)), nrow = 9999, ncol =4,
+         dimnames = list(NULL, c("tau", "alpha", "A", "k")))
+} else if(mod.num == 5){
+  matrix(data = c(rep(summary(mod)$param["tau","Estimate"], 9999), 
+                  rnorm(nsamp, summary(mod)$param["alpha","Estimate"], vcov_mat["alpha","alpha"]), ### sample parameters from Random Normal distrep
+                  rep(summary(mod)$param["a","Estimate"], 9999),
+                  rep(summary(mod)$param["b","Estimate"], 9999), 
+                  rep(summary(mod)$param["c","Estimate"], 9999),
+                  rep(summary(mod)$param["d","Estimate"], 9999)), nrow = 9999, ncol =6,
+         dimnames = list(NULL, c("tau", "alpha", "a", "b", "c", "d")))
+}
 
-### solve f(disturbance) function at B_L_prop_first and B_L_prop_last
+### solve f(disturbance) function at B_L_first and B_L_last
 sim_f_disturbance_first <- apply(parameters, 1, predict_f.disturbance_first, data = data, mod.number = mod.num,
-                        p.alpha = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$alpha,
-                        p.tau = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$tau,
-                        simplify = T)
-sim_f_disturbance_last <- apply(parameters, 1, predict_f.disturbance_last, data = data, mod.number = mod.num, 
-                        p.alpha = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$alpha,
-                        p.tau = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$tau,
-                        simplify = T)
+                                 simplify = TRUE)
+sim_f_disturbance_last <- apply(parameters, 1, predict_f.disturbance_last, data = data, mod.number = mod.num,
+                                simplify = TRUE)
 
-### take difference in f(B_L_prop_first) and f(B_L_prop_last)over deltaT (aka MEASTIME_t2_last - MEASTIME_t2_first)  --  need to transform the numerator to get plots in rows and sim samples down columns -- then can do division 
-sim_DeltaB <- t(sim_f_disturbance_last - sim_f_disturbance_first) / (data$MEASTIME_t2_last - data$MEASTIME_t2_first) 
+### take difference in f(disturbance_first) and f(disturbance_last) over deltaT (aka MEASTIME_t2_last - MEASTIME_t2_first)  --  need to transform the numerator to get plots in rows and sim samples down columns -- then can do division 
+sim_DeltaB <- t(sim_f_disturbance_last - sim_f_disturbance_first) / (data$MEASTIME_t2_last - data$MEASTIME_t2_first)
 
 ### take means and store in list 
 B_sim_pred_f_disturbance_bar[[paste(ecoprov)]] <- rowMeans(sim_DeltaB, na.rm = T)
@@ -18839,21 +19120,32 @@ mod <- get(paste("nls_", ecoprov, ".",  Best_mods.P_bal[Best_mods.P_bal$Ecoprovi
 mod.num <-  Best_mods.P_bal[Best_mods.P_bal$Ecoprovince == paste(ecoprov),]$Best.Mod
 data <- get(paste("DeltaB_df_", ecoprov, sep = ""))
 vcov_mat <- vcov_list[[paste(ecoprov)]]
+
 set.seed(77) ## for reproducibility
-parameters <- MASS::mvrnorm(nsamp, summary(mod)$param[,"Estimate"], vcov_mat)
+parameters <- if(mod.num == 2){
+  matrix(data = c(rep(summary(mod)$param["tau","Estimate"], 9999), 
+                  rnorm(nsamp, summary(mod)$param["alpha","Estimate"], vcov_mat["alpha","alpha"]), ### sample parameters from Random Normal distrep
+                  rep(summary(mod)$param["A","Estimate"], 9999),
+                  rep(summary(mod)$param["k","Estimate"], 9999)), nrow = 9999, ncol =4,
+         dimnames = list(NULL, c("tau", "alpha", "A", "k")))
+} else if(mod.num == 5){
+  matrix(data = c(rep(summary(mod)$param["tau","Estimate"], 9999), 
+                  rnorm(nsamp, summary(mod)$param["alpha","Estimate"], vcov_mat["alpha","alpha"]), ### sample parameters from Random Normal distrep
+                  rep(summary(mod)$param["a","Estimate"], 9999),
+                  rep(summary(mod)$param["b","Estimate"], 9999), 
+                  rep(summary(mod)$param["c","Estimate"], 9999),
+                  rep(summary(mod)$param["d","Estimate"], 9999)), nrow = 9999, ncol =6,
+         dimnames = list(NULL, c("tau", "alpha", "a", "b", "c", "d")))
+}
 
-### solve f(disturbance) function at B_L_prop_first and B_L_prop_last
+### solve f(disturbance) function at B_L_first and B_L_last
 sim_f_disturbance_first <- apply(parameters, 1, predict_f.disturbance_first, data = data, mod.number = mod.num,
-                        p.alpha = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$alpha,
-                        p.tau = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$tau,
-                        simplify = T)
-sim_f_disturbance_last <- apply(parameters, 1, predict_f.disturbance_last, data = data, mod.number = mod.num, 
-                        p.alpha = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$alpha,
-                        p.tau = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$tau,
-                        simplify = T)
+                                 simplify = TRUE)
+sim_f_disturbance_last <- apply(parameters, 1, predict_f.disturbance_last, data = data, mod.number = mod.num,
+                                simplify = TRUE)
 
-### take difference in f(B_L_prop_first) and f(B_L_prop_last)over deltaT (aka MEASTIME_t2_last - MEASTIME_t2_first)  --  need to transform the numerator to get plots in rows and sim samples down columns -- then can do division 
-sim_DeltaB <- t(sim_f_disturbance_last - sim_f_disturbance_first) / (data$MEASTIME_t2_last - data$MEASTIME_t2_first) 
+### take difference in f(disturbance_first) and f(disturbance_last) over deltaT (aka MEASTIME_t2_last - MEASTIME_t2_first)  --  need to transform the numerator to get plots in rows and sim samples down columns -- then can do division 
+sim_DeltaB <- t(sim_f_disturbance_last - sim_f_disturbance_first) / (data$MEASTIME_t2_last - data$MEASTIME_t2_first)
 
 ### take means and store in list 
 B_sim_pred_f_disturbance_bar[[paste(ecoprov)]] <- rowMeans(sim_DeltaB, na.rm = T)
@@ -18866,21 +19158,32 @@ mod <- get(paste("nls_", ecoprov, ".",  Best_mods.P_bal[Best_mods.P_bal$Ecoprovi
 mod.num <-  Best_mods.P_bal[Best_mods.P_bal$Ecoprovince == paste(ecoprov),]$Best.Mod
 data <- get(paste("DeltaB_df_", ecoprov, sep = ""))
 vcov_mat <- vcov_list[[paste(ecoprov)]]
+
 set.seed(77) ## for reproducibility
-parameters <- MASS::mvrnorm(nsamp, summary(mod)$param[,"Estimate"], vcov_mat)
+parameters <- if(mod.num == 2){
+  matrix(data = c(rep(summary(mod)$param["tau","Estimate"], 9999), 
+                  rnorm(nsamp, summary(mod)$param["alpha","Estimate"], vcov_mat["alpha","alpha"]), ### sample parameters from Random Normal distrep
+                  rep(summary(mod)$param["A","Estimate"], 9999),
+                  rep(summary(mod)$param["k","Estimate"], 9999)), nrow = 9999, ncol =4,
+         dimnames = list(NULL, c("tau", "alpha", "A", "k")))
+} else if(mod.num == 5){
+  matrix(data = c(rep(summary(mod)$param["tau","Estimate"], 9999), 
+                  rnorm(nsamp, summary(mod)$param["alpha","Estimate"], vcov_mat["alpha","alpha"]), ### sample parameters from Random Normal distrep
+                  rep(summary(mod)$param["a","Estimate"], 9999),
+                  rep(summary(mod)$param["b","Estimate"], 9999), 
+                  rep(summary(mod)$param["c","Estimate"], 9999),
+                  rep(summary(mod)$param["d","Estimate"], 9999)), nrow = 9999, ncol =6,
+         dimnames = list(NULL, c("tau", "alpha", "a", "b", "c", "d")))
+}
 
-### solve f(disturbance) function at B_L_prop_first and B_L_prop_last
+### solve f(disturbance) function at B_L_first and B_L_last
 sim_f_disturbance_first <- apply(parameters, 1, predict_f.disturbance_first, data = data, mod.number = mod.num,
-                        p.alpha = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$alpha,
-                        p.tau = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$tau,
-                        simplify = T)
-sim_f_disturbance_last <- apply(parameters, 1, predict_f.disturbance_last, data = data, mod.number = mod.num, 
-                        p.alpha = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$alpha,
-                        p.tau = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$tau,
-                        simplify = T)
+                                 simplify = TRUE)
+sim_f_disturbance_last <- apply(parameters, 1, predict_f.disturbance_last, data = data, mod.number = mod.num,
+                                simplify = TRUE)
 
-### take difference in f(B_L_prop_first) and f(B_L_prop_last)over deltaT (aka MEASTIME_t2_last - MEASTIME_t2_first)  --  need to transform the numerator to get plots in rows and sim samples down columns -- then can do division 
-sim_DeltaB <- t(sim_f_disturbance_last - sim_f_disturbance_first) / (data$MEASTIME_t2_last - data$MEASTIME_t2_first) 
+### take difference in f(disturbance_first) and f(disturbance_last) over deltaT (aka MEASTIME_t2_last - MEASTIME_t2_first)  --  need to transform the numerator to get plots in rows and sim samples down columns -- then can do division 
+sim_DeltaB <- t(sim_f_disturbance_last - sim_f_disturbance_first) / (data$MEASTIME_t2_last - data$MEASTIME_t2_first)
 
 ### take means and store in list 
 B_sim_pred_f_disturbance_bar[[paste(ecoprov)]] <- rowMeans(sim_DeltaB, na.rm = T)
@@ -18893,21 +19196,32 @@ mod <- get(paste("nls_", ecoprov, ".",  Best_mods.P_bal[Best_mods.P_bal$Ecoprovi
 mod.num <-  Best_mods.P_bal[Best_mods.P_bal$Ecoprovince == paste(ecoprov),]$Best.Mod
 data <- get(paste("DeltaB_df_", ecoprov, sep = ""))
 vcov_mat <- vcov_list[[paste(ecoprov)]]
+
 set.seed(77) ## for reproducibility
-parameters <- MASS::mvrnorm(nsamp, summary(mod)$param[,"Estimate"], vcov_mat)
+parameters <- if(mod.num == 2){
+  matrix(data = c(rep(summary(mod)$param["tau","Estimate"], 9999), 
+                  rnorm(nsamp, summary(mod)$param["alpha","Estimate"], vcov_mat["alpha","alpha"]), ### sample parameters from Random Normal distrep
+                  rep(summary(mod)$param["A","Estimate"], 9999),
+                  rep(summary(mod)$param["k","Estimate"], 9999)), nrow = 9999, ncol =4,
+         dimnames = list(NULL, c("tau", "alpha", "A", "k")))
+} else if(mod.num == 5){
+  matrix(data = c(rep(summary(mod)$param["tau","Estimate"], 9999), 
+                  rnorm(nsamp, summary(mod)$param["alpha","Estimate"], vcov_mat["alpha","alpha"]), ### sample parameters from Random Normal distrep
+                  rep(summary(mod)$param["a","Estimate"], 9999),
+                  rep(summary(mod)$param["b","Estimate"], 9999), 
+                  rep(summary(mod)$param["c","Estimate"], 9999),
+                  rep(summary(mod)$param["d","Estimate"], 9999)), nrow = 9999, ncol =6,
+         dimnames = list(NULL, c("tau", "alpha", "a", "b", "c", "d")))
+}
 
-### solve f(disturbance) function at B_L_prop_first and B_L_prop_last
+### solve f(disturbance) function at B_L_first and B_L_last
 sim_f_disturbance_first <- apply(parameters, 1, predict_f.disturbance_first, data = data, mod.number = mod.num,
-                         p.alpha = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$alpha,
-                         p.tau = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$tau,
-                         simplify = T)
+                                 simplify = TRUE)
 sim_f_disturbance_last <- apply(parameters, 1, predict_f.disturbance_last, data = data, mod.number = mod.num,
-                        p.alpha = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$alpha,
-                        p.tau = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$tau,
-                        simplify = T)
+                                simplify = TRUE)
 
-### take difference in f(B_L_prop_first) and f(B_L_prop_last)over deltaT (aka MEASTIME_t2_last - MEASTIME_t2_first)  --  need to transform the numerator to get plots in rows and sim samples down columns -- then can do division 
-sim_DeltaB <- t(sim_f_disturbance_last - sim_f_disturbance_first) / (data$MEASTIME_t2_last - data$MEASTIME_t2_first) 
+### take difference in f(disturbance_first) and f(disturbance_last) over deltaT (aka MEASTIME_t2_last - MEASTIME_t2_first)  --  need to transform the numerator to get plots in rows and sim samples down columns -- then can do division 
+sim_DeltaB <- t(sim_f_disturbance_last - sim_f_disturbance_first) / (data$MEASTIME_t2_last - data$MEASTIME_t2_first)
 
 ### take means and store in list 
 B_sim_pred_f_disturbance_bar[[paste(ecoprov)]] <- rowMeans(sim_DeltaB, na.rm = T)
@@ -18920,21 +19234,32 @@ mod <- get(paste("nls_", ecoprov, ".",  Best_mods.P_bal[Best_mods.P_bal$Ecoprovi
 mod.num <-  Best_mods.P_bal[Best_mods.P_bal$Ecoprovince == paste(ecoprov),]$Best.Mod
 data <- get(paste("DeltaB_df_", ecoprov, sep = ""))
 vcov_mat <- vcov_list[[paste(ecoprov)]]
+
 set.seed(77) ## for reproducibility
-parameters <- MASS::mvrnorm(nsamp, summary(mod)$param[,"Estimate"], vcov_mat)
+parameters <- if(mod.num == 2){
+  matrix(data = c(rep(summary(mod)$param["tau","Estimate"], 9999), 
+                  rnorm(nsamp, summary(mod)$param["alpha","Estimate"], vcov_mat["alpha","alpha"]), ### sample parameters from Random Normal distrep
+                  rep(summary(mod)$param["A","Estimate"], 9999),
+                  rep(summary(mod)$param["k","Estimate"], 9999)), nrow = 9999, ncol =4,
+         dimnames = list(NULL, c("tau", "alpha", "A", "k")))
+} else if(mod.num == 5){
+  matrix(data = c(rep(summary(mod)$param["tau","Estimate"], 9999), 
+                  rnorm(nsamp, summary(mod)$param["alpha","Estimate"], vcov_mat["alpha","alpha"]), ### sample parameters from Random Normal distrep
+                  rep(summary(mod)$param["a","Estimate"], 9999),
+                  rep(summary(mod)$param["b","Estimate"], 9999), 
+                  rep(summary(mod)$param["c","Estimate"], 9999),
+                  rep(summary(mod)$param["d","Estimate"], 9999)), nrow = 9999, ncol =6,
+         dimnames = list(NULL, c("tau", "alpha", "a", "b", "c", "d")))
+}
 
-### solve f(disturbance) function at B_L_prop_first and B_L_prop_last
+### solve f(disturbance) function at B_L_first and B_L_last
 sim_f_disturbance_first <- apply(parameters, 1, predict_f.disturbance_first, data = data, mod.number = mod.num,
-                         p.alpha = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$alpha,
-                         p.tau = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$tau,
-                         simplify = T)
+                                 simplify = TRUE)
 sim_f_disturbance_last <- apply(parameters, 1, predict_f.disturbance_last, data = data, mod.number = mod.num,
-                        p.alpha = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$alpha,
-                        p.tau = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$tau,
-                        simplify = T)
+                                simplify = TRUE)
 
-### take difference in f(B_L_prop_first) and f(B_L_prop_last)over deltaT (aka MEASTIME_t2_last - MEASTIME_t2_first)  --  need to transform the numerator to get plots in rows and sim samples down columns -- then can do division 
-sim_DeltaB <- t(sim_f_disturbance_last - sim_f_disturbance_first) / (data$MEASTIME_t2_last - data$MEASTIME_t2_first) 
+### take difference in f(disturbance_first) and f(disturbance_last) over deltaT (aka MEASTIME_t2_last - MEASTIME_t2_first)  --  need to transform the numerator to get plots in rows and sim samples down columns -- then can do division 
+sim_DeltaB <- t(sim_f_disturbance_last - sim_f_disturbance_first) / (data$MEASTIME_t2_last - data$MEASTIME_t2_first)
 
 ### take means and store in list 
 B_sim_pred_f_disturbance_bar[[paste(ecoprov)]] <- rowMeans(sim_DeltaB, na.rm = T)
@@ -18947,21 +19272,32 @@ mod <- get(paste("nls_", ecoprov, ".",  Best_mods.P_bal[Best_mods.P_bal$Ecoprovi
 mod.num <-  Best_mods.P_bal[Best_mods.P_bal$Ecoprovince == paste(ecoprov),]$Best.Mod
 data <- get(paste("DeltaB_df_", ecoprov, sep = ""))
 vcov_mat <- vcov_list[[paste(ecoprov)]]
+
 set.seed(77) ## for reproducibility
-parameters <- MASS::mvrnorm(nsamp, summary(mod)$param[,"Estimate"], vcov_mat)
+parameters <- if(mod.num == 2){
+  matrix(data = c(rep(summary(mod)$param["tau","Estimate"], 9999), 
+                  rnorm(nsamp, summary(mod)$param["alpha","Estimate"], vcov_mat["alpha","alpha"]), ### sample parameters from Random Normal distrep
+                  rep(summary(mod)$param["A","Estimate"], 9999),
+                  rep(summary(mod)$param["k","Estimate"], 9999)), nrow = 9999, ncol =4,
+         dimnames = list(NULL, c("tau", "alpha", "A", "k")))
+} else if(mod.num == 5){
+  matrix(data = c(rep(summary(mod)$param["tau","Estimate"], 9999), 
+                  rnorm(nsamp, summary(mod)$param["alpha","Estimate"], vcov_mat["alpha","alpha"]), ### sample parameters from Random Normal distrep
+                  rep(summary(mod)$param["a","Estimate"], 9999),
+                  rep(summary(mod)$param["b","Estimate"], 9999), 
+                  rep(summary(mod)$param["c","Estimate"], 9999),
+                  rep(summary(mod)$param["d","Estimate"], 9999)), nrow = 9999, ncol =6,
+         dimnames = list(NULL, c("tau", "alpha", "a", "b", "c", "d")))
+}
 
-### solve f(disturbance) function at B_L_prop_first and B_L_prop_last
+### solve f(disturbance) function at B_L_first and B_L_last
 sim_f_disturbance_first <- apply(parameters, 1, predict_f.disturbance_first, data = data, mod.number = mod.num,
-                         p.alpha = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$alpha,
-                         p.tau = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$tau,
-                         simplify = T)
+                                 simplify = TRUE)
 sim_f_disturbance_last <- apply(parameters, 1, predict_f.disturbance_last, data = data, mod.number = mod.num,
-                        p.alpha = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$alpha,
-                        p.tau = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$tau,
-                        simplify = T)
+                                simplify = TRUE)
 
-### take difference in f(B_L_prop_first) and f(B_L_prop_last) over deltaT (aka MEASTIME_t2_last - MEASTIME_t2_first)  --  need to transform the numerator to get plots in rows and sim samples down columns -- then can do division 
-sim_DeltaB <- t(sim_f_disturbance_last - sim_f_disturbance_first) / (data$MEASTIME_t2_last - data$MEASTIME_t2_first) 
+### take difference in f(disturbance_first) and f(disturbance_last) over deltaT (aka MEASTIME_t2_last - MEASTIME_t2_first)  --  need to transform the numerator to get plots in rows and sim samples down columns -- then can do division 
+sim_DeltaB <- t(sim_f_disturbance_last - sim_f_disturbance_first) / (data$MEASTIME_t2_last - data$MEASTIME_t2_first)
 
 ### take means and store in list 
 B_sim_pred_f_disturbance_bar[[paste(ecoprov)]] <- rowMeans(sim_DeltaB, na.rm = T)
@@ -18974,21 +19310,32 @@ mod <- get(paste("nls_", ecoprov, ".",  Best_mods.P_bal[Best_mods.P_bal$Ecoprovi
 mod.num <-  Best_mods.P_bal[Best_mods.P_bal$Ecoprovince == paste(ecoprov),]$Best.Mod
 data <- get(paste("DeltaB_df_", ecoprov, sep = ""))
 vcov_mat <- vcov_list[[paste(ecoprov)]]
+
 set.seed(77) ## for reproducibility
-parameters <- MASS::mvrnorm(nsamp, summary(mod)$param[,"Estimate"], vcov_mat)
+parameters <- if(mod.num == 2){
+  matrix(data = c(rep(summary(mod)$param["tau","Estimate"], 9999), 
+                  rnorm(nsamp, summary(mod)$param["alpha","Estimate"], vcov_mat["alpha","alpha"]), ### sample parameters from Random Normal distrep
+                  rep(summary(mod)$param["A","Estimate"], 9999),
+                  rep(summary(mod)$param["k","Estimate"], 9999)), nrow = 9999, ncol =4,
+         dimnames = list(NULL, c("tau", "alpha", "A", "k")))
+} else if(mod.num == 5){
+  matrix(data = c(rep(summary(mod)$param["tau","Estimate"], 9999), 
+                  rnorm(nsamp, summary(mod)$param["alpha","Estimate"], vcov_mat["alpha","alpha"]), ### sample parameters from Random Normal distrep
+                  rep(summary(mod)$param["a","Estimate"], 9999),
+                  rep(summary(mod)$param["b","Estimate"], 9999), 
+                  rep(summary(mod)$param["c","Estimate"], 9999),
+                  rep(summary(mod)$param["d","Estimate"], 9999)), nrow = 9999, ncol =6,
+         dimnames = list(NULL, c("tau", "alpha", "a", "b", "c", "d")))
+}
 
-### solve f(disturbance) function at B_L_prop_first and B_L_prop_last
+### solve f(disturbance) function at B_L_first and B_L_last
 sim_f_disturbance_first <- apply(parameters, 1, predict_f.disturbance_first, data = data, mod.number = mod.num,
-                         p.alpha = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$alpha,
-                         p.tau = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$tau,
-                         simplify = T)
-sim_f_disturbance_last <- apply(parameters, 1, predict_f.disturbance_last, data = data, mod.number = mod.num, 
-                        p.alpha = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$alpha,
-                        p.tau = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$tau,
-                        simplify = T)
+                                 simplify = TRUE)
+sim_f_disturbance_last <- apply(parameters, 1, predict_f.disturbance_last, data = data, mod.number = mod.num,
+                                simplify = TRUE)
 
-### take constant times difference in f(B_L_prop_first) and f(B_L_prop_last)over deltaT (aka MEASTIME_t2_last - MEASTIME_t2_first)  --  need to transform the numerator to get plots in rows and sim samples down columns -- then can do division 
-sim_DeltaB <- t(sim_f_disturbance_last - sim_f_disturbance_first) / (data$MEASTIME_t2_last - data$MEASTIME_t2_first) 
+### take difference in f(disturbance_first) and f(disturbance_last) over deltaT (aka MEASTIME_t2_last - MEASTIME_t2_first)  --  need to transform the numerator to get plots in rows and sim samples down columns -- then can do division 
+sim_DeltaB <- t(sim_f_disturbance_last - sim_f_disturbance_first) / (data$MEASTIME_t2_last - data$MEASTIME_t2_first)
 
 ### take means and store in list 
 B_sim_pred_f_disturbance_bar[[paste(ecoprov)]] <- rowMeans(sim_DeltaB, na.rm = T)
@@ -19001,21 +19348,32 @@ mod <- get(paste("nls_", ecoprov, ".",  Best_mods.P_bal[Best_mods.P_bal$Ecoprovi
 mod.num <-  Best_mods.P_bal[Best_mods.P_bal$Ecoprovince == paste(ecoprov),]$Best.Mod
 data <- get(paste("DeltaB_df_", ecoprov, sep = ""))
 vcov_mat <- vcov_list[[paste(ecoprov)]]
+
 set.seed(77) ## for reproducibility
-parameters <- MASS::mvrnorm(nsamp, summary(mod)$param[,"Estimate"], vcov_mat)
+parameters <- if(mod.num == 2){
+  matrix(data = c(rep(summary(mod)$param["tau","Estimate"], 9999), 
+                  rnorm(nsamp, summary(mod)$param["alpha","Estimate"], vcov_mat["alpha","alpha"]), ### sample parameters from Random Normal distrep
+                  rep(summary(mod)$param["A","Estimate"], 9999),
+                  rep(summary(mod)$param["k","Estimate"], 9999)), nrow = 9999, ncol =4,
+         dimnames = list(NULL, c("tau", "alpha", "A", "k")))
+} else if(mod.num == 5){
+  matrix(data = c(rep(summary(mod)$param["tau","Estimate"], 9999), 
+                  rnorm(nsamp, summary(mod)$param["alpha","Estimate"], vcov_mat["alpha","alpha"]), ### sample parameters from Random Normal distrep
+                  rep(summary(mod)$param["a","Estimate"], 9999),
+                  rep(summary(mod)$param["b","Estimate"], 9999), 
+                  rep(summary(mod)$param["c","Estimate"], 9999),
+                  rep(summary(mod)$param["d","Estimate"], 9999)), nrow = 9999, ncol =6,
+         dimnames = list(NULL, c("tau", "alpha", "a", "b", "c", "d")))
+}
 
-### solve f(disturbance) function at B_L_prop_first and B_L_prop_last
+### solve f(disturbance) function at B_L_first and B_L_last
 sim_f_disturbance_first <- apply(parameters, 1, predict_f.disturbance_first, data = data, mod.number = mod.num,
-                        p.alpha = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$alpha,
-                        p.tau = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$tau,
-                        simplify = T)
+                                 simplify = TRUE)
 sim_f_disturbance_last <- apply(parameters, 1, predict_f.disturbance_last, data = data, mod.number = mod.num,
-                        p.alpha = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$alpha,
-                        p.tau = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$tau,
-                        simplify = T)
+                                simplify = TRUE)
 
-### take constant times difference in f(B_L_prop_first) and f(B_L_prop_last)over deltaT (aka MEASTIME_t2_last - MEASTIME_t2_first)  --  need to transform the numerator to get plots in rows and sim samples down columns -- then can do division 
-sim_DeltaB <- t(sim_f_disturbance_last - sim_f_disturbance_first) / (data$MEASTIME_t2_last - data$MEASTIME_t2_first) 
+### take difference in f(disturbance_first) and f(disturbance_last) over deltaT (aka MEASTIME_t2_last - MEASTIME_t2_first)  --  need to transform the numerator to get plots in rows and sim samples down columns -- then can do division 
+sim_DeltaB <- t(sim_f_disturbance_last - sim_f_disturbance_first) / (data$MEASTIME_t2_last - data$MEASTIME_t2_first)
 
 ### take means and store in list 
 B_sim_pred_f_disturbance_bar[[paste(ecoprov)]] <- rowMeans(sim_DeltaB, na.rm = T)
@@ -19028,21 +19386,32 @@ mod <- get(paste("nls_", ecoprov, ".",  Best_mods.P_bal[Best_mods.P_bal$Ecoprovi
 mod.num <-  Best_mods.P_bal[Best_mods.P_bal$Ecoprovince == paste(ecoprov),]$Best.Mod
 data <- get(paste("DeltaB_df_", ecoprov, sep = ""))
 vcov_mat <- vcov_list[[paste(ecoprov)]]
+
 set.seed(77) ## for reproducibility
-parameters <- MASS::mvrnorm(nsamp, summary(mod)$param[,"Estimate"], vcov_mat)
+parameters <- if(mod.num == 2){
+  matrix(data = c(rep(summary(mod)$param["tau","Estimate"], 9999), 
+                  rnorm(nsamp, summary(mod)$param["alpha","Estimate"], vcov_mat["alpha","alpha"]), ### sample parameters from Random Normal distrep
+                  rep(summary(mod)$param["A","Estimate"], 9999),
+                  rep(summary(mod)$param["k","Estimate"], 9999)), nrow = 9999, ncol =4,
+         dimnames = list(NULL, c("tau", "alpha", "A", "k")))
+} else if(mod.num == 5){
+  matrix(data = c(rep(summary(mod)$param["tau","Estimate"], 9999), 
+                  rnorm(nsamp, summary(mod)$param["alpha","Estimate"], vcov_mat["alpha","alpha"]), ### sample parameters from Random Normal distrep
+                  rep(summary(mod)$param["a","Estimate"], 9999),
+                  rep(summary(mod)$param["b","Estimate"], 9999), 
+                  rep(summary(mod)$param["c","Estimate"], 9999),
+                  rep(summary(mod)$param["d","Estimate"], 9999)), nrow = 9999, ncol =6,
+         dimnames = list(NULL, c("tau", "alpha", "a", "b", "c", "d")))
+}
 
-### solve f(disturbance) function at B_L_prop_first and B_L_prop_last
+### solve f(disturbance) function at B_L_first and B_L_last
 sim_f_disturbance_first <- apply(parameters, 1, predict_f.disturbance_first, data = data, mod.number = mod.num,
-                        p.alpha = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$alpha,
-                        p.tau = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$tau,
-                        simplify = T)
-sim_f_disturbance_last <- apply(parameters, 1, predict_f.disturbance_last, data = data, mod.number = mod.num, 
-                        p.alpha = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$alpha,
-                        p.tau = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$tau,
-                        simplify = T)
+                                 simplify = TRUE)
+sim_f_disturbance_last <- apply(parameters, 1, predict_f.disturbance_last, data = data, mod.number = mod.num,
+                                simplify = TRUE)
 
-### take constant times difference in f(B_L_prop_first) and f(B_L_prop_last)over deltaT (aka MEASTIME_t2_last - MEASTIME_t2_first)  --  need to transform the numerator to get plots in rows and sim samples down columns -- then can do division 
-sim_DeltaB <- t(sim_f_disturbance_last - sim_f_disturbance_first) / (data$MEASTIME_t2_last - data$MEASTIME_t2_first) 
+### take difference in f(disturbance_first) and f(disturbance_last) over deltaT (aka MEASTIME_t2_last - MEASTIME_t2_first)  --  need to transform the numerator to get plots in rows and sim samples down columns -- then can do division 
+sim_DeltaB <- t(sim_f_disturbance_last - sim_f_disturbance_first) / (data$MEASTIME_t2_last - data$MEASTIME_t2_first)
 
 ### take means and store in list 
 B_sim_pred_f_disturbance_bar[[paste(ecoprov)]] <- rowMeans(sim_DeltaB, na.rm = T)
@@ -19055,21 +19424,32 @@ mod <- get(paste("nls_", ecoprov, ".",  Best_mods.P_bal[Best_mods.P_bal$Ecoprovi
 mod.num <-  Best_mods.P_bal[Best_mods.P_bal$Ecoprovince == paste(ecoprov),]$Best.Mod
 data <- get(paste("DeltaB_df_", ecoprov, sep = ""))
 vcov_mat <- vcov_list[[paste(ecoprov)]]
+
 set.seed(77) ## for reproducibility
-parameters <- MASS::mvrnorm(nsamp, summary(mod)$param[,"Estimate"], vcov_mat)
+parameters <- if(mod.num == 2){
+  matrix(data = c(rep(summary(mod)$param["tau","Estimate"], 9999), 
+                  rnorm(nsamp, summary(mod)$param["alpha","Estimate"], vcov_mat["alpha","alpha"]), ### sample parameters from Random Normal distrep
+                  rep(summary(mod)$param["A","Estimate"], 9999),
+                  rep(summary(mod)$param["k","Estimate"], 9999)), nrow = 9999, ncol =4,
+         dimnames = list(NULL, c("tau", "alpha", "A", "k")))
+} else if(mod.num == 5){
+  matrix(data = c(rep(summary(mod)$param["tau","Estimate"], 9999), 
+                  rnorm(nsamp, summary(mod)$param["alpha","Estimate"], vcov_mat["alpha","alpha"]), ### sample parameters from Random Normal distrep
+                  rep(summary(mod)$param["a","Estimate"], 9999),
+                  rep(summary(mod)$param["b","Estimate"], 9999), 
+                  rep(summary(mod)$param["c","Estimate"], 9999),
+                  rep(summary(mod)$param["d","Estimate"], 9999)), nrow = 9999, ncol =6,
+         dimnames = list(NULL, c("tau", "alpha", "a", "b", "c", "d")))
+}
 
-### solve f(disturbance) function at B_L_prop_first and B_L_prop_last
+### solve f(disturbance) function at B_L_first and B_L_last
 sim_f_disturbance_first <- apply(parameters, 1, predict_f.disturbance_first, data = data, mod.number = mod.num,
-                         p.alpha = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$alpha,
-                         p.tau = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$tau,
-                         simplify = T)
-sim_f_disturbance_last <- apply(parameters, 1, predict_f.disturbance_last, data = data, mod.number = mod.num, 
-                        p.alpha = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$alpha,
-                        p.tau = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$tau,
-                        simplify = T)
+                                 simplify = TRUE)
+sim_f_disturbance_last <- apply(parameters, 1, predict_f.disturbance_last, data = data, mod.number = mod.num,
+                                simplify = TRUE)
 
-### take constant times difference in f(B_L_prop_first) and f(B_L_prop_last)over deltaT (aka MEASTIME_t2_last - MEASTIME_t2_first)  --  need to transform the numerator to get plots in rows and sim samples down columns -- then can do division 
-sim_DeltaB <- t(sim_f_disturbance_last - sim_f_disturbance_first) / (data$MEASTIME_t2_last - data$MEASTIME_t2_first) 
+### take difference in f(disturbance_first) and f(disturbance_last) over deltaT (aka MEASTIME_t2_last - MEASTIME_t2_first)  --  need to transform the numerator to get plots in rows and sim samples down columns -- then can do division 
+sim_DeltaB <- t(sim_f_disturbance_last - sim_f_disturbance_first) / (data$MEASTIME_t2_last - data$MEASTIME_t2_first)
 
 ### take means and store in list 
 B_sim_pred_f_disturbance_bar[[paste(ecoprov)]] <- rowMeans(sim_DeltaB, na.rm = T)
@@ -19082,21 +19462,32 @@ mod <- get(paste("nls_", ecoprov, ".",  Best_mods.P_bal[Best_mods.P_bal$Ecoprovi
 mod.num <-  Best_mods.P_bal[Best_mods.P_bal$Ecoprovince == paste(ecoprov),]$Best.Mod
 data <- get(paste("DeltaB_df_", ecoprov, sep = ""))
 vcov_mat <- vcov_list[[paste(ecoprov)]]
+
 set.seed(77) ## for reproducibility
-parameters <- MASS::mvrnorm(nsamp, summary(mod)$param[,"Estimate"], vcov_mat)
+parameters <- if(mod.num == 2){
+  matrix(data = c(rep(summary(mod)$param["tau","Estimate"], 9999), 
+                  rnorm(nsamp, summary(mod)$param["alpha","Estimate"], vcov_mat["alpha","alpha"]), ### sample parameters from Random Normal distrep
+                  rep(summary(mod)$param["A","Estimate"], 9999),
+                  rep(summary(mod)$param["k","Estimate"], 9999)), nrow = 9999, ncol =4,
+         dimnames = list(NULL, c("tau", "alpha", "A", "k")))
+} else if(mod.num == 5){
+  matrix(data = c(rep(summary(mod)$param["tau","Estimate"], 9999), 
+                  rnorm(nsamp, summary(mod)$param["alpha","Estimate"], vcov_mat["alpha","alpha"]), ### sample parameters from Random Normal distrep
+                  rep(summary(mod)$param["a","Estimate"], 9999),
+                  rep(summary(mod)$param["b","Estimate"], 9999), 
+                  rep(summary(mod)$param["c","Estimate"], 9999),
+                  rep(summary(mod)$param["d","Estimate"], 9999)), nrow = 9999, ncol =6,
+         dimnames = list(NULL, c("tau", "alpha", "a", "b", "c", "d")))
+}
 
-### solve f(disturbance) function at B_L_prop_first and B_L_prop_last
+### solve f(disturbance) function at B_L_first and B_L_last
 sim_f_disturbance_first <- apply(parameters, 1, predict_f.disturbance_first, data = data, mod.number = mod.num,
-                        p.alpha = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$alpha,
-                        p.tau = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$tau,
-                        simplify = T)
-sim_f_disturbance_last <- apply(parameters, 1, predict_f.disturbance_last, data = data, mod.number = mod.num, 
-                        p.alpha = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$alpha,
-                        p.tau = nls.param.df_bal[nls.param.df_bal$Ecoprovince == ecoprov,]$tau,
-                        simplify = T)
+                                 simplify = TRUE)
+sim_f_disturbance_last <- apply(parameters, 1, predict_f.disturbance_last, data = data, mod.number = mod.num,
+                                simplify = TRUE)
 
-### take constant times difference in f(B_L_prop_first) and f(B_L_prop_last)over deltaT (aka MEASTIME_t2_last - MEASTIME_t2_first)  --  need to transform the numerator to get plots in rows and sim samples down columns -- then can do division 
-sim_DeltaB <- t(sim_f_disturbance_last - sim_f_disturbance_first) / (data$MEASTIME_t2_last - data$MEASTIME_t2_first) 
+### take difference in f(disturbance_first) and f(disturbance_last) over deltaT (aka MEASTIME_t2_last - MEASTIME_t2_first)  --  need to transform the numerator to get plots in rows and sim samples down columns -- then can do division 
+sim_DeltaB <- t(sim_f_disturbance_last - sim_f_disturbance_first) / (data$MEASTIME_t2_last - data$MEASTIME_t2_first)
 
 ### take means and store in list 
 B_sim_pred_f_disturbance_bar[[paste(ecoprov)]] <- rowMeans(sim_DeltaB, na.rm = T)
@@ -19343,13 +19734,13 @@ colnames(BK_df_year_avg)[3] <- "value" # rename the mean to "Value" to match oth
 BK_df_year_avg$Ecoprovince <- factor(BK_df_year_avg$Ecoprovince, levels=BK_df_age_avg$Ecoprovince)
 
 ### calculate variance from list of DeltaB_age bar samples (by ecoprov)
-var.f_year <- unlist(lapply(B_sim_pred_f_year_bar, var, na.rm = T))   ## this is var_f(age)
+var.f_year <- unlist(lapply(B_sim_pred_f_year_bar, var, na.rm = T))   ## this is var_f(year) -- for the productivity trend 
 
 ##### important!:  need to re-calculate standard error in DeltaB_tau/ productivity trend 
 ## note this overwrites previous se calculation from summarySE
 ## this is done the same as above for DeltaB_age
 
-BK_df_year_avg$se <- sqrt(var.f_year[match(BK_df_year_avg$Ecoprovince, names(var.f_age))])
+BK_df_year_avg$se <- sqrt(var.f_year[match(BK_df_year_avg$Ecoprovince, names(var.f_year))])
 
 # BK_df_year_avg$se <- sqrt(BK_df_year_avg$se^2 + var.f_year[match(BK_df_year_avg$Ecoprovince, names(var.f_age))]) ## this commented code adds the variance in the data (among plots) the paramerter uncertainty in the s.e. calculation  -- the simplier method (just with parameter uncertainty is used)
                     
@@ -19363,11 +19754,14 @@ colnames(BK_df_disturbance_avg)[3] <- "value" # rename the mean to "Value" to ma
 ## order to match order of DeltaB_age
 BK_df_disturbance_avg$Ecoprovince <- factor(BK_df_disturbance_avg$Ecoprovince, levels=BK_df_age_avg$Ecoprovince)
 
+### calculate variance from list of DeltaB_age bar samples (by ecoprov)
+var.f_disturbance <- unlist(lapply(B_sim_pred_f_disturbance_bar, var, na.rm = T)) ## this is var_f(disturbance)
+
 ##### important!:  need to re-calculate standard error in DeltaB_disturabnce
 ## note this overwrites previous se calculation from summarySE
 ## this is done the same as above for DeltaB_age
 
-BK_df_disturbance_avg$se <- sqrt(var.f_year[match(BK_df_disturbance_avg$Ecoprovince, names(var.f_age))])
+BK_df_disturbance_avg$se <- sqrt(var.f_disturbance[match(BK_df_disturbance_avg$Ecoprovince, names(var.f_disturbance))])
 
 # BK_df_disturbance_avg$se <- sqrt(BK_df_disturbance_avg$se^2 + var.f_year[match(BK_df_disturbance_avg$Ecoprovince, names(var.f_age))])  ## this commented code adds the variance in the data (among plots) the parameter uncertainty in the s.e. calculation  -- the simplier method (just with parameter uncertainty is used)
 
@@ -19394,9 +19788,9 @@ colnames(BK_df_SUM_total_avg)[3] <- "value" # rename the mean to "Value" to matc
 BK_df_SUM_total_avg$Ecoprovince <- factor(BK_df_SUM_total_avg$Ecoprovince, levels=BK_df_age_avg$Ecoprovince)
 
 ## standard error of the mean for DetlaB_SUM_total -- this is the square root of  the sum of the variances in DeltaB_age, disturbance and productivity trend (i.e., year)
-BK_df_SUM_total_avg$se <- sqrt(var.f_age[match(BK_df_age_avg$Ecoprovince, names(var.f_age))] +
-                               var.f_year[match(BK_df_disturbance_avg$Ecoprovince, names(var.f_age))] +
-                               var.f_year[match(BK_df_year_avg$Ecoprovince, names(var.f_age))])
+BK_df_SUM_total_avg$se <- sqrt(var.f_age[match(BK_df_SUM_total_avg$Ecoprovince, names(var.f_age))] +
+                               var.f_year[match(BK_df_SUM_total_avg$Ecoprovince, names(var.f_year))] +
+                               var.f_disturbance[match(BK_df_SUM_total_avg$Ecoprovince, names(var.f_disturbance))])
 
 ###################
 #### Data wrangling
@@ -19482,9 +19876,9 @@ gg.Delta_B_total_compare <- ggplot(aes(x= value.x, y=value.y, color = Ecoprovinc
                  ggrepel::geom_text_repel(aes(label = Ecoprovince),
                                           data = BK_total_df_compare, size = 2, direction = "both",
                                           min.segment.length = 10) +
-                  ggtitle(label = NULL, subtitle = parse(text = lm_eqn(lm_Delta_B_total_compare)))  + ylim(c(-1,3)) + xlim(c(-1,3))
+                  ggtitle(label = NULL, subtitle = parse(text = lm_eqn(lm_Delta_B_total_compare)))  + ylim(c(-1.5,3)) + xlim(c(-1.5,3))
 
-gg.Delta_B_total_compare               
+# gg.Delta_B_total_compare               
 ```
 
 
@@ -19521,7 +19915,7 @@ gg.age_effect <- ggplot(aes(x= diff_STDAGE, y= DeltaB_age, col = Ecoprovince),
                                           min.segment.length = 10) +
                 ggtitle(label = NULL, subtitle = parse(text = lm_eqn(lm_age)))
                  
-gg.age_effect            
+# gg.age_effect            
 
 ```
 
@@ -19572,7 +19966,7 @@ gg.Delta1_tau <- ggplot(aes(x= tau, y=value, col = Ecoprovince),
                  ggtitle(label = NULL, subtitle = parse(text = lm_eqn(lm_Delta_tau))) #+ 
                 # ylim(c(-1,2.5)) + xlim(c(-1,2.5))
 
-gg.Delta1_tau                 
+# gg.Delta1_tau                 
 ```
 
 #### Delta B_disturbance vs. -alpha X MBL
@@ -19613,12 +20007,12 @@ gg.Delta2_alpha <- ggplot(aes(x= alpha_ML, y=value, col = Ecoprovince),
                  ggrepel::geom_text_repel(aes(label = Ecoprovince), 
                                           data = DELTA_frame2, size = 2, direction = "both", 
                                           min.segment.length = 10) +
-                 ggtitle(label = NULL, subtitle = parse(text = lm_eqn(lm_Delta_B_L1)))  #+ ylim(c(-1.,0.5)) #+ xlim(c(-0.5,1.5))
+                 ggtitle(label = NULL, subtitle = parse(text = lm_eqn(lm_Delta_B_L1))) # + xlim(c(-0.01,0.01)) #+ ylim(c(-1.,0.5)) #+ xlim(c(-0.5,1.5))
 
 
 ## L_LAST VS.L_FIRST
 
-gg.Delta2_alpha                 
+# gg.Delta2_alpha                 
 ```
 
 
@@ -19720,7 +20114,7 @@ gg_BK2b <- ggplot(aes(x=Ecoprovince, y = value, group = variable),
           
           
 # tiff("FIA_Bookkeeper_v2C_April2023.tiff", width = 19, height = 16, units = "cm", res = 600, compression ="lzw")        
-gg_BK2b + coord_cartesian(ylim=c(-2, 2.5))
+gg_BK2b + coord_cartesian(ylim=c(-1,2.5))
 # dev.off()
 ```
 
@@ -19781,7 +20175,7 @@ gg_BK2c <- ggplot(aes(x=Ecoprovince, y = value, group = variable),
           
           
 # tiff("FIA_Bookkeeper_disturbance_June_2023.tiff", width = 20, height = 9.33, units = "cm", res = 600, compression ="lzw")        
-gg_BK2c
+# gg_BK2c
 # dev.off()
 
 ```
@@ -19878,9 +20272,9 @@ gg_fig3.Xb <- cowplot::plot_grid(gg_BK2b + coord_cartesian(ylim=c(-2, 2.5)), #+
 
 
 ## make the graphic
-# tiff(filename = "Fig3_07.10.2023_3_stacker.tiff", width = 13.5, height = 20, units = "cm", res = 600, compression = "lzw")
+tiff(filename = "Fig3_07.17.2023_3_stacker_v2.tiff", width = 13.5, height = 20, units = "cm", res = 600, compression = "lzw")
 gg_fig3.Xb
-# dev.off()
+dev.off()
 ```
 
 ### relationship of DeltaB_observed and DeltaB_productivity trend
@@ -19930,7 +20324,7 @@ gg.DELTAB_prod_corr1 <- ggplot(aes(y= value_total, x = value_year, col = Ecoprov
   
 
 # tiff(filename = "DeltaB_year vs. DeltaB_total.tiff", width =10, height =10, units="cm", res = 600, )
-gg.DELTAB_prod_corr1
+# gg.DELTAB_prod_corr1
 # dev.off()  
 ```
 
@@ -19980,7 +20374,7 @@ gg.DELTAB_prod_corr2 <- ggplot(aes(y= value_total, x = value_age, col = Ecoprovi
                        
   
 # tiff(filename = "DeltaB_year vs. DeltaB_total.tiff", width =10, height =10, units="cm", res = 600, )
-gg.DELTAB_prod_corr2  
+# gg.DELTAB_prod_corr2  
 # dev.off()  
 ```
 
@@ -19988,7 +20382,7 @@ gg.DELTAB_prod_corr2
 ### relationship of DeltaB_observed and DeltaB_disturbance
 
 ```{r}
-year_avg_merger3 <- merge(BK_df_year_avg, BK_df_disturbance_avg, by = c("Ecoprovince", "N"), suffixes = c("_disturbance", "_total"))
+year_avg_merger3 <- merge(BK_df_disturbance_avg, BK_df_total_avg, by = c("Ecoprovince", "N"), suffixes = c("_disturbance", "_total"))
 
 year_avg_merger3$Ecoprovince <-  factor(year_avg_merger3$Ecoprovince, levels =c("211","212","221","222","223","231","232","234","251","255","M211","M221","M223", "M231"))
 
@@ -20032,7 +20426,7 @@ gg.DELTAB_prod_corr3 <- ggplot(aes(y= value_total, x = value_disturbance, col = 
   
 
 # tiff(filename = "DeltaB_year vs. DeltaB_total.tiff", width =10, height =10, units="cm", res = 600, )
-gg.DELTAB_prod_corr3  
+# gg.DELTAB_prod_corr3  
 # dev.off()  
 
 ```
@@ -20042,35 +20436,14 @@ gg.DELTAB_prod_corr3
 
 # tiff("fig_S7_3wide.tiff", width = 20, height = 8.5, units = "cm", res = 600, compression = "lzw")
 
-ggpubr::ggarrange(gg.DELTAB_prod_corr1, gg.DELTAB_prod_corr2 + theme(axis.title.y = element_blank()),
-                  gg.DELTAB_prod_corr3 + theme(axis.title.y = element_blank()), labels = "AUTO", ncol=3, nrow =1, widths = c(1.03,0.95,1.02))
+ggpubr::ggarrange(gg.DELTAB_prod_corr1 + ylim(-1,3), 
+                  gg.DELTAB_prod_corr2 + ylim(-1,3) + theme(axis.title.y = element_blank()),
+                  gg.DELTAB_prod_corr3 + ylim(-1,3) + theme(axis.title.y = element_blank()), labels = "AUTO", ncol=3, nrow =1, widths = c(1.03,0.95,1.02))
 
 # dev.off()
 ```
 
 
-```{r}
-### make a figure --  Change in Stand Age Distributions vs. Delta B due to AGE (age effects)
-
-## data wrangling 
-Age_effect_df <- merge(summarySE(BK_df, measurevar = "diff_STDAGE", groupvars = c("Ecoprovince"), na.rm = T), summarySE(BK_df, measurevar = "DeltaB_age", groupvars = c("Ecoprovince"), na.rm = T), by = c("Ecoprovince"))
-
-## ggplot
-
-gg.age_effect <- ggplot(aes(x= diff_STDAGE, y= DeltaB_age, col = Ecoprovince),
-                        data = Age_effect_df) + 
-                 #geom_abline(intercept = 0, slope = 1, lty = 2, size =1, alpha = 0.5) +   
-                 geom_point() +
-                 geom_errorbarh(aes(xmin = diff_STDAGE-se.x, xmax = diff_STDAGE+se.x)) +
-                 geom_errorbar(aes(ymin = DeltaB_age-se.y, ymax = DeltaB_age+se.y)) +
-                 theme_classic() + 
-                 theme(legend.position = "top", strip.text.x = element_text(size = 6), aspect.ratio =1) + 
-                 xlab(expression(~Delta*"Stand Age (yrs)")) + 
-                 ylab(expression(~Delta*"B age (Mg ha"^1*" yr"^-1*")")) + guides(shape = guide_legend(ncol =1))
-
-
-gg.age_effect
-```
 
 
 ### plotting compare Delta B altogether
