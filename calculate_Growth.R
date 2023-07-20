@@ -260,11 +260,11 @@ for (j in 1:length(state_vec)) {
 
 } ## end  state loop
 
-## this commented code loads the 
+## this commented code loads the saved calc_dfs from the above loop...
 
-### funciton to load R data to specified name
+### function to load R data to a specified name
 # loadRData <- function(fileName){
-#   #loads an RData file, and returns it
+#   #loads an RData file and returns it
 #   load(fileName)
 #   get(ls()[ls() != "fileName"])
 # }
