@@ -12,7 +12,7 @@ This respository accompanies Hogan et al. "Climate change determines the sign of
 This repository includes: 
 
 * code used to derive a single processed FIA dataset from the FIA datatables. That dataset, including metadata, are archived in this main directory:
-    - A single processed FIA plot biomass growth dataset (G) is used for all analyses.  This dataset is structured at the second of two FIA plot measurments (i.e., at the re-measurment).  For analyses which use plot biomass as the response variable, the very first plot measument is not included in the mode fits (i.e., biomass models are fit only to the t2 obsrevations to make the sample of data consistent with that used in growth analyses).  For growth analyses, the growth interval is defined between successive plot meausurements (i.e., the growth measurements is at t2).  
+    - A single processed FIA plot biomass growth dataset (G) is used for all analyses.  This dataset is structured at the second of two FIA plot measurements (i.e., at the re-measurment).  For analyses which use plot biomass as the response variable, the very first plot measument is not included in model fits (i.e., biomass models are fit only to re-measurment data to make the dataset consistent with the data used in models for the growth analyses).  For growth analyses, the growth interval is defined between successive plot re-meausurements (i.e., the growth measurements is at t2).  
 
                     - codefile: calculate_Growth.R
                     - dataset: Growth.Rdata
