@@ -7,7 +7,7 @@
 *Data*:  Data from the United States Forest Service's Forest Inventory and Analysis program from ~2000-2022 were used (see https://www.fia.fs.usda.gov/).
 We recommend the rFIA package for downloading FIA data tables (see `rfia::getFIA`, https://rfia.netlify.app/).
 
-This respository accompanies Hogan et al. "Climate change determines the sign of productivity trends in US forests"  (*in review* at *PNAS*)
+This respository accompanies Hogan et al. "Climate change determines the sign of productivity trends in US forests"  (2024) *PNAS* 121(4):e2311132121  https://doi.org/10.1073/pnas.2311132121
 
 This repository includes: 
 
