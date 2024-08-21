@@ -9,6 +9,9 @@ We recommend the rFIA package for downloading FIA data tables (see `rfia::getFIA
 
 This respository accompanies Hogan et al. "Climate change determines the sign of productivity trends in US forests"  (2024) *PNAS* 121(4):e2311132121  https://doi.org/10.1073/pnas.2311132121
 
+[![DOI](https://zenodo.org/badge/485865523.svg)](https://zenodo.org/doi/10.5281/zenodo.13356676)
+
+
 This repository includes: 
 
 * code used to derive a single processed FIA dataset from the FIA datatables. That dataset, including metadata, are archived in this main directory:
